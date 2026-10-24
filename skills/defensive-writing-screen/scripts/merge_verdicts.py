@@ -69,7 +69,7 @@ def main(argv: list[str]) -> int:
         return 1
 
     header = ["id", "line", *DIMENSIONS, "triage", "triage_dim", "screen_state",
-              "verdict", "category", "span", "reason", "label", "agree"]
+              "verdict", "category", "basis", "rule", "span", "reason", "label", "agree"]
     lines = ["\t".join(header)]
     routed = rewritten = agree = comparable = 0
     rewrite_labeled = rewrite_found = 0
@@ -100,6 +100,8 @@ def main(argv: list[str]) -> int:
             "routed" if is_routed else "not_selected",
             action,
             str(verdict.get("category", "")),
+            str(verdict.get("basis", "")),
+            str(verdict.get("rule", "")),
             str(verdict.get("span", "")),
             str(verdict.get("reason", "")),
             label,
