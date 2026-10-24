@@ -4,7 +4,7 @@ description: Audit drafts for unnecessary defensive writing with Jev-first triag
 license: MIT
 compatibility: Jev triage needs a System One caller such as jev_evaluate. Python 3 is optional for bundled offline scripts. Without a caller or after a failed control gate, report agent-only mode; never invent probabilities.
 metadata:
-  version: "0.16.0"
+  version: "0.17.0"
   upstream: "Kiterlin/anti-defensive-writing (MIT), adapted; see NOTICE.md"
 ---
 
@@ -31,13 +31,27 @@ No caller, a completed failing gate, or a persistent gate transport failure trig
 
 ## Reporting
 
-- Version/hash, scope, genre, unit/exclusion counts, extraction caveats.
-- Control question revision, all six control rows, model alias and resolved version if returned, pass/fail and retry history.
-- Review scope (screened or full), units read, units sampled, units unread, and the observed miss rate with its sample size when sampling was used. Do not enumerate silently read units.
-- Triage and verification counts separately; agent-only or partial status prominently.
-- Per-unit records, one line per routed unit, and independent span findings with disposition (confirmed or optional), protection classes and keep reasons.
-- Structure separately, with proposed receiving locations and a note that a single model pass is weak evidence for a structural finding.
-- Cost facts: Jev requests, retries, failures, agent turns or tokens when available.
-- No claim of recall, accuracy or cost benefit without independent labels and measured comparison on the same draft. Jev prioritizes review and structures the record; it does not by itself reduce reading.
+Compress the response to the two things a reader acts on: the original text and the revision. Write it in controlled technical English, following the discipline of ASD-STE100: one idea per sentence, short sentences, approved simple words, active voice, no hedges, no restatement, no justification prose. Move reasons, kept facts, protection classes and per-unit notes into `findings.json` and cite the file.
+
+Fixed response shape:
+
+```text
+skill 0.17.0 | target <sha256> | units <n> | routed <n> | sampled <n> | failed <n> | model <name>
+L<line> | <original sentence, verbatim> | <revision, or KEEP> | <rule/disposition code>
+...
+sample <hits>/<n> | findings <n> confirmed, <n> optional | checks <ran> | <not run>
+```
+
+Rules for the response:
+
+- One finding per line. No paragraph explains another line.
+- Use the codes `R1`-`R6`, `confirmed` or `optional`, and `KEEP`. Do not spell out arguments.
+- Do not quote the packet, its scores, or the document's context. The line number locates it.
+- Do not write sentences about the paper's quality, the method, the process, or the review itself.
+- A line longer than the original plus its revision is too long. Cut the extra words.
+- Report counts, not narratives: review scope, units read, units unread, sample hits, failures, checks run.
+- Ask for the full explanation only when the user asks for it, then read it from `findings.json`.
+
+Compression never removes a finding, a number, a metric direction, or a condition from the revision itself. It removes prose about the finding.
 
 Files: `scripts/run_screen.py` (gate, triage and focused runs from one process), `references/controls.json` (canonical active questions, six gate controls and semantic challenges), `references/questions.md` (protocol and categories), `references/rewrite-guide.md` (self-contained rewriting authority), `references/cases.md` (current and historical calibration boundaries), `scripts/prepare_units.py`, `scripts/check_structure.py`, `scripts/merge_verdicts.py`.

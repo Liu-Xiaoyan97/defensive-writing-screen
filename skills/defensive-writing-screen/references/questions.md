@@ -25,6 +25,19 @@ A script-driven screen is not a cheaper agent pass; it is a different allocation
 
 Judge quality by detection, not by response length. A run that writes a shorter report and misses a confirmable problem has failed even though it saved tokens. When comparing against an agent-only baseline, adjudicate the two finding sets against the document instead of comparing their sizes.
 
+## Response compression
+
+The response carries the original and the revision, nothing else. Write it as controlled technical English: one idea per sentence, short sentences, active voice, simple approved words, no hedges, no restatement, no justification.
+
+| allowed | banned in the response |
+|---|---|
+| `L58 \| original \| revision \| R2/confirmed` | explanations of why the sentence is defensive |
+| `KEEP` as the revision field | summaries of the paper, method or process |
+| counts in the header and footer | adopted scores, packet excerpts, restated context |
+| codes `R1`-`R6`, `P1`-`P6` | adjectives about quality such as "important", "notable", "reasonable" |
+
+Write the reason, the kept facts and the protection class to `findings.json`. Ask before printing them. A response line longer than its original plus revision means the compression failed.
+
 ## Handoff packet
 
 The script owns the machine record; the agent owns judgment. `run_screen.py summarize` emits one packet containing only the units at or above the threshold: id, line range, four scores, the maximum, the exact paragraph, and the failed ids. The agent judges that packet and writes findings, not a ledger. `--sample N` (default 12 when the skill runs it) adds evenly spaced non-routed units, because the baseline's advantage is broad reading and the screen should test its own misses rather than assume they are absent.

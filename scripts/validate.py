@@ -117,13 +117,20 @@ def main() -> int:
         check(marker in questions_text, f"questions.md missing scope/disposition contract: {marker}")
     for marker in ["`confirmed`", "`optional`", "misses/sample"]:
         check(marker in questions_text, f"questions.md missing disposition or sampling rule: {marker}")
-    for marker in ["screened", "full", "Review scope"]:
+    for marker in ["screened", "full", "review scope"]:
         check(marker in text, f"SKILL.md missing review-scope marker: {marker}")
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
     check("report only what carries risk" in text.lower(),
           "SKILL.md must state that only risk-bearing results are recorded")
+    check("review scope" in text or "review_scope" in text, "SKILL.md must name the review scope in the response")
+    check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
+    check("L<line> | <original sentence, verbatim>" in text,
+          "SKILL.md must fix the response line format")
+    check("## Response compression" in questions_text, "questions.md must define response compression")
+    check("banned in the response" in questions_text,
+          "questions.md must list what the response may not contain")
     check("appears only in the aggregate count" in text,
           "SKILL.md must exempt low-risk read units from individual records")
     check("aggregate line" in questions_text,
@@ -184,13 +191,20 @@ def main() -> int:
         check(marker in questions_text, f"questions.md missing scope/disposition contract: {marker}")
     for marker in ["`confirmed`", "`optional`", "misses/sample"]:
         check(marker in questions_text, f"questions.md missing disposition or sampling rule: {marker}")
-    for marker in ["screened", "full", "Review scope"]:
+    for marker in ["screened", "full", "review scope"]:
         check(marker in text, f"SKILL.md missing review-scope marker: {marker}")
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
     check("report only what carries risk" in text.lower(),
           "SKILL.md must state that only risk-bearing results are recorded")
+    check("review scope" in text or "review_scope" in text, "SKILL.md must name the review scope in the response")
+    check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
+    check("L<line> | <original sentence, verbatim>" in text,
+          "SKILL.md must fix the response line format")
+    check("## Response compression" in questions_text, "questions.md must define response compression")
+    check("banned in the response" in questions_text,
+          "questions.md must list what the response may not contain")
     check("appears only in the aggregate count" in text,
           "SKILL.md must exempt low-risk read units from individual records")
     check("aggregate line" in questions_text,
