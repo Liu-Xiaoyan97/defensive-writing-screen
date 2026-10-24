@@ -18,11 +18,12 @@ so an agent that installs only this package still has the full editing capabilit
 ```text
 draft
   └─ prepare_units.py          split into prose paragraphs, line ranges, candidate spans
-       └─ Jev triage          3 broad noul questions per paragraph (+ 1 focused span question)
-            └─ routing         max probability per paragraph, top-k above a threshold
-                 └─ agent     read candidate in context, classify, decide keep or change
-                      └─ rewrite guide   claim-first, positive scope, keep real limits
-                           └─ report       excerpt, reason, one local revision
+       └─ control battery      4 positive + 2 negative controls; a failing battery blocks the screen
+            └─ Jev triage     observable noul questions per paragraph (+ focused span question)
+                 └─ routing   max probability per paragraph, top-k above threshold
+                      └─ agent     read candidate in context, classify, decide keep or change
+                           └─ rewrite guide   claim-first, positive scope, keep real limits
+                                └─ report       excerpt, reason, one local revision
 ```
 
 Jev never rewrites, never locates quotes, and never grants permission. A high
@@ -118,24 +119,45 @@ revision. Nothing is written to disk unless you authorize it.
 
 ## Calibration
 
-The shipped `0.65` routing threshold is a smoke-test value, not a calibrated cutoff.
-Run `references/cases.md`, add labeled paragraphs from your language and genre, and
-pick the threshold from the observed miss/review trade-off. Chinese and other CJK
-inputs are accepted by Jev but score lower than English, so calibrate separately and
-keep the agent verification step. Record the model version with any tuning result.
+Version 0.3.0 replaces the original sufficiency questions with observable ones and
+adds a control battery that runs before any document is screened. The change came
+from a measured failure: the original questions scored the canonical defensive
+sentences at 0.15-0.45, below the 0.65 gate they were shipped with, and an English
+academic draft of several hundred units returned no candidate at all. The observable set scores the
+same positives at 0.83-0.99 and neutral prose at 0.002-0.017; on that draft it
+returned 13 candidates, of which 5 survived review.
+
+The shipped `0.65` threshold is valid only for the current question set, language,
+and model version. Rerun `references/cases.md` before screening a new genre, and
+report the six battery values with any result. A failing battery invalidates the
+run; it does not make the document clean. Chinese and other CJK inputs are accepted
+by Jev but score lower than English, so calibrate separately and keep the agent
+verification step. Record the model version with any tuning result.
+
+Calibration data is deliberately decoupled from any project. The skill holds
+control sentences from the upstream defensive-writing patterns plus aggregate
+screening statistics: no draft content, document identity, domain vocabulary, or
+excerpts. Project cases live in the project and reach the skill only as run-time
+state, so the same battery can be compared across projects.
 
 ## Design notes
 
 - **Screening before rewriting.** Paragraph-level questions are cheap and parallel;
   rewriting is not. Triage buys attention where it matters.
+- **A battery before a screen.** A probability scale without known positive and
+  negative controls cannot distinguish a clean draft from an insensitive question.
+- **Observable wording over sufficiency wording.** Asking whether wording "adds
+  evidence" is answered conservatively on academic prose and flattens the ranking;
+  asking what the text contains keeps the scale usable.
 - **One paragraph per request.** Batched paragraphs blurred target attribution in
   testing; the SOP keeps them separate until a measured run shows otherwise.
-- **Two question families.** Broad questions catch explicit defense; a focused
+- **Two question families.** Observable dimensions catch explicit defense; a focused
   "would removal preserve all known meaning?" question catches mild Chinese modesty
-  that broad questions miss. Neither one alone is sufficient.
+  and restated caveats that the dimensions miss. Neither one alone is sufficient.
 - **Necessary limits are protected.** Causal boundaries, safety prohibitions,
-  technical prerequisites, and unfavorable results stay, even when they read as
-  negative phrasing.
+  technical prerequisites, mathematical conditions, unfavorable results, and
+  conceptual contrasts that carry the argument stay, even when they read as negative
+  phrasing. In the measured run, eight of thirteen candidates were such contrasts.
 - **Rewriting capability is bundled.** `references/rewrite-guide.md` reproduces the
   operational content of `anti-defensive-writing` needed to revise prose, with
   attribution in `NOTICE.md`.

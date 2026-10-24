@@ -45,6 +45,8 @@ PATTERNS_ZH = [
     r"值得注意的是[^。；，]{0,20}",
     r"需要澄清的是[^。；，]{0,20}",
     r"并非[^。；，]{0,20}而是[^。；，]{0,20}",
+    r"很难[^。；，]{0,20}",
+    r"几乎无法[^。；，]{0,20}",
 ]
 PATTERNS_EN = [
     r"\bnot claim[^.;]{0,40}",
@@ -58,6 +60,14 @@ PATTERNS_EN = [
     r"\bonly a preliminary[^.;]{0,30}",
     r"\bmay potentially[^.;]{0,40}",
     r"\bcould possibly[^.;]{0,40}",
+    r"\b(?:do|does|did) not (?:claim|attempt|provide|include|prove|address|cover)\b[^.;]{0,40}",
+    r"\bnot (?:intended|meant|designed) to\b[^.;]{0,40}",
+    r"\binstead of\b[^.;]{0,30}",
+    r"\bas opposed to\b[^.;]{0,30}",
+    r"\bcould hardly\b",
+    r"\bto some extent\b",
+    r"\bnot necessarily\b",
+    r"\bnot by themselves\b",
 ]
 
 SKIP_PREFIXES = ("```", "~~~", "|", "![", "<img", "<table", "$$", "\\[", "\\begin{", "%")

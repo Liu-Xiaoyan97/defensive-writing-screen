@@ -53,6 +53,20 @@ def main() -> int:
     check("Jev" in description, "description should state the Jev triage")
     check(fields.get("license") == "MIT", "frontmatter license must be MIT")
     check("version" in text, "metadata.version should be recorded")
+    check(
+        "Calibration records in this skill stay generic" in text,
+        "SKILL.md must state that calibration records stay free of project content",
+    )
+
+    cases = SKILL_DIR / "references" / "cases.md"
+    if cases.is_file():
+        cases_text = cases.read_text(encoding="utf-8")
+        check(
+            "must not carry project content" in cases_text,
+            "cases.md must keep the decoupling rule",
+        )
+        for marker in ["Control battery", "What the numbers mean"]:
+            check(marker in cases_text, f"cases.md missing section: {marker}")
 
     for section in REQUIRED_SECTIONS:
         check(section in text, f"SKILL.md missing section: {section}")
