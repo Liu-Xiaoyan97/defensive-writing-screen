@@ -103,7 +103,7 @@ with `/skill:defensive-writing-screen`.
 Ask for an audit and name the scope:
 
 ```text
-Use defensive-writing-screen on sections 4.2-4.3 of paper.md. Screen first, show me
+Use defensive-writing-screen on sections 4.2-4.3 of draft.md. Screen first, show me
 candidates with probabilities, then propose edits without writing to the file.
 ```
 

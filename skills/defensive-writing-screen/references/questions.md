@@ -115,7 +115,7 @@ Use for every span returned by `scripts/prepare_units.py --candidates`, independ
 }
 ```
 
-A high `true` means the span is a deletion *candidate*. The agent still decides, because `evidence` may be incomplete. Observed span values: 0.93 for a contrast clause that repeats a fact stated elsewhere, 0.72 for a vague weakening clause, 0.70 for a disclaimer whose content belongs in a setup section, 0.66 for a summary sentence restating earlier content, 0.60 for a duplicated scope reminder, and 0.39 for a harmless restatement that the agent kept. The question orders removable spans above harmless ones but does not separate removable from necessary wording on its own, so it never authorizes deletion.
+A high `true` means the span is a deletion *candidate*. A low value means the span carries something, so the options are keep or restructure, not delete. The agent still decides, because `evidence` may be incomplete. Observed span values: 0.93 for a contrast clause that repeats a fact stated elsewhere, 0.72 for a vague weakening clause, 0.70 for a disclaimer whose content belongs in a setup section, 0.66 for a summary sentence restating earlier content, 0.60 for a duplicated scope reminder, and 0.39 for a harmless restatement that the agent kept. The question orders removable spans above harmless ones but does not separate removable from necessary wording on its own, so it never authorizes deletion.
 
 ## Routing
 

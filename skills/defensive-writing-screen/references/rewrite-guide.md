@@ -83,14 +83,14 @@ Only the first and last are routine deletion or compression targets. The middle 
 
 ## Metrics, experiments, unfavorable results
 
-- When a metric is unfavorable, state the condition, metric, and number, then the tradeoff. Do not turn one weaker metric into a verdict on the whole method, and do not switch evaluation criteria to avoid the result. "Accuracy falls from 90% to 89%, and latency from 100 ms to 60 ms" stays a two-sided statement.
+- When a metric is unfavorable, state the condition, metric, and number, then the tradeoff. Do not turn one weaker metric into a verdict on the whole method, and do not switch evaluation criteria to avoid the result. "Accuracy falls from 90% to 89% while latency falls from 100 ms to 60 ms" stays a two-sided statement.
 - Each experiment should answer at least one of: does the method work, what explains the gain, can alternatives be ruled out, when does it apply. When a supporting experiment is missing, name the specific claim that loses support instead of writing "the experiments are insufficient".
 - Keep results that affect the central conclusion. Report them where the conclusion is discussed, not only in a limitations section.
-- Do not attribute a gain to a module without the corresponding ablation, and do not describe a local observation as a general defect of the method.
+- Do not attribute an effect to one component without the corresponding intervention test, and do not describe a local observation as a general defect.
 
 ## Chinese-specific habits
 
-Check habitual modesty: "仅仅做了初步尝试", "只能提供有限参考", "仍有很大提升空间". Replace with what was done: "本文在两个数据集上评估该方法". Keep "初步", "可能", and "提示" when the evidence warrants them; do not add "显著" or "全面领先" to sound stronger. Remove admonitory tone ("切记") while keeping real prohibitions and technical conclusions. Keep necessary conditions such as "仅在……时" or "若欲……需要……" and rewrite them equivalently; never drop them to sound decisive.
+Check habitual modesty: "仅仅做了初步尝试", "只能提供有限参考", "仍有很大提升空间". Replace with what was done: "本文在两个案例上评估该方法". Keep "初步", "可能", and "提示" when the evidence warrants them; do not add "显著" or "全面领先" to sound stronger. Remove admonitory tone ("切记") while keeping real prohibitions and technical conclusions. Keep necessary conditions such as "仅在……时" or "若欲……需要……" and rewrite them equivalently; never drop them to sound decisive.
 
 ## English-specific habits
 
