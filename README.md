@@ -23,7 +23,7 @@ draft
        └─ control battery      4 positive + 2 negative controls; a failing battery blocks the screen
             └─ Jev triage     observable noul questions per paragraph (+ focused span question)
                  └─ routing   max probability per paragraph, top-k above threshold
-                      └─ agent     read candidate in context, classify, decide keep or change
+                      └─ agent     read every unit, classify, record rewrite or keep
                            └─ rewrite guide   claim-first, positive scope, keep real limits
                                 └─ report       excerpt, reason, one local revision
 ```
@@ -113,7 +113,8 @@ The agent then:
 2. asks the three broad questions per paragraph and, for each retrieved span, the
    focused removal question;
 3. ranks by `max(probability)` and reviews the top candidates above the threshold;
-4. verifies each one against the surrounding argument and known evidence;
+4. verifies each one against the surrounding argument and known evidence, and
+   records a verdict for every unit, including those the screen did not route;
 5. proposes one local revision per confirmed item, or explains why it stays.
 
 Default reporting: source excerpt, probabilities, agent classification, proposed
