@@ -40,6 +40,7 @@ import argparse
 import json
 import multiprocessing as mp
 import os
+import ssl
 import sys
 import time
 import urllib.error
@@ -48,6 +49,15 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+
+
+def ssl_context():
+    """Use the certifi bundle when the system store is unusable, as on some macOS Pythons."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        return ssl.create_default_context()
 CONTROLS = HERE.parent / "references" / "controls.json"
 
 DEFAULT_BASE = "http://localhost:8090"
@@ -60,17 +70,21 @@ def load_controls() -> dict:
     return json.loads(CONTROLS.read_text(encoding="utf-8"))
 
 
-def post(base: str, payload: dict, timeout: float, model: str | None) -> dict:
+def post(endpoint: str, payload: dict, timeout: float, model: str | None,
+         api_key: str | None = None) -> dict:
     body = dict(payload)
     if model:
         body["model"] = model
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
     request = urllib.request.Request(
-        base.rstrip("/") + "/v1/systemone",
+        endpoint,
         data=json.dumps(body).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers=headers,
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    with urllib.request.urlopen(request, timeout=timeout, context=ssl_context()) as response:
         return json.loads(response.read().decode("utf-8"))
 
 
@@ -84,12 +98,12 @@ def values(answers: dict) -> dict[str, float | None]:
     return out
 
 
-def call(base, payload, timeout, model, retries=1):
+def call(base, payload, timeout, model, retries=1, api_key=None):
     """Return (values, resolved_model, attempts, error). Retries transport errors only."""
     last = ""
     for attempt in range(retries + 1):
         try:
-            response = post(base, payload, timeout, model)
+            response = post(base, payload, timeout, model, api_key)
             answers = response.get("answers") or response
             return values(answers), response.get("model"), attempt + 1, None
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError,
@@ -129,24 +143,24 @@ def build_row(item, probs, resolved, attempts, error, questions, label):
 
 def worker(job):
     """Runs inside a pool process: one unit, claimed when the process is free."""
-    item, base, questions, timeout, model, retries, label = job
+    item, base, questions, timeout, model, retries, label, api_key = job
     payload = {"state": item["state"], "questions": questions}
     try:
-        probs, resolved, attempts, error = call(base, payload, timeout, model, retries)
+        probs, resolved, attempts, error = call(base, payload, timeout, model, retries, api_key)
     except Exception as exc:  # a worker must never take the run down
         probs, resolved, attempts, error = None, None, 0, f"{type(exc).__name__}: {exc}"
     return build_row(item, probs, resolved, attempts, error, questions, label)
 
 
 def run(items, base, questions, timeout, model, workers, label, executor="process",
-        retries=1, out_path=None):
+        retries=1, out_path=None, api_key=None):
     """Claim units from a shared queue and stream each finished row to disk.
 
     Process mode isolates a crash to one unit and lets workers claim work as they
     finish instead of receiving a fixed slice. Thread mode stays available for
     platforms where forking is unavailable.
     """
-    jobs = [(item, base, questions, timeout, model, retries, label) for item in items]
+    jobs = [(item, base, questions, timeout, model, retries, label, api_key) for item in items]
     results = []
     handle = out_path.open("a", encoding="utf-8") if out_path else None
     try:
@@ -201,7 +215,13 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--units", type=Path)
     parser.add_argument("--spans", type=Path)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--base", default=os.environ.get("PI_JEV_BASE_URL", DEFAULT_BASE))
+    parser.add_argument("--base", default=os.environ.get("PI_JEV_BASE_URL", DEFAULT_BASE),
+                        help="base URL; the path is appended")
+    parser.add_argument("--path", default=os.environ.get("JEV_PATH", "/v1/systemone"),
+                        help="endpoint path, for example /v1/systemone or /v1/decisions")
+    parser.add_argument("--endpoint", help="full endpoint URL, overriding --base and --path")
+    parser.add_argument("--api-key", default=os.environ.get("JEV_API_KEY")
+                        or os.environ.get("BAMBOO_API_KEY") or os.environ.get("TYPESAFE_API_KEY") or None)
     parser.add_argument("--model", default=os.environ.get("JEV_MODEL") or None)
     parser.add_argument("--workers", default=os.environ.get("JEV_CONCURRENCY", "4"),
                         help="pool size, or auto to use the widest safe fan-out (units are independent)")
@@ -271,6 +291,7 @@ def main(argv: list[str]) -> int:
               file=sys.stderr)
         return 0
 
+    endpoint = args.endpoint or (args.base.rstrip("/") + args.path)
     workers = args.workers
     if str(workers).strip().lower() == "auto":
         workers = int(os.environ.get("JEV_AUTO_WORKERS", "8"))
@@ -279,8 +300,9 @@ def main(argv: list[str]) -> int:
     if args.mode == "gate":
         items = [{"id": row["id"], "state": state_for(row["text"], "control battery")}
                  for row in controls["controls"]]
-        results = run(items, args.base, questions, args.timeout, args.model,
-                      min(workers, len(items)), "gate", args.executor, args.retries)
+        results = run(items, endpoint, questions, args.timeout, args.model,
+                      min(workers, len(items)), "gate", args.executor, args.retries,
+                      api_key=args.api_key)
         thresholds = controls["thresholds"]
         failures = []
         # Pool results arrive in completion order: match by id, never by position.
@@ -329,9 +351,10 @@ def main(argv: list[str]) -> int:
                           "state": state_for(unit["text"],
                                              f"lines {unit.get('start')}-{unit.get('end')}",
                                              args.context)})
-        results = kept + run(items, args.base, questions, args.timeout, args.model,
+        results = kept + run(items, endpoint, questions, args.timeout, args.model,
                              min(workers, max(1, len(items))), "triage",
-                             args.executor, args.retries, None if kept else args.out)
+                             args.executor, args.retries, None if kept else args.out,
+                             api_key=args.api_key)
     else:
         if not args.spans:
             raise SystemExit("focused needs --spans")
@@ -347,9 +370,9 @@ def main(argv: list[str]) -> int:
                   "state": {"text": span["text"], "span": span["span"],
                             "evidence": span.get("evidence") or "unknown"}}
                  for span in read_jsonl(args.spans) if span["id"] not in keep_ids]
-        results = kept + run(items, args.base, payload_questions, args.timeout, args.model,
+        results = kept + run(items, endpoint, payload_questions, args.timeout, args.model,
                              min(workers, max(1, len(items))), "focused", args.executor, args.retries,
-                             None if kept else args.out)
+                             None if kept else args.out, api_key=args.api_key)
 
     args.out.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in results) + "\n",
                         encoding="utf-8")
@@ -357,7 +380,7 @@ def main(argv: list[str]) -> int:
     failed = [r["id"] for r in results if not r["ok"]]
     resolved = next((r["resolved_model"] for r in results if r["resolved_model"]), None)
     retried = sum(1 for r in results if r.get("attempts", 1) > 1)
-    print(f"{args.mode}: {ok}/{len(results)} ok; workers {workers}; retried {retried}; "
+    print(f"{args.mode}: {ok}/{len(results)} ok; endpoint {endpoint}; workers {workers}; retried {retried}; "
           f"resolved model: {resolved}; failures: {failed or 'none'}", file=sys.stderr)
     return 0 if not failed else 1
 
