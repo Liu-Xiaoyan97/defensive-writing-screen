@@ -50,6 +50,12 @@ All service calls returned normally. Both complete gates failed, so no document 
 - A low deletion-preservation score can correctly identify that a span carries a fact. It does not veto an equivalent rewrite that preserves the fact.
 - Multi-paragraph requests can confuse target attribution. Prefer one unit per call.
 
+## Concurrency and handoff size
+
+Units were screened at four, eight and twelve pool workers on the same draft and question set. Results were identical in routing; wall time stayed between 55 and 58 seconds at every setting, which matches a four-slot service limit rather than a client bottleneck. Keep four as the default, treat higher values as an experiment, and record retries because the service returned intermittent 502s under load.
+
+The handoff packet for that draft contained 8 high-risk units and 6 sampled units in 71 lines. The agent judged the packet instead of the document, so its reading shrank to the routed units while the machine record stayed in the script output.
+
 ## Script path versus tool path
 
 The same environment was measured twice: once through per-unit agent tool calls and once through `scripts/run_screen.py` with concurrency four. Both used the same questions, controls and thresholds.
@@ -57,7 +63,8 @@ The same environment was measured twice: once through per-unit agent tool calls 
 | path | calls | wall time | resolved model | routed units at 0.65 |
 |---|---|---:|---|---:|
 | individual tool calls | 131 | minutes, interleaved with agent turns | not returned | 8 |
-| script, concurrency four | 119 triage calls | about 57 s | StartLux-Decision-v1.1-4B-AutoThink | 8 |
+| script, thread pool, concurrency four | 119 triage calls | about 57 s | StartLux-Decision-v1.1-4B-AutoThink | 8 |
+| script, process pool claiming units | 119 triage calls | about 55 s | StartLux-Decision-v1.1-4B-AutoThink | 8 |
 
 Routing agreed on the same eight units. Individual values differed by up to about 0.04, so the two paths are not interchangeable within one measurement and a run must name the path it used. The script also returns the resolved model identifier, which the tool path did not expose. A resumed run retried only the single failed unit and finished in seconds.
 

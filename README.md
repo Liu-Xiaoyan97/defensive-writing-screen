@@ -200,6 +200,14 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.15.0 stops the skill from writing a ledger. `run_screen.py summarize` emits one
+packet holding only the units at or above the threshold, with scores, line ranges and
+exact text; the agent judges that packet, writes findings and cites the packet file
+instead of copying it. Paragraph judgment is order-independent, so units run in
+completion order and join by id. Measured: 8 routed units plus a 6-unit sample fitted in
+71 lines; four, eight and twelve workers all finished in 55-58 seconds, consistent with
+a four-slot service limit, so four stays the default.
+
 Version 0.13.0 runs the screen from a script. `run_screen.py` performs the gate, the
 per-unit triage and the focused deletion check in one process at concurrency four,
 retries transport errors, keeps null for persistent failures, resumes failed ids only,

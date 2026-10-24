@@ -267,9 +267,19 @@ def main() -> int:
         result = subprocess.run([sys.executable, str(runner), "--help"], capture_output=True, text=True)
         check(result.returncode == 0, f"run_screen --help failed: {result.stderr.strip()}")
         runner_text = runner.read_text(encoding="utf-8")
-        for marker in ("/v1/systemone", "--resume", "resolved_model"):
+        for marker in ("/v1/systemone", "--resume", "resolved_model", "mp.Pool", "imap_unordered",
+                       "maxtasksperchild", "os.fsync", "summarize"):
+            check(marker in runner_text, f"run_screen.py missing: {marker}")
             check(marker in runner_text, f"run_screen.py missing: {marker}")
         check("JEV_CONCURRENCY" in runner_text, "run_screen.py must expose the concurrency setting")
+        check("claim units from a shared queue" in questions_text or "claim units" in questions_text,
+              "questions.md must describe pool workers claiming units")
+        check("flushed" in questions_text, "questions.md must state that finished rows are flushed")
+        check("## Handoff packet" in questions_text, "questions.md must define the handoff packet")
+        check("writes findings, not a ledger" in questions_text,
+              "questions.md must state that the agent writes findings, not a ledger")
+        check("do not write a per-unit ledger" in text,
+              "SKILL.md must forbid the per-unit ledger in the response")
         check("run_screen.py" in text, "SKILL.md must point at run_screen.py")
         check("Script-mode and tool-mode values are not interchangeable" in text,
               "SKILL.md must warn that script and tool paths are not interchangeable")

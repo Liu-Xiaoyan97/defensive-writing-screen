@@ -17,7 +17,13 @@ English and Chinese markers are included in the canonical questions, but the gat
 
 ## Running the screen from a script
 
-`scripts/run_screen.py` performs the gate, the per-unit triage and the focused deletion check without per-unit tool calls: one process, concurrency four by default (`JEV_CONCURRENCY`), retries on transport errors, null for persistent failures, `--resume` to retry only failed ids, and the resolved model captured from each response. Prefer it over individual tool calls. Two consequences follow. The agent reads the aggregate output instead of carrying dozens of raw responses, and failures become per-row data rather than lost calls. Script mode and tool mode are measured paths, not synonyms: the same gate differed by up to about 0.04 between them, so one run uses one path and reports which.
+`scripts/run_screen.py` performs the gate, the per-unit triage and the focused deletion check without per-unit tool calls. One invocation runs a process pool whose workers claim units from a shared queue (default four, `JEV_CONCURRENCY`; `--executor thread` where forking is unavailable). Each finished row is appended to the output file and flushed, so an interrupted run keeps completed work; transport errors retry with backoff, persistent failures stay null, `--resume` re-calls only failed ids, and the resolved model is captured from each response. Process mode isolates a crashing worker to one unit instead of ending the run. Prefer it over individual tool calls. Two consequences follow. The agent reads the aggregate output instead of carrying dozens of raw responses, and failures become per-row data rather than lost calls. Script mode and tool mode are measured paths, not synonyms: the same gate differed by up to about 0.04 between them, so one run uses one path and reports which.
+
+## Handoff packet
+
+The script owns the machine record; the agent owns judgment. `run_screen.py summarize` emits one packet containing only the units at or above the threshold: id, line range, four scores, the maximum, the exact paragraph, and the failed ids. The agent judges that packet and writes findings, not a ledger. `--sample N` adds evenly spaced non-routed units for a miss check; without it, those units stay unread and are reported as a count.
+
+Paragraph judgment does not depend on document order, so units are evaluated in completion order and joined by id. Order only matters when the agent needs the paragraph's neighbors to interpret a backward reference; then it opens the source at the recorded line range instead of rereading the document.
 
 ## State
 
