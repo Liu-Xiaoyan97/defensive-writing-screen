@@ -43,6 +43,15 @@ English-only marker lists underperform on Chinese: the mild-modesty control scor
 
 The `vague_hedge` question excludes explicit prohibitions and conditions that name the case they govern. Before that exclusion, the causal-limit control scored 0.706 on `vague_hedge` and the prohibition control 0.272, so both entered the review queue for nothing; after it they score 0.391 and 0.195 while the mild-modesty control stays at 0.921.
 
+### Conditional controls
+
+| id | text | value on its strongest dimension | expected agent decision |
+|---|---|---:|---|
+| `conditional_vague` | 若仅采用这两类记录，不同位置的取值会合并到共享状态，难以按固定位置单独读取。 | 0.643 (`vague_hedge`) | rewrite the closing clause; keep the conditional |
+| `conditional_precise` | 该流程沿时间共享同一组规则，无法在该步骤内部根据输入改变处理方式。 | 0.060 (`vague_hedge`) | keep; the constraint names its object |
+
+`conditional_vague` sits just below the gate, so a vague clause inside a conditional baseline is a borderline case: route it when other content pushes the unit over 0.65, otherwise reach it through the deterministic candidate search.
+
 The same six controls under the deprecated v1 sufficiency wording:
 
 | id | v1 dimension | v1 value |
