@@ -36,6 +36,7 @@ GUIDE_CAPABILITIES = [
     "## Rewrite procedure",
     "## Detection checklist",
     "## Discouraged patterns",
+    "## Retreating tails",
     "## Metrics, experiments, unfavorable results",
     "## Chinese-specific habits",
     "## English-specific habits",
@@ -98,6 +99,10 @@ def main() -> int:
 
     for section in REQUIRED_SECTIONS:
         check(section in text, f"SKILL.md missing section: {section}")
+    check("scope_tail" in text, "SKILL.md must name the scope_tail dimension")
+    questions_text = (SKILL_DIR / "references" / "questions.md").read_text(encoding="utf-8")
+    for marker in ["scope_tail", "| R6 |", "Tail calibration"]:
+        check(marker in questions_text, f"questions.md missing v3 marker: {marker}")
     check(
         "requires no other skill" in text,
         "SKILL.md must state that the skill requires no other skill",

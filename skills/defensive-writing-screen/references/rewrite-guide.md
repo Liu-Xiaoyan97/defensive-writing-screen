@@ -40,7 +40,7 @@ For Chinese technical plans, procedures, reports, and presentations, remove redu
 
 ## What must survive
 
-Keep a limitation when omitting it would change the validity of the claim, the interpretation of the evidence, the scope of application, the research design, a safety or legal requirement, or the reader's ability to use the result correctly. State such a limitation once, calmly, in the place where it belongs: methods, results, discussion, limitations, or the exact sentence that depends on it. Do not scatter it through abstracts, contribution lists, topic sentences, or conclusions.
+Keep a limitation when omitting it would change the validity of the claim, the interpretation of the evidence, the scope of application, the research design, a safety or legal requirement, or the reader's ability to use the result correctly. A qualifier that names the budget, precision, protocol, implementation, or version under test is such a limitation, and so is one that reports what an intervention covered. State such a limitation once, calmly, in the place where it belongs: methods, results, discussion, limitations, or the exact sentence that depends on it. Do not scatter it through abstracts, contribution lists, topic sentences, or conclusions.
 
 ## Classify before editing
 
@@ -75,11 +75,31 @@ Only the first and last are routine deletion or compression targets. The middle 
 - negative framing where positive scope is available;
 - self-undermining contribution statements ("only a preliminary attempt", "of limited reference value");
 - reflexive "not X but Y";
-- redundant "however", "nevertheless", "although" transitions.
+- redundant "however", "nevertheless", "although" transitions;
+- retreating tails that point at the setup instead of naming it.
 
 ## Discouraged patterns
 
 "This paper does not claim..."; "We do not attempt to..."; "This is not to say that..."; "This should not be taken to mean..."; "The goal is not X but Y"; "Rather than arguing X, this paper argues Y"; "Although this study has limitations..."; "Of course, this does not fully capture..."; "It is worth noting that..."; "To be clear...". Keep any of them only when the sentence carries accuracy that would otherwise be lost.
+
+## Retreating tails
+
+A tail is a qualifier added after the statement is already complete. It does not
+carry a condition; it points at one. "The intervention lowers the measured error
+by 4.5 points under this setup" names no budget, precision, or range, so the
+reader learns only that something limits the result. Replace the tail with the
+condition the draft already supplies, or drop it.
+
+- A qualifier that names its condition stays: "at the 2B-step budget", "with
+  0-shot evaluation", "within 1e-5", "in the current implementation".
+- A qualifier whose removal would drop the fact of what was tested stays: "the
+  contribution of the full path, not its components" reports the scope of the
+  intervention, and a rewrite keeps it.
+- A tail on a method statement follows the same test: if the sentence reads
+  correctly without it and no information is lost, the tail was decoration.
+- Do not use this rule to remove a result. The tail goes; the number, the metric
+  direction, and the unfavorable outcome stay, in the place where the result is
+  discussed.
 
 ## Metrics, experiments, unfavorable results
 
@@ -112,6 +132,9 @@ Direct: "The sample covers the variation relevant to the study's question." (onl
 
 Defensive: "We are not arguing that this model is superior in every situation."
 Direct: "The model is most useful when the task requires interpretable comparisons across cases."
+
+Defensive: "The comparison supports the benefit of the additional term under this setup."
+Direct: "Across the four cases, the additional term lowers the mean error by 4.5 points." (only if the draft supplies that comparison)
 
 Examples show phrasing only. They never supply facts to a draft that lacks them.
 

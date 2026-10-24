@@ -31,6 +31,16 @@ draft
 Jev never rewrites, never locates quotes, and never grants permission. A high
 probability means "read this", not "delete this".
 
+## What it screens
+
+Five calibrated yes/no questions per paragraph: `claim_negation`,
+`negative_contrast`, `vague_hedge`, `concessive_hedge`, and `scope_tail`.
+The last one routes retreating tails, a qualifier added after a result is complete
+that points at the document's own conditions without naming them ("under this
+setup", "at the measured positions"). Rule R6 rewrites those tails and keeps any
+qualifier that names its condition, precision, protocol, implementation, or
+version, and any qualifier that reports what an intervention covered.
+
 ## Install
 
 The package is plain files: a skill directory, three references, and two stdlib

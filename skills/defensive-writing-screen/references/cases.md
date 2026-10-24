@@ -4,18 +4,21 @@ All values were produced by `jev-latest` through Pi `jev_evaluate` with one para
 
 This file records detector behaviour only: control sentences, question-level numbers, and aggregate screening statistics. It must not carry project content, document identity, domain vocabulary, or draft-specific excerpts. Project cases belong in the project that uses the skill, supplied as state at run time.
 
-## Control battery (question set v2)
+## Control battery (question set v3)
 
-Run these six before screening a document. The battery passes when each positive control reaches its designated dimension at or above 0.65 and neither negative control exceeds 0.20 on any dimension.
+Run these seven before screening a document. The battery passes when each positive control reaches its designated dimension at or above 0.65 and neither negative control exceeds 0.20 on any dimension.
 
-| id | text | designated dimension | v2 value | expected agent decision |
+Values in this table were re-measured for v3 on one served model, whose endpoint reported `StartLux-Decision-v1.1-4B-AutoThink`; an earlier v2 table recorded `jev-latest` and differed within the documented 0.03 repeat-run spread. Record the model with any rerun.
+
+| id | text | designated dimension | v3 value | expected agent decision |
 |---|---|---|---:|---|
-| `pos_do_not_claim` | We do not claim that these cases are representative of all settings. | `claim_negation` | 0.998 | rewrite to positive scope |
-| `pos_not_x_but_y` | This paper is not intended to provide a comprehensive account of the phenomenon, but rather to examine one specific mechanism. | `negative_contrast` | 0.908 | rewrite to a single claim |
-| `pos_although_limited` | While the sample is limited and cannot capture every variation, it still offers useful insights. | `concessive_hedge` | 0.993 | rewrite; keep the sample description |
-| `pos_stacked_hedge` | This may potentially suggest that X could possibly be associated with Y. | `vague_hedge` | 0.982 | reduce to one warranted qualifier |
-| `neg_neutral_setup` | We analyze four cases over the same period. | all | 0.001 / 0.002 / 0.024 | keep |
-| `neg_neutral_result` | Under the same conditions the two estimates are 49.47% and 46.08%. | all | 0.001 / 0.002 / 0.011 | keep |
+| `pos_do_not_claim` | We do not claim that these cases are representative of all settings. | `claim_negation` | 0.991 | rewrite to positive scope |
+| `pos_not_x_but_y` | This paper is not intended to provide a comprehensive account of the phenomenon, but rather to examine one specific mechanism. | `negative_contrast` | 0.844 | rewrite to a single claim |
+| `pos_although_limited` | While the sample is limited and cannot capture every variation, it still offers useful insights. | `concessive_hedge` | 0.988 | rewrite; keep the sample description |
+| `pos_stacked_hedge` | This may potentially suggest that X could possibly be associated with Y. | `vague_hedge` | 0.977 | reduce to one warranted qualifier |
+| `pos_scope_tail` | The intervention lowers the measured error by 4.5 points under this setup. | `scope_tail` | 0.968 | rewrite; name the condition or drop the tail |
+| `neg_neutral_setup` | We analyze four cases over the same period. | all | 0.066 max | keep |
+| `neg_neutral_result` | Under the same conditions the two estimates are 49.47% and 46.08%. | all | 0.145 max | keep |
 
 The positive controls are the canonical defensive patterns listed in `references/rewrite-guide.md`; they carry no project content and no field-specific nouns, so the same battery applies to any academic or professional draft. Designated dimensions follow the construction each control uses: a concessive sentence routes on `concessive_hedge`, not on `claim_negation`.
 
@@ -111,6 +114,20 @@ The 13 candidates of run B fell into five decision classes:
 Confirmed share: 5 of 13, about 38%. Every reject was necessary contrast or necessary scope, which is the class the rewrite guide protects.
 
 Three further candidates were below 0.65 on every dimension and were reached only through a retrieved span. Their span values were 0.66, 0.60, and 0.39; the agent changed the first two and kept the third.
+
+### Tail controls (question set v3)
+
+| id | text | `scope_tail` | expected agent decision |
+|---|---|---:|---|
+| `pos_scope_tail` | The intervention lowers the measured error by 4.5 points under this setup. | 0.968 | rewrite; name the condition or drop the tail |
+| `tail_setting` | The comparison supports the benefit of the additional term under the current training setup. | 0.809 | rewrite; the tail points at conditions already described |
+| `tail_positions` | The check confirms agreement at the measured positions. | 0.979 | rewrite; name the coverage the check actually reached |
+| `tail_named_budget` | The intervention lowers the measured error by 4.5 points at the 2B-step budget. | 0.008 | keep; the qualifier names its condition |
+| `tail_named_protocol` | The check confirms that the two paths agree within 1e-5 at every readout record. | 0.014 | keep; the qualifier names the coverage |
+| `tail_named_scope` | The intervention measures the contribution of the full path, not its components. | 0.068 | keep; removal would drop what the intervention covered |
+| `tail_impl` | Both subsystems use the same scan in the current implementation. | 0.213 | keep as scope; the value exceeds the 0.20 control bound, so an implementation qualifier needs an agent decision rather than automatic routing |
+
+Two of the positives were added after the first control set, because a single phrase can be matched by a keyword rule while the deictic pattern is the class being detected. `tail_impl` is recorded rather than repaired: pushing it under 0.20 by naming more exclusions would also pull down `tail_setting`, which shares its wording.
 
 ## What the numbers mean
 

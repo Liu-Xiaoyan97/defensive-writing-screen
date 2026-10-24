@@ -11,7 +11,7 @@ Usage:
 
 Inputs (one JSON object per line):
     screen    {"id": "...", "line": 12, "neg": 0.1, "con": 0.2,
-               "hedge": 0.7, "conc": 0.3}
+               "hedge": 0.7, "conc": 0.3, "tail": 0.1}
     verdicts  {"id": "...", "verdict": "rewrite"|"keep",
                "category": "...", "span": "...", "reason": "..."}
     labels    {"id": "...", "verdict": "rewrite"|"keep"}
@@ -27,7 +27,7 @@ import json
 import sys
 from pathlib import Path
 
-DIMENSIONS = ("neg", "con", "hedge", "conc")
+DIMENSIONS = ("neg", "con", "hedge", "conc", "tail")
 
 
 def read_jsonl(path: Path) -> list[dict]:

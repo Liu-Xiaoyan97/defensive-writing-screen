@@ -22,7 +22,9 @@ Keep state flat and short when asking about one span. Do not include the intende
 
 `jev_evaluate` returns a JSON string; parse it before reading values. Batched calls occasionally time out at higher concurrency: retry the unit, and report it as untriaged if the retry fails.
 
-## Question set v2 (calibrated)
+## Question set v3 (calibrated)
+
+Version 3 keeps the four v2 questions and adds `scope_tail`, which routes a closing qualifier that withdraws a result without naming the condition that limits it. The extended battery passes: positives 0.844-0.991 on their designated dimensions, neutral controls at or below 0.145, and named-condition controls at or below 0.068.
 
 Ask all five in one request for the paragraph. Each maps to a row of the detection checklist in `references/rewrite-guide.md`. Each asks what the text **contains**, not whether the text **deserves** to contain it.
 
@@ -62,6 +64,14 @@ Marker lists are language-specific and must be translated for the document at ha
       "false": "No concessive construction is used to soften a claim"
     }
   },
+  "scope_tail": {
+    "type": "noul",
+    "instructions": "Does `paragraph.text` append a qualifier to an already completed statement of a result, method, or check that retreats from it by pointing at the document's own conditions with a deictic word (markers: under this setup, under this setting, under the current training setup, in this setup, at the measured positions, at this stage, for now) instead of naming the condition, bound, or range? Do not count a qualifier that names its condition, such as a budget, a precision, a range, or an evaluation protocol. Do not count a qualifier that identifies which implementation, version, or configuration the statement describes, and do not count a prohibition or a stated failure mode.",
+    "criteria": {
+      "true": "At least one such retreating qualifier is present and it names no condition, bound, range, implementation, or version",
+      "false": "No such qualifier, or the qualifier names its condition, implementation, or version"
+    }
+  },
   "repeated_scope": {
     "type": "noul",
     "instructions": "Agent-side only; do not route on this value. Does `paragraph.text` state a scope limit, condition, or caveat twice, where the second statement adds no new restriction?",
@@ -81,6 +91,7 @@ Dimension coverage, defined by these questions alone:
 | `negative_contrast` | "not X but Y", "rather than", "instead of", "the goal is not X but Y"; 并非…而是 | unnecessary "not X but Y" structures; reflexive contrast |
 | `vague_hedge` | "could hardly", "may potentially", "to some extent", "it is worth noting"; 仅、只能、初步、难以 | excessive hedging; apologetic framing |
 | `concessive_hedge` | "although", "while", "however"; 虽然、尽管、但、然而、仍 | caveats in high-impact positions; limitation-first topic sentences |
+| `scope_tail` | "under this setup", "at the measured positions", "for now"; 在该设置下、在当前实现中 | retreating tails; a result withdrawn by a deictic qualifier that names no condition |
 | `repeated_scope` | the same caveat twice, caveat restating the previous sentence | repeated caveats; redundant clarification |
 
 `repeated_scope` and a stricter `repeated_fact` variant were measured on a genuine restatement and did not separate it: 0.29 and 0.36, against 0.38 for a constructed redundant control and 0.34 for neutral prose. Paraphrase-level repetition therefore stays outside the routable classes and is assigned to the agent-side check in step 6. Do not lower the threshold to force it through; a threshold below the neutral baseline routes everything.
@@ -131,6 +142,7 @@ Rewrite rules:
 | R3 | An explicit statement of what the work does not claim, prove, or address, carrying no method, data, or scope information. |
 | R4 | A not-A-but-B contrast used to pre-empt a misreading, where the contrast carries no argument or distinction. |
 | R5 | The same limit, scope, or fact stated twice in one unit about the same object, the second occurrence adding nothing. A sentence that transfers a bound to a new object adds information and is K5, not R5. |
+| R6 | A closing qualifier that retreats from a completed statement by pointing at the document's own conditions with a deictic word, without naming the condition, bound, or range that limits it. The qualifier goes; the actual condition replaces it when the paragraph supports one. A qualifier that names its condition, precision, protocol, implementation, or version is K4 or K5, and a qualifier whose removal would drop the fact of what the statement covered is K5, not R6. |
 
 Keep categories:
 
@@ -147,11 +159,25 @@ Keep categories:
 A keep record carries the category and, in one short clause, what makes the unit
 that category. Without that clause the record shows a label, not a judgment.
 
+## Tail calibration (question set v3)
+
+Measured on constructed controls, one paragraph per request. The positive appends a deictic qualifier to a finished result; the negatives name the condition instead.
+
+| id | text | `scope_tail` | expected agent decision |
+|---|---|---:|---|
+| `pos_scope_tail` | The intervention lowers the measured error by 4.5 points under this setup. | 0.968 | rewrite; name the condition or drop the tail |
+| `tail_named_budget` | The intervention lowers the measured error by 4.5 points at the 2B-step budget. | 0.008 | keep; the qualifier names its condition |
+| `tail_named_protocol` | The check confirms that the two paths agree within 1e-5 at every readout record. | 0.014 | keep; the qualifier names the coverage |
+| `tail_named_scope` | The intervention measures the contribution of the full path, not its components. | 0.068 | keep; removal would drop what the intervention covered |
+| `tail_impl` | Both subsystems use the same scan in the current implementation. | 0.213 | keep as scope, but the value sits above the 0.20 control bound, so implementation qualifiers need an agent decision |
+
+The class is narrow on purpose. A second measured positive, "The comparison supports the benefit of the additional term under the current training setup", scored 0.809, and "The check confirms agreement at the measured positions" scored 0.979, so the question reads the deictic pattern rather than one fixed phrase. Values move with the model version; re-measure before relying on the gate.
+
 ## Routing
 
-- `triage_probability = max(claim_negation, negative_contrast, vague_hedge, concessive_hedge)` per paragraph; sort descending. Keep `repeated_scope` and `removal_preserves` as separate columns.
+- `triage_probability = max(claim_negation, negative_contrast, vague_hedge, concessive_hedge, scope_tail)` per paragraph; sort descending. Keep `repeated_scope` and `removal_preserves` as separate columns.
 - Review up to five units at or above `0.65`, plus every unit with a candidate span at `removal_preserves >= 0.65`.
-- `0.65` is valid for v2 because the battery separates: positive controls 0.83-0.99, negative controls 0.002-0.017. It is not transferable to another question set, language, or model version without rerunning the battery.
+- `0.65` is valid for v3 because the battery separates: positive controls 0.844-0.991, negative controls at or below 0.145, and named-condition tail controls at or below 0.068. It is not transferable to another question set, language, or model version without rerunning the battery.
 - Language anchors move recall by large margins. English-only markers left a mild Chinese modesty sentence at 0.375; naming Chinese markers moved the same sentence to 0.991. Run the battery in the document's language before trusting either number.
 - Candidate precision is low by design. In the calibration screening, 5 of 13 candidates were confirmed; every reject was a notation distinction, a mechanism contrast, a setup fact, or a necessary scope statement. Report both counts. In a method-heavy draft, conditional baselines ("if only a single value were used", 若仅采用) account for most rejects; they describe the problem class and stay.
 - Never convert a probability into a deletion without agent evidence. A probability near 0.5 means the model splits yes and no, not that the wording is half-defensive.
