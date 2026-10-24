@@ -130,7 +130,7 @@ Rewrite rules:
 | R2 | A concessive frame that puts the limitation and the conclusion in one sentence, so the conclusion only appears after a turn. |
 | R3 | An explicit statement of what the work does not claim, prove, or address, carrying no method, data, or scope information. |
 | R4 | A not-A-but-B contrast used to pre-empt a misreading, where the contrast carries no argument or distinction. |
-| R5 | The same limit, scope, or fact stated twice in one unit, the second occurrence adding nothing. |
+| R5 | The same limit, scope, or fact stated twice in one unit about the same object, the second occurrence adding nothing. A sentence that transfers a bound to a new object adds information and is K5, not R5. |
 
 Keep categories:
 
