@@ -24,13 +24,15 @@ Keep state flat and short when asking about one span. Do not include the intende
 
 ## Question set v2 (calibrated)
 
-Ask all four in one request for the paragraph. Each maps to a row of the detection checklist in `references/rewrite-guide.md`. Each asks what the text **contains**, not whether the text **deserves** to contain it.
+Ask all five in one request for the paragraph. Each maps to a row of the detection checklist in `references/rewrite-guide.md`. Each asks what the text **contains**, not whether the text **deserves** to contain it.
+
+Marker lists are language-specific and must be translated for the document at hand. The Chinese markers below were added after a batch of English-only anchors scored a mild Chinese modesty sentence at 0.375 and the same sentence reached 0.991 once Chinese markers were named.
 
 ```json
 {
   "claim_negation": {
     "type": "noul",
-    "instructions": "Does `paragraph.text` contain a sentence or clause stating a negation of a claim, that is, saying what the method, paper, model, or result does not do, does not claim, does not prove, does not provide, or does not include?",
+    "instructions": "Does `paragraph.text` contain a sentence or clause stating a negation of a claim, that is, saying what the method, paper, model, or result does not do, does not claim, does not prove, does not provide, or does not include? Markers: do not claim, not intended to, should not be taken to mean; 并不声称、无意、不意味着、不应被理解为、不代表、不涉及、不能据此.",
     "criteria": {
       "true": "At least one sentence or clause explicitly negates a claim or capability",
       "false": "No sentence or clause explicitly negates a claim or capability"
@@ -38,7 +40,7 @@ Ask all four in one request for the paragraph. Each maps to a row of the detecti
   },
   "negative_contrast": {
     "type": "noul",
-    "instructions": "Does `paragraph.text` contain a 'not X but Y', 'rather than', 'instead of', or 'as opposed to' contrast used to redirect an expected reading?",
+    "instructions": "Does `paragraph.text` contain a 'not X but Y', 'rather than', 'instead of', or 'as opposed to' contrast used to redirect an expected reading? Markers: 并非…而是、不是…而是、与其说…不如说.",
     "criteria": {
       "true": "At least one such contrast construction is present",
       "false": "No such contrast construction is present"
@@ -46,10 +48,18 @@ Ask all four in one request for the paragraph. Each maps to a row of the detecti
   },
   "vague_hedge": {
     "type": "noul",
-    "instructions": "Does `paragraph.text` contain a vague weakening word or phrase, such as 'could hardly', 'may potentially', 'to some extent', 'it should be noted', or 'of course', that lowers the force of a statement without naming the source of uncertainty?",
+    "instructions": "Does `paragraph.text` contain a vague weakening word or phrase that lowers the force of a statement without naming the source of uncertainty? Markers: could hardly, may potentially, to some extent, it should be noted, of course; 仅、只能、初步、难以、尚不能、仍有提升空间、在一定程度上、或许.",
     "criteria": {
       "true": "At least one such vague weakening expression is present",
       "false": "No such vague weakening expression is present"
+    }
+  },
+  "concessive_hedge": {
+    "type": "noul",
+    "instructions": "Does `paragraph.text` use a concessive construction that softens a claim or pre-frames a limitation instead of stating the result directly? Markers: although, while, however; 虽然、尽管、但、然而、仍.",
+    "criteria": {
+      "true": "At least one concessive construction softens a claim or pre-frames a limitation",
+      "false": "No concessive construction is used to soften a claim"
     }
   },
   "repeated_scope": {
@@ -67,9 +77,10 @@ Dimension coverage, defined by these questions alone:
 
 | dimension | catches | checklist rows |
 |---|---|---|
-| `claim_negation` | "We do not claim", "This paper does not attempt", "This is not to say", "This should not be taken to mean" | unnecessary disclaimers; repeated statements of what the text does not claim |
-| `negative_contrast` | "not X but Y", "rather than", "instead of", "the goal is not X but Y" | unnecessary "not X but Y" structures; reflexive contrast |
-| `vague_hedge` | "could hardly", "may potentially", "to some extent", "it is worth noting", "to be clear", stacked modals | excessive hedging; apologetic framing |
+| `claim_negation` | "We do not claim", "This paper does not attempt", "This is not to say", "This should not be taken to mean"; 并不声称、不意味着 | unnecessary disclaimers; repeated statements of what the text does not claim |
+| `negative_contrast` | "not X but Y", "rather than", "instead of", "the goal is not X but Y"; 并非…而是 | unnecessary "not X but Y" structures; reflexive contrast |
+| `vague_hedge` | "could hardly", "may potentially", "to some extent", "it is worth noting"; 仅、只能、初步、难以 | excessive hedging; apologetic framing |
+| `concessive_hedge` | "although", "while", "however"; 虽然、尽管、但、然而、仍 | caveats in high-impact positions; limitation-first topic sentences |
 | `repeated_scope` | the same caveat twice, caveat restating the previous sentence | repeated caveats; redundant clarification |
 
 Low recall is expected on `repeated_scope` for paraphrase-level repetition: it scored 0.60-0.68 on real academic text where the repeated content was a prior obligation restated with new wording. Treat it as a soft signal and rely on `removal_preserves` for those units.
@@ -108,20 +119,21 @@ A high `true` means the span is a deletion *candidate*. The agent still decides,
 
 ## Routing
 
-- `triage_probability = max(claim_negation, negative_contrast, vague_hedge)` per paragraph; sort descending. Keep `repeated_scope` and `removal_preserves` as separate columns.
+- `triage_probability = max(claim_negation, negative_contrast, vague_hedge, concessive_hedge)` per paragraph; sort descending. Keep `repeated_scope` and `removal_preserves` as separate columns.
 - Review up to five units at or above `0.65`, plus every unit with a candidate span at `removal_preserves >= 0.65`.
 - `0.65` is valid for v2 because the battery separates: positive controls 0.83-0.99, negative controls 0.002-0.017. It is not transferable to another question set, language, or model version without rerunning the battery.
-- Candidate precision is low by design. In the calibration screening, 5 of 13 candidates were confirmed; every reject was a notation distinction, a mechanism contrast, a setup fact, or a necessary scope statement. Report both counts.
+- Language anchors move recall by large margins. English-only markers left a mild Chinese modesty sentence at 0.375; naming Chinese markers moved the same sentence to 0.991. Run the battery in the document's language before trusting either number.
+- Candidate precision is low by design. In the calibration screening, 5 of 13 candidates were confirmed; every reject was a notation distinction, a mechanism contrast, a setup fact, or a necessary scope statement. Report both counts. In a method-heavy draft, conditional baselines ("if only a single decay were used", 若仅采用) account for most rejects; they describe the problem class and stay.
 - Never convert a probability into a deletion without agent evidence. A probability near 0.5 means the model splits yes and no, not that the wording is half-defensive.
 - Keep this file free of project content. Control sentences are the generic defensive patterns bundled in `references/cases.md`; screening statistics are aggregates without document identity, domain vocabulary, or draft excerpts. Project cases stay in the project and arrive as state at run time.
 
 ## Batching and cost
 
-- Batch the four questions for one paragraph in a single call: they run in parallel and cost little.
+- Batch the five questions for one paragraph in a single call: they run in parallel and cost little. Long CJK units can exceed a 10 s request timeout on a four- or five-question call; split such a unit into two calls rather than dropping it.
 - Do not batch different paragraphs until a measured run shows no recall loss and no target confusion. Path-based references (`paragraphs[2].text`) are the failure point.
 - One retry on timeout; report the unit as untriaged if it still fails.
 - Record model name and version with results. Default `jev-evaluate` runs used `jev-latest`; behavior changes across versions.
-- CJK accuracy is lower than English. Calibrate separately and keep the human verification step.
+- CJK is slower and scores lower than English on English-only wording. Name CJK markers in the `instructions`, calibrate separately, expect request timeouts on long units, and keep the human verification step.
 
 ## Calibration
 

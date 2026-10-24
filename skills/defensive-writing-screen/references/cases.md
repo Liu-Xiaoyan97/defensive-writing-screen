@@ -19,6 +19,28 @@ Run these six before screening a document. The battery passes when each positive
 
 The positive controls are the canonical defensive patterns listed in `references/rewrite-guide.md`; they carry no project content. The battery runs entirely from files in this skill.
 
+### Chinese controls (bilingual markers)
+
+English-only marker lists underperform on Chinese: the mild-modesty control scored 0.377 on the hedge dimension, below the gate, and 0.991 once Chinese markers were named in the same question. Run this block when the target document is Chinese.
+
+| id | text | designated dimension | bilingual value | expected agent decision |
+|---|---|---|---:|---|
+| `zh_weak_modesty` | 本文仅在两个数据集上做了初步尝试，只能提供有限参考。 | `vague_hedge` | 0.991 | rewrite; keep "two datasets" |
+| `zh_strong_defense` | 本文并不声称解决所有语言模型问题，也无意证明该方法总是最优。我们只提供一个初步方案，仍有很大提升空间。 | `claim_negation` | 0.997 | rewrite both sentences |
+| `zh_causal_boundary` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | `claim_negation` | 0.998 | keep; the causal limit carries method meaning |
+| `zh_safety_rule` | 设备通电时不得进行校准，否则可能发生电击。 | none | 0.167 | keep; a prohibition is not routed for rewriting |
+| `zh_clean_scope` | 本文在两个数据集上评估该方法。 | all | 0.014 | keep |
+
+### Concessive controls
+
+| id | text | concessive value | expected agent decision |
+|---|---|---:|---|
+| `concessive_soften` | 虽然样本规模有限，但该方法在三个数据集上均取得更低损失。 | 0.996 | rewrite; lead with the result |
+| `gap_first` | 结果在部分任务上领先，但在另外两项任务上仍落后于基线。 | 0.908 | rewrite; state both sides without the concession frame |
+| `necessary_limit` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | 0.214 | keep |
+| `conditional_baseline` | 若仅采用单一衰减核，历史只能按一种权重汇集。 | 0.183 | keep; defines the problem the design addresses |
+| `neutral` | 本文在两个数据集上评估该方法。 | 0.003 | keep |
+
 The same six controls under the deprecated v1 sufficiency wording:
 
 | id | v1 dimension | v1 value |
