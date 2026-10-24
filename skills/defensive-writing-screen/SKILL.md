@@ -4,7 +4,7 @@ description: Audit drafts for defensive writing with a Jev-first triage, then co
 license: MIT
 compatibility: Needs a System One/Jev-capable caller for triage (Pi `jev_evaluate`, TypeSafe API, or a compatible endpoint). Without one, run steps 2 and 6-7 with the bundled rewrite guide and report that triage was skipped.
 metadata:
-  version: "0.5.1"
+  version: "0.5.2"
   upstream: "Kiterlin/anti-defensive-writing (MIT), adapted; see NOTICE.md"
 ---
 

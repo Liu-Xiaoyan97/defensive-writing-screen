@@ -90,11 +90,17 @@ with `/skill:defensive-writing-screen`.
 
 ## Requirements
 
+No other skill and no MCP server is required. The skill is a self-contained
+directory: its rulebook, question set, control battery, and scripts are all local,
+and `scripts/validate.py` fails if the text reintroduces a dependency on another
+installed skill.
+
 - A System One caller for triage: Pi's `jev_evaluate` tool, the TypeSafe HTTP API
   (`/v1/systemone`), or a compatible local endpoint such as a StartLux-Decision
   server that accepts `state` + typed `questions`.
-- Python 3.8+ only if you use `scripts/prepare_units.py`. It is stdlib-only and
-  optional: the agent can split paragraphs itself.
+- Python 3.8+ only for the two helper scripts. Both are stdlib-only, make no
+  network calls, and are optional: the agent can split paragraphs and merge the
+  per-unit record itself.
 - No Jev? The skill still runs in `agent-only` mode using the bundled rewrite
   guide, and must report that triage was skipped.
 
