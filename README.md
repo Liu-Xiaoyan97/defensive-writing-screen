@@ -33,60 +33,60 @@ probability means "read this", not "delete this".
 
 ## Install
 
-### 1. As an agent skill (any skills-compatible agent)
-
-The skill is the directory `skills/defensive-writing-screen/`. Copy it into a skills
-location your agent reads:
+### 1. From npm
 
 ```sh
-# user-level (Pi, Codex, other agents reading ~/.agents/skills)
+npm install defensive-writing-screen
+```
+
+The package ships the skill directory, its references, and its two helper scripts.
+Point your agent at `node_modules/defensive-writing-screen/skills/defensive-writing-screen/`,
+or copy that directory into a skills location your agent reads:
+
+```sh
 mkdir -p ~/.agents/skills
-cp -R skills/defensive-writing-screen ~/.agents/skills/
-
-# or project-level
-mkdir -p .agents/skills
-cp -R skills/defensive-writing-screen .agents/skills/
+cp -R node_modules/defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
 ```
 
-Claude Code uses `~/.claude/skills/` or `.claude/skills/` instead. Keep the
+Claude Code reads `~/.claude/skills/` or `.claude/skills/` instead. Keep the
 `references/` and `scripts/` subdirectories: the skill resolves them relative to its
-own directory, and `references/rewrite-guide.md` is what supplies the rewriting
-capability.
-
-From a git URL:
-
-```sh
-git clone https://github.com/<you>/defensive-writing-screen.git
-cp -R defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
-```
-
-With the installer, which reads this checkout when run from the repository root and
-otherwise downloads a pinned tarball:
-
-```sh
-sh install.sh                                   # -> ~/.agents/skills
-sh install.sh --dest .agents/skills             # project-level
-sh install.sh --repo <you>/defensive-writing-screen --ref v0.2.0 --force
-```
-
-With the skills CLI (layout follows the `skills/<name>/SKILL.md` convention; confirm
-with the CLI's own output):
-
-```sh
-npx skills add <you>/defensive-writing-screen@defensive-writing-screen
-```
+own directory, and `references/rewrite-guide.md` supplies the rewriting rules.
 
 ### 2. As a Pi package
 
 ```sh
-pi install git:github.com/<you>/defensive-writing-screen@v0.2.0
-# or from a local checkout
+pi install npm:defensive-writing-screen
+# or pin a version
+pi install npm:defensive-writing-screen@0.6.0
+# or from git or a local checkout
+pi install git:github.com/Liu-Xiaoyan97/defensive-writing-screen
 pi install ./defensive-writing-screen
 ```
 
 `package.json` declares `pi.skills: ["./skills"]`, so the skill appears alongside
-other Pi resources. Run `/reload` in an existing session, then invoke it explicitly
-with `/skill:defensive-writing-screen`.
+other Pi resources. Run `/reload` in an existing session, then invoke it with
+`/skill:defensive-writing-screen`.
+
+### 3. From a checkout
+
+```sh
+git clone https://github.com/Liu-Xiaoyan97/defensive-writing-screen.git
+cp -R defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
+```
+
+The installer reads the current checkout when run from the repository root and
+otherwise downloads a tarball:
+
+```sh
+sh install.sh                                   # -> ~/.agents/skills
+sh install.sh --dest .agents/skills             # project-level
+```
+
+The layout follows the `skills/<name>/SKILL.md` convention used by `npx skills`:
+
+```sh
+npx skills add Liu-Xiaoyan97/defensive-writing-screen
+```
 
 ## Requirements
 

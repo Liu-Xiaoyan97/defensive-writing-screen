@@ -1,7 +1,7 @@
 {
   "name": "defensive-writing-screen",
-  "version": "0.5.5",
-  "description": "Jev-first defensive-writing audit for agent skills: a control battery, calibrated observable yes/no judgments, agent confirmation of candidates, then rewriting with bundled anti-defensive rules.",
+  "version": "0.6.0",
+  "description": "Jev-first defensive-writing audit as an agent skill: a control battery, calibrated observable yes/no judgments, per-unit agent verdicts, then rewriting with bundled anti-defensive rules.",
   "license": "MIT",
   "keywords": [
     "pi-package",
@@ -24,5 +24,19 @@
     "skills": [
       "./skills"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Liu-Xiaoyan97/defensive-writing-screen.git"
+  },
+  "homepage": "https://github.com/Liu-Xiaoyan97/defensive-writing-screen#readme",
+  "bugs": {
+    "url": "https://github.com/Liu-Xiaoyan97/defensive-writing-screen/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
