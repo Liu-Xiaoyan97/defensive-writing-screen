@@ -43,6 +43,16 @@ English-only marker lists underperform on Chinese: the mild-modesty control scor
 
 The `vague_hedge` question excludes explicit prohibitions and conditions that name the case they govern. Before that exclusion, the causal-limit control scored 0.706 on `vague_hedge` and the prohibition control 0.272, so both entered the review queue for nothing; after it they score 0.391 and 0.195 while the mild-modesty control stays at 0.921.
 
+### Repetition controls (agent-side only)
+
+| id | text | `repeated_scope` / `repeated_fact` | expected agent decision |
+|---|---|---:|---|
+| `repeat_genuine` | 未选中专家的输出权重为零。（前句已说明只有选中专家参与加权聚合） | 0.29 / 0.36 | rewrite; the second sentence restates the first |
+| `repeat_constructed` | 样本规模有限，说明样本规模不足，因此结论仅限本组案例，本组案例之外不作推断。 | — / 0.38 | rewrite; deliberate repetition |
+| `repeat_neutral` | 本文在两个案例上评估该方法，报告其准确率与耗时。 | — / 0.34 | keep |
+
+The constructed control scores 0.38 against 0.34 for neutral prose, so neither question separates the class. Repetition is therefore not a routing dimension; step 6 assigns it to the agent.
+
 ### Conditional controls
 
 | id | text | value on its strongest dimension | expected agent decision |

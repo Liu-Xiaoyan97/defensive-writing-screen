@@ -64,7 +64,7 @@ Marker lists are language-specific and must be translated for the document at ha
   },
   "repeated_scope": {
     "type": "noul",
-    "instructions": "Does `paragraph.text` state a scope limit, condition, or caveat twice, where the second statement adds no new restriction?",
+    "instructions": "Agent-side only; do not route on this value. Does `paragraph.text` state a scope limit, condition, or caveat twice, where the second statement adds no new restriction?",
     "criteria": {
       "true": "A limit or caveat is stated twice within the unit",
       "false": "Each limit or caveat is stated once, or none is stated"
@@ -83,7 +83,7 @@ Dimension coverage, defined by these questions alone:
 | `concessive_hedge` | "although", "while", "however"; 虽然、尽管、但、然而、仍 | caveats in high-impact positions; limitation-first topic sentences |
 | `repeated_scope` | the same caveat twice, caveat restating the previous sentence | repeated caveats; redundant clarification |
 
-Low recall is expected on `repeated_scope` for paraphrase-level repetition: it scored 0.60-0.68 on real academic text where the repeated content was a prior obligation restated with new wording. Treat it as a soft signal and rely on `removal_preserves` for those units.
+`repeated_scope` and a stricter `repeated_fact` variant were measured on a genuine restatement and did not separate it: 0.29 and 0.36, against 0.38 for a constructed redundant control and 0.34 for neutral prose. Paraphrase-level repetition therefore stays outside the routable classes and is assigned to the agent-side check in step 6. Do not lower the threshold to force it through; a threshold below the neutral baseline routes everything.
 
 ## Deprecated question set v1
 
