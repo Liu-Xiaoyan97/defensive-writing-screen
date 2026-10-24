@@ -76,7 +76,9 @@ Only the first and last are routine deletion or compression targets. The middle 
 - self-undermining contribution statements ("only a preliminary attempt", "of limited reference value");
 - reflexive "not X but Y";
 - redundant "however", "nevertheless", "although" transitions;
-- retreating tails that point at the setup instead of naming it.
+- retreating tails that point at the setup instead of naming it;
+- a result demoted behind a retreat while a stronger fact sits in the main clause;
+- a claim wider than the evidence, or a fact stated in two sections.
 
 ## Discouraged patterns
 
@@ -100,6 +102,27 @@ condition the draft already supplies, or drop it.
 - Do not use this rule to remove a result. The tail goes; the number, the metric
   direction, and the unfavorable outcome stay, in the place where the result is
   discussed.
+
+## Narrative placement
+
+Three moves carry the same facts into a stronger position. None of them is a style
+repair, and none may change a number, a unit, a direction, or a condition.
+
+- **Restate.** When a sentence puts its own result behind a retreat while a stronger
+  fact it already reports sits in the main clause, swap them. "The estimate is 0.7
+  points below the baseline while using 12% of its steps" becomes "Using 12% of its
+  steps, the estimate comes within 0.7 points of the baseline". It never becomes "the
+  estimate matches the baseline".
+- **Narrow.** When a claim covers more than the evidence, cut it back to what was
+  measured. Narrowing is not a licence to drop an unfavorable number or to stop
+  making a comparison the unit already makes.
+- **Relocate.** When a fact interrupts its unit or appears in more than one section,
+  keep one statement where the reader needs it and name the location that keeps it.
+  Relocating never deletes the fact.
+
+The test is the same for all three: after the move, every number, metric direction,
+condition, and unfavorable result is still present, and the sentence that carries the
+result is the one a reader meets first. A unit that fails the test keeps its verdict.
 
 ## Metrics, experiments, unfavorable results
 

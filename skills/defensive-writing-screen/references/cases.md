@@ -129,6 +129,20 @@ Three further candidates were below 0.65 on every dimension and were reached onl
 
 Two of the positives were added after the first control set, because a single phrase can be matched by a keyword rule while the deictic pattern is the class being detected. `tail_impl` is recorded rather than repaired: pushing it under 0.20 by naming more exclusions would also pull down `tail_setting`, which shares its wording.
 
+### Narrative cases (agent-side only)
+
+No question in the set detects narrative placement, so these cases carry no routing
+value. They fix the expected action so two readers can compare records.
+
+| id | text | expected action | boundary that applies |
+|---|---|---|---|
+| `n1_defeat_buried` | The estimate is 0.7 points below the baseline while using 12% of its steps. | N1 restate; lead with the token share | may not become a match |
+| `n1_stated_plainly` | Using 12% of its steps, the estimate comes within 0.7 points of the baseline. | keep | already in the stronger order |
+| `n2_overreach` | The method outperforms the baselines on the tasks we measured and on others. | N2 narrow to the measured tasks | may not delete the measured comparisons |
+| `n2_scoped` | The method outperforms the baselines on the four measured tasks. | keep | the claim matches the evidence |
+| `n3_duplicate_fact` | The same setup sentence appears in a related-work subsection and again in the setup subsection. | N3 relocate; keep the setup subsection | must name the section that keeps it |
+| `n3_kept_where_needed` | A control condition appears once, immediately before the comparison it governs. | keep | the fact is already where the reader needs it |
+
 ## What the numbers mean
 
 - **Sufficiency wording compresses the scale.** v1 scored the canonical defensive sentences at 0.15-0.45, below the gate it shipped with, and returned no candidate on a draft that contained several. A low v1 score is not evidence about a document.

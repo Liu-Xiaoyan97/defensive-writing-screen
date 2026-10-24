@@ -130,8 +130,7 @@ A high `true` means the span is a deletion *candidate*. A low value means the sp
 
 ## Verdict categories
 
-Every unit gets one verdict. A rewrite cites one rule; a keep cites one category.
-The list is closed so that two readers can compare their records.
+Every unit gets one verdict. A rewrite cites one rule and may carry narrative actions, recorded together as `R6+N3`; a narrative action on its own cites one action id; a keep cites one category. Each list is closed so that two readers can compare their records.
 
 Rewrite rules:
 
@@ -158,6 +157,38 @@ Keep categories:
 
 A keep record carries the category and, in one short clause, what makes the unit
 that category. Without that clause the record shows a label, not a judgment.
+
+## Narrative actions (agent-side, not routed)
+
+No question in the set detects these. They are judgments about framing and placement,
+not about observable wording, so like the repetition check they are found by reading
+every unit. Every action keeps each fact, number, metric direction, condition, and
+prohibition; an action that would remove one is not available and the unit stays.
+
+| id | action | entry condition | what may change |
+|---|---|---|---|
+| N1 | RESTATE | A unit demotes its own result behind a retreat or a subordinate clause while a stronger fact it already reports sits in the main clause, or the reverse. | Clause order and emphasis. Same numbers, same direction, same comparison. |
+| N2 | NARROW | A claim covers more than the unit's evidence: a range wider than what was measured, a population wider than what was sampled, or a comparison the unit does not support. | The claim shrinks to the measured scope. The numbers it already reports stay. |
+| N3 | RELOCATE | A fact, control condition, or caveat sits where it interrupts the unit's job, or the same fact is stated in more than one section. | The fact moves or is consolidated, exactly one statement remains, and the receiving location is named in the record. |
+
+Boundaries:
+
+- N1 may not convert a deficit into a match. "The estimate is 0.7 points below the
+  baseline while using 12% of its steps" may become "Using 12% of its steps, the
+  estimate comes within 0.7 points of the baseline", never "the estimate matches the
+  baseline".
+- N1 may not replace a ranked comparison with a spread that hides its direction.
+  Reporting that a value falls inside a distribution is a restatement only when the
+  distribution is also compared, not when it replaces the comparison.
+- N2 may not drop an unfavorable number, and may not narrow a claim past the evidence
+  in order to avoid a comparison the unit already makes.
+- N3 may not lose a fact. The receiving location must exist in the draft and must be
+  named, and the record must say which section keeps it.
+- None of the three may change a metric direction, a unit, a condition, a prohibition,
+  or the identity of the objects being compared.
+
+A narrative action is not a reward for a weak result. When the unit's evidence does not
+support any framing that reads better, the verdict is keep with a K category.
 
 ## Tail calibration (question set v3)
 

@@ -41,6 +41,12 @@ setup", "at the measured positions"). Rule R6 rewrites those tails and keeps any
 qualifier that names its condition, precision, protocol, implementation, or
 version, and any qualifier that reports what an intervention covered.
 
+Three narrative actions run agent-side, with no routing value: N1 restates a unit so
+the result it already reports comes first, N2 narrows a claim to what the unit's
+evidence covers, and N3 relocates or consolidates a fact that interrupts its unit or
+appears in two sections. Each action keeps every number, direction, and condition;
+N1 may not turn a deficit into a match, and N3 must name where the fact lands.
+
 ## Install
 
 The package is plain files: a skill directory, three references, and two stdlib
