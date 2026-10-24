@@ -54,13 +54,13 @@ A deliberate repetition scores 0.384 against 0.343 for neutral prose, so neither
 
 ### Conditional controls
 
-| id | text | value on its strongest dimension | expected agent decision |
+| id | text | `vague_hedge` | expected agent decision |
 |---|---|---:|---|
-| `conditional_vague` | 若仅采用单一账号，不同渠道的记录会合并到同一汇总，难以按来源单独核对。 | 0.207 (`vague_hedge`) | rewrite the closing clause; keep the conditional |
-| `conditional_vague_strong` | 若仅采用单一账号，不同渠道的记录会合并到同一汇总，几乎无法按来源单独核对。 | 0.338 (`vague_hedge`) | rewrite the closing clause; keep the conditional |
-| `conditional_precise` | 该模板对所有章节使用同一格式，无法在单个章节内根据内容调整版式。 | 0.077 (`vague_hedge`) | keep; the constraint names its object |
+| `conditional_vague` | 若只保留最终结论而不附原始记录，复核时难以追溯每个判断的依据。 | 0.706 | rewrite the closing clause; keep the conditional |
+| `conditional_vague_strong` | 若只保留最终结论而不附原始记录，复核时几乎无法追溯任何判断的依据。 | 0.437 | rewrite the closing clause; keep the conditional |
+| `conditional_precise` | 该流程统一采用固定模板，无法在单个环节内根据材料调整格式。 | 0.030 | keep; the constraint names its object |
 
-Vagueness inside a conditional baseline does not route reliably: constructed instances scored 0.207 and 0.338, both below the gate. Treat this as an agent judgment rule and reach such units through the deterministic candidate search.
+The same class spans 0.030-0.706 across constructed instances, and the stronger wording scores lower than the milder one. Conditional vagueness therefore does not separate reliably at any single threshold; treat the distinction as an agent judgment and reach such units through the deterministic candidate search.
 
 The same six controls under the deprecated v1 sufficiency wording:
 
