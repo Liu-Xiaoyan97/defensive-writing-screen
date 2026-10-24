@@ -10,14 +10,14 @@ Run these six before screening a document. The battery passes when each positive
 
 | id | text | designated dimension | v2 value | expected agent decision |
 |---|---|---|---:|---|
-| `pos_do_not_claim` | We do not claim that these cases are representative of all contexts. | `claim_negation` | 0.991 | rewrite to positive scope |
-| `pos_not_x_but_y` | This paper is not intended to provide a comprehensive theory of platform governance, but rather to examine one specific mechanism. | `negative_contrast` | 0.919 | rewrite to a single claim |
-| `pos_although_limited` | While the sample is limited and cannot capture every variation, it still offers useful insights. | `claim_negation` | 0.832 | rewrite; keep the sample description |
-| `pos_stacked_hedge` | This may potentially suggest that X could possibly be associated with Y. | `vague_hedge` | 0.995 | reduce to one warranted qualifier |
-| `neg_neutral_setup` | We train four models on the same corpus for 10B tokens. | all | 0.002 / 0.001 / 0.004 | keep |
-| `neg_neutral_result` | Under the same conditions the two averages are 49.47% and 46.08%. | all | 0.002 / 0.002 / 0.017 | keep |
+| `pos_do_not_claim` | We do not claim that these cases are representative of all settings. | `claim_negation` | 0.998 | rewrite to positive scope |
+| `pos_not_x_but_y` | This paper is not intended to provide a comprehensive account of the phenomenon, but rather to examine one specific mechanism. | `negative_contrast` | 0.908 | rewrite to a single claim |
+| `pos_although_limited` | While the sample is limited and cannot capture every variation, it still offers useful insights. | `concessive_hedge` | 0.993 | rewrite; keep the sample description |
+| `pos_stacked_hedge` | This may potentially suggest that X could possibly be associated with Y. | `vague_hedge` | 0.982 | reduce to one warranted qualifier |
+| `neg_neutral_setup` | We analyze four cases over the same period. | all | 0.001 / 0.002 / 0.024 | keep |
+| `neg_neutral_result` | Under the same conditions the two estimates are 49.47% and 46.08%. | all | 0.001 / 0.002 / 0.011 | keep |
 
-The positive controls are the canonical defensive patterns listed in `references/rewrite-guide.md`; they carry no project content. The battery runs entirely from files in this skill.
+The positive controls are the canonical defensive patterns listed in `references/rewrite-guide.md`; they carry no project content and no field-specific nouns, so the same battery applies to any academic or professional draft. Designated dimensions follow the construction each control uses: a concessive sentence routes on `concessive_hedge`, not on `claim_negation`.
 
 ### Chinese controls (bilingual markers)
 
@@ -25,21 +25,23 @@ English-only marker lists underperform on Chinese: the mild-modesty control scor
 
 | id | text | designated dimension | bilingual value | expected agent decision |
 |---|---|---|---:|---|
-| `zh_weak_modesty` | 本文仅在两个数据集上做了初步尝试，只能提供有限参考。 | `vague_hedge` | 0.991 | rewrite; keep "two datasets" |
-| `zh_strong_defense` | 本文并不声称解决所有语言模型问题，也无意证明该方法总是最优。我们只提供一个初步方案，仍有很大提升空间。 | `claim_negation` | 0.997 | rewrite both sentences |
-| `zh_causal_boundary` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | `claim_negation` | 0.998 | keep; the causal limit carries method meaning |
-| `zh_safety_rule` | 设备通电时不得进行校准，否则可能发生电击。 | none | 0.167 | keep; a prohibition is not routed for rewriting |
-| `zh_clean_scope` | 本文在两个数据集上评估该方法。 | all | 0.014 | keep |
+| `zh_weak_modesty` | 本文仅在两个案例上做了初步尝试，只能提供有限参考。 | `vague_hedge` | 0.921 | rewrite; keep "two cases" |
+| `zh_strong_defense` | 本文并不声称解决该领域的全部问题，也无意证明该方法总是最优。我们只提供一个初步方案，仍有很大提升空间。 | `claim_negation` | 0.995 | rewrite both sentences |
+| `zh_causal_boundary` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | `claim_negation` | 0.995 | keep; the causal limit carries method meaning |
+| `zh_safety_rule` | 设备通电时不得进行校准，否则可能发生电击。 | none | 0.195 | keep; a prohibition is not routed for rewriting |
+| `zh_clean_scope` | 本文在两个案例上评估该方法。 | all | 0.074 | keep |
 
 ### Concessive controls
 
-| id | text | concessive value | expected agent decision |
+| id | text | value on its strongest dimension | expected agent decision |
 |---|---|---:|---|
-| `concessive_soften` | 虽然样本规模有限，但该方法在三个数据集上均取得更低损失。 | 0.996 | rewrite; lead with the result |
-| `gap_first` | 结果在部分任务上领先，但在另外两项任务上仍落后于基线。 | 0.908 | rewrite; state both sides without the concession frame |
-| `necessary_limit` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | 0.214 | keep |
-| `conditional_baseline` | 若仅采用单一衰减核，历史只能按一种权重汇集。 | 0.183 | keep; defines the problem the design addresses |
-| `neutral` | 本文在两个数据集上评估该方法。 | 0.003 | keep |
+| `concessive_soften` | 虽然样本规模有限，但该方法在三个案例上均给出一致结论。 | 0.991 (`concessive_hedge`) | rewrite; lead with the result |
+| `gap_first` | 结果在部分指标上更优，但在另外两项指标上低于对照。 | 0.662 (`concessive_hedge`) | rewrite; state both sides without the concession frame |
+| `necessary_limit` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | 0.995 (`claim_negation`) | keep; the negation carries method meaning |
+| `conditional_baseline` | 若仅采用单一取值，结论只能按一种方式汇总。 | 0.307 (`vague_hedge`) | keep; defines the problem the design addresses |
+| `neutral` | 本文在两个案例上评估该方法。 | 0.074 (`vague_hedge`) | keep |
+
+The `vague_hedge` question excludes explicit prohibitions and conditions that name the case they govern. Before that exclusion, the causal-limit control scored 0.706 on `vague_hedge` and the prohibition control 0.272, so both entered the review queue for nothing; after it they score 0.391 and 0.195 while the mild-modesty control stays at 0.921.
 
 The same six controls under the deprecated v1 sufficiency wording:
 
@@ -54,27 +56,19 @@ The same six controls under the deprecated v1 sufficiency wording:
 
 Three of the four canonical positives sit below 0.65 under v1, which is why a v1 threshold cannot be used as written. That measurement is the basis of the v0.3.0 change.
 
-## Labeled cases from the Chinese smoke test (v1 questions)
+## Labeled cases (question set v1)
 
-Measured before the v2 calibration. Kept because the agent decisions still define correct behaviour; the probabilities need re-measurement under v2 before they are used for routing.
+Reworded to remove field-specific nouns. The expected decisions still define correct behaviour; the v1 probabilities are no longer routing values.
 
 | id | text | expected agent decision |
 |---|---|---|
-| `weak_modesty` | 本文仅在两个数据集上做了初步尝试，只能提供有限参考。 | rewrite; keep "two datasets" |
+| `weak_modesty` | 本文仅在两个案例上做了初步尝试，只能提供有限参考。 | rewrite; keep "two cases" |
 | `causal_boundary` | 观察性分析发现 X 与 Y 相关。本研究不能据此识别 X 对 Y 的因果效应。 | keep; the causal limit carries method meaning |
 | `safety_rule` | 设备通电时不得进行校准，否则可能发生电击。 | keep; safety prohibition |
-| `clean_scope` | 本文在两个数据集上评估该方法。 | keep; no defensive wording |
-| `strong_defense` | 本文并不声称解决所有语言模型问题，也无意证明该方法总是最优。我们只提供一个初步方案，仍有很大提升空间。 | rewrite both sentences |
+| `clean_scope` | 本文在两个案例上评估该方法。 | keep; no defensive wording |
+| `strong_defense` | 本文并不声称解决该领域的全部问题，也无意证明该方法总是最优。我们只提供一个初步方案，仍有很大提升空间。 | rewrite both sentences |
 
-| case | self | preemptive | hedging | span removal_preserves |
-|---|---:|---:|---:|---:|
-| `weak_modesty` | 0.336 | 0.223 | 0.271 | 0.691 |
-| `causal_boundary` | 0.038 | 0.044 | 0.060 | 0.737 |
-| `safety_rule` | 0.001 | 0.004 | 0.014 | 0.371 |
-| `clean_scope` | 0.006 | 0.019 | 0.093 | — |
-| `strong_defense` | 0.753 | 0.804 | 0.357 | — |
-
-Under v2, `weak_modesty` and `strong_defense` are expected to move on `claim_negation`, and `causal_boundary` and `safety_rule` are expected to stay high on `claim_negation` while remaining correct to keep. Re-measure before using either number.
+The v1 run on the earlier phrasing returned 0.34 for `weak_modesty` and 0.75-0.80 for `strong_defense`. Only the second would have cleared a 0.65 gate, which is why the Chinese battery exists.
 
 ## Calibration screening (v1 to v2)
 

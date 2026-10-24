@@ -48,10 +48,10 @@ Marker lists are language-specific and must be translated for the document at ha
   },
   "vague_hedge": {
     "type": "noul",
-    "instructions": "Does `paragraph.text` contain a vague weakening word or phrase that lowers the force of a statement without naming the source of uncertainty? Markers: could hardly, may potentially, to some extent, it should be noted, of course; 仅、只能、初步、难以、尚不能、仍有提升空间、在一定程度上、或许.",
+    "instructions": "Does `paragraph.text` contain a vague weakening word or phrase that lowers the force of a statement without naming the source of uncertainty? Markers: could hardly, may potentially, to some extent, it should be noted, of course; 仅、只能、初步、难以、尚不能、仍有提升空间、在一定程度上、或许. Do not count an explicit prohibition or a required restriction, such as 不得、must not、cannot be used, or a condition that names the specific case it governs.",
     "criteria": {
-      "true": "At least one such vague weakening expression is present",
-      "false": "No such vague weakening expression is present"
+      "true": "At least one such vague weakening expression is present and it is not a prohibition or a condition that names its case",
+      "false": "No such weakening expression, or the negative wording is a prohibition or a named condition"
     }
   },
   "concessive_hedge": {
@@ -123,7 +123,7 @@ A high `true` means the span is a deletion *candidate*. The agent still decides,
 - Review up to five units at or above `0.65`, plus every unit with a candidate span at `removal_preserves >= 0.65`.
 - `0.65` is valid for v2 because the battery separates: positive controls 0.83-0.99, negative controls 0.002-0.017. It is not transferable to another question set, language, or model version without rerunning the battery.
 - Language anchors move recall by large margins. English-only markers left a mild Chinese modesty sentence at 0.375; naming Chinese markers moved the same sentence to 0.991. Run the battery in the document's language before trusting either number.
-- Candidate precision is low by design. In the calibration screening, 5 of 13 candidates were confirmed; every reject was a notation distinction, a mechanism contrast, a setup fact, or a necessary scope statement. Report both counts. In a method-heavy draft, conditional baselines ("if only a single decay were used", 若仅采用) account for most rejects; they describe the problem class and stay.
+- Candidate precision is low by design. In the calibration screening, 5 of 13 candidates were confirmed; every reject was a notation distinction, a mechanism contrast, a setup fact, or a necessary scope statement. Report both counts. In a method-heavy draft, conditional baselines ("if only a single value were used", 若仅采用) account for most rejects; they describe the problem class and stay.
 - Never convert a probability into a deletion without agent evidence. A probability near 0.5 means the model splits yes and no, not that the wording is half-defensive.
 - Keep this file free of project content. Control sentences are the generic defensive patterns bundled in `references/cases.md`; screening statistics are aggregates without document identity, domain vocabulary, or draft excerpts. Project cases stay in the project and arrive as state at run time.
 

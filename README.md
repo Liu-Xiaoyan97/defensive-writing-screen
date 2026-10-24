@@ -126,7 +126,7 @@ adds a control battery that runs before any document is screened. The change cam
 from a measured failure: the original questions scored the canonical defensive
 sentences at 0.15-0.45, below the 0.65 gate they were shipped with, and an English
 academic draft of several hundred units returned no candidate at all. The observable set scores the
-same positives at 0.83-0.99 and neutral prose at 0.002-0.017; on that draft it
+same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
 The shipped `0.65` threshold is valid only for the current question set, language,
