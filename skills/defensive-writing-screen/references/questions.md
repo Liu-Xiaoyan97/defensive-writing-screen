@@ -137,12 +137,17 @@ record names the class next to the keep category.
 
 | id | class | test |
 |---|---|---|
-| P1 | Measured result | Would removal change a number, its sign, its direction, or the comparison it belongs to? Unfavorable results and metric direction belong here. |
+| P1 | Measured result | Does the span itself carry the number, the sign, or the direction together with the value it qualifies? Unfavorable results belong here. |
 | P2 | Mathematical or proof condition | Would removal drop a bound, a floor, an identity case, an assumption, or the scope within which a proof holds? |
 | P3 | Measurement or reproduction condition | Would removal drop the corpus, tokenizer, budget, context length, precision, protocol, implementation path, or configuration that a reader needs to reproduce or interpret the number? |
 | P4 | Scope of an intervention or check | Would removal drop what was varied, what was held fixed, what the check covered, or what it did not isolate? |
 | P5 | Design premise or motivation | Would removal drop the reason a component exists, the problem it answers, or the baseline the design is measured against? |
 | P6 | Comparison semantics | Would removal turn a ranked comparison into a spread, or change a per-item difference into a summary that hides it? |
+
+The classes apply to spans, not to units. A unit that reports a number does not make
+every sentence in it protected: a sentence that restates a direction in words, with the
+value living in another sentence or a table, carries no bound and is an R1 rewording
+candidate. Read the span, not the paragraph, when applying a class.
 
 A high Jev probability never overrides a protection class. The two measured failures that
 created this section are representatives of the class: a metric-semantics sentence about
@@ -160,6 +165,8 @@ record, never as a unit verdict, and each states whether the genre requires the 
 | S2 | Document ends on limitations | The last section a reader meets is a withdrawal rather than the takeaway. |
 | S3 | No limitations statement | Required when the draft makes claims whose scope is not bounded in the sections themselves. |
 | S4 | Related work absent or folded into the introduction | Often legitimate; report where the prior-work discussion sits. |
+| S5 | Mechanism evidence sits away from the claim it supports | Read the heading order: a mechanism experiment that carries the advantage should sit next to the comparison it explains, not after a later section. |
+| S6 | A closed section ends on the paper's own design | A section that reviews prior work should close on that review, not on the draft's own evaluation design, which belongs to the method or setup. |
 
 A supplement, appendix, extended abstract, letter, or proposal carries a different set.
 Say which absences the genre allows instead of reporting them as defects.
@@ -204,7 +211,7 @@ prohibition; an action that would remove one is not available and the unit stays
 | id | action | entry condition | what may change |
 |---|---|---|---|
 | N1 | RESTATE | A unit demotes its own result behind a retreat or a subordinate clause while a stronger fact it already reports sits in the main clause, or the reverse. | Clause order and emphasis. Same numbers, same direction, same comparison. |
-| N2 | NARROW | A claim covers more than the unit's evidence: a range wider than what was measured, a population wider than what was sampled, or a comparison the unit does not support. | The claim shrinks to the measured scope. The numbers it already reports stay. |
+| N2 | NARROW | A claim covers more than the unit's evidence: a range wider than what was measured, a population wider than what was sampled, a comparison the unit does not support, or an accounting clause that draws a conclusion from numbers the unit already reports without adding a condition or a bound. | The claim shrinks to the measured scope, or the accounting clause goes while the numbers stay. |
 | N3 | RELOCATE | A fact, control condition, or caveat sits where it interrupts the unit's job, or the same fact is stated in more than one section. | The fact moves or is consolidated, exactly one statement remains, and the receiving location is named in the record. |
 
 Boundaries:

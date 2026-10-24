@@ -110,7 +110,7 @@ def main() -> int:
     for marker in ["P1", "P2", "P3", "P4", "P5", "P6"]:
         check(marker in questions_text, f"questions.md missing protection class: {marker}")
         check(marker in text, f"SKILL.md missing protection class: {marker}")
-    for marker in ["S1", "S2", "S3", "S4"]:
+    for marker in ["S1", "S2", "S3", "S4", "S5", "S6"]:
         check(marker in questions_text, f"questions.md missing structural finding: {marker}")
         check(marker in text, f"SKILL.md missing structural finding: {marker}")
     for marker in ["N1", "N2", "N3"]:

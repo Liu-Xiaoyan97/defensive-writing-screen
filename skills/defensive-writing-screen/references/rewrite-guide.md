@@ -114,7 +114,10 @@ repair, and none may change a number, a unit, a direction, or a condition.
   steps, the estimate comes within 0.7 points of the baseline". It never becomes "the
   estimate matches the baseline".
 - **Narrow.** When a claim covers more than the evidence, cut it back to what was
-  measured. Narrowing is not a licence to drop an unfavorable number or to stop
+  measured. The same action covers an accounting clause: a sentence that draws a
+  conclusion from numbers already reported, such as "the other tasks offset part of the
+  shortfall", adds interpretation rather than a condition, so the clause goes and the
+  numbers stay. Narrowing is not a licence to drop an unfavorable number or to stop
   making a comparison the unit already makes.
 - **Relocate.** When a fact interrupts its unit or appears in more than one section,
   keep one statement where the reader needs it and name the location that keeps it.
@@ -138,7 +141,10 @@ is not a disclaimer; it is the scope of the claim.
 
 The distinction is testable: ask what a reader could no longer verify, reproduce, or
 interpret if the span disappeared. If the answer is anything, the span stays and the
-record names the class.
+record names the class. Apply the test to the span, not to the paragraph: a unit that
+reports a number does not protect a sentence that restates a direction in words while the
+value lives in a table. That sentence names no bound, so it is rewritten to carry the
+value or removed.
 
 ## Document structure
 
@@ -151,6 +157,12 @@ solved, proposed, and shown. Both are structural findings, reported once at the 
 level. Absence is not automatically a defect: a supplement, appendix, extended abstract,
 letter, or proposal carries a different set, and the report says which roles the genre
 does not require.
+
+Placement is also structural. A piece of mechanism evidence should sit beside the claim it
+supports; a mechanism experiment that carries the advantage and appears after a later section makes
+the reader carry the argument across the document. A review section should close on the
+review, not on the draft's own evaluation design, which belongs to the method or the
+setup. Both are reported once, at the document level.
 
 ## Metrics, experiments, unfavorable results
 

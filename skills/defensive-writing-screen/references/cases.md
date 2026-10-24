@@ -158,6 +158,15 @@ is the record, not the probability.
 | `protect_intervention_scope` | The replacement test measures the whole path and does not isolate its components. | 0.363 (`vague_hedge`) | P4 | keep; what the check did not isolate |
 | `protect_premise` | The auxiliary objective exists to keep the assignment from collapsing onto a few units. | 0.279 (`claim_negation`) | P5 | keep; the reason the component exists |
 
+### Within-span protection controls (P1, N2)
+
+| id | text | expected decision |
+|---|---|---|
+| `p1_span_carries_number` | The method scores 55.1 while the baseline scores 67.5 on the fourth task. | keep; the span carries both values (P1) |
+| `p1_span_direction_only` | Compared with the two larger baselines, the method scores lower on the fourth task. | rewrite R1; the values live in the table, so the sentence names a direction with no bound |
+| `n2_accounting_clause` | The other seven tasks exceed the baselines, offsetting part of the shortfall. | N2; the numbers stay, the accounting clause goes |
+| `n2_measured_scope` | The estimate holds over the measured parameter range and token budgets. | keep; the clause adds the condition, not a conclusion |
+
 A keep that is not routed needs no class. A routed keep without one is an incomplete
 record, because the reason it stays is exactly what the probability could not see.
 
@@ -169,6 +178,8 @@ record, because the reason it stays is exactly what the probability could not se
 | `structure_complete` | Sections: Abstract, Introduction, Related Work, Method, Experiments, Conclusion, Limitations. | none | no structural finding |
 | `structure_folded_related` | Sections: Abstract, Introduction, Method, Experiments, Conclusion. | `related_work_absent_or_folded` | report S4 as informational, not a defect |
 | `structure_supplement` | Fourteen appendix sections, no abstract or introduction. | `sparse_structure` | no defect; the genre carries no such roles |
+| `structure_ordering` | Sections: Abstract, Introduction, Method, Experiments, Scaling, Conclusion — with a component experiment before the scaling section but the advantage claimed in the comparison. | none from the script | report S5; the mechanism evidence sits away from the claim |
+| `structure_related_ends_on_design` | Related Work closes with "We therefore compare the checkpoints at reported budgets". | none from the script | report S6; the review section ends on the draft's own design |
 
 ## What the numbers mean
 
