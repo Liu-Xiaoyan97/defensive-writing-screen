@@ -200,6 +200,15 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.12.0 adds two review scopes and a disposition contract. `screened` reads
+routed units, candidate spans and a labelled sample; `full` reads every unit and is
+required for publication acceptance or any agent-only run. Findings are `confirmed`
+when the bundled rules list the construction and the revision keeps every fact, and
+`optional` when the text is not defensive and the change is presentation. The report
+must state scope, units read and unread, Jev requests with failures, and agent turns
+or tokens, and it may not claim a Jev-first saving unless a measured comparison on
+the same draft supports it: a run that also reads every unit cannot save agent work.
+
 Version 0.11.0 moves the question and control definitions into
 `references/controls.json` so the prompt, the gate, and the challenge cases cannot
 drift apart, retires `scope_tail` after it failed its controls in both directions,

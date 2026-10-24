@@ -83,7 +83,31 @@ A direction-only comparison is not automatically R1. Do not add redundant number
 
 ## Verdict categories
 
-Every unit has one summary verdict (`keep`, `rewrite`, `narrative`, `mixed`, or `unresolved`) and zero or more independent span findings. One unit may carry several R rules on different spans, including combinations of rewrites and keeps. Each finding needs an ID, exact span, rule/action, reason, protection classes, proposal and disposition (`confirmed`, `optional`, `keep`, `unresolved`). Count findings and units separately.
+Every read unit has one summary verdict (`keep`, `rewrite`, `narrative`, `mixed`, or `unresolved`) and zero or more independent span findings. One unit may carry several R rules on different spans, including combinations of rewrites and keeps. Each finding needs an ID, exact span, rule/action, reason, protection classes, proposal and disposition (`confirmed`, `optional`, `keep`, `unresolved`). Count findings and units separately.
+
+### Disposition test
+
+| disposition | test |
+|---|---|
+| `confirmed` | The bundled guide lists the construction as a rewrite rule, every fact and condition survives the revision, and the current wording weakens a supported claim, a supported unfavorable result, or the reader's access to the result through framing rather than content. |
+| `optional` | The text is not defensive; the change is presentation only: restating a condition the paragraph already makes clear, importing numbers that already appear in a table, merging or splitting sentences, reordering material. |
+| `keep` | The span carries a protection class, a functional contrast, a resolved reference, or a result whose framing does not need to change. |
+| `unresolved` | The evidence or context needed to decide is missing. |
+
+A concession whose favorable and unfavorable facts both survive is `confirmed`: the facts are protected, the frame is not. Treating such a case as `optional` understates a real finding, and a run reporting zero confirmed findings while routing concession units needs that discrepancy explained rather than left as a total.
+
+## Review scope and cost accounting
+
+Choose one scope before reading and report it with the result.
+
+| scope | reads | when |
+|---|---|---|
+| `screened` | All routed units, all focused candidates, the 0.45-0.65 band when small, plus a stratified sample of the rest: everything when 20 or fewer, otherwise at least 20 spread across the document. | Default when Jev passed the gate and the goal is triage. |
+| `full` | Every unit. | Publication acceptance, exhaustive requests, or any agent-only run. |
+
+In `screened` mode, count misses found in the sampled unread population and report `misses/sample`, never a recall claim. Unsampled units are reported as unread, not as clean. A Jev-first run that also reads every unit cannot save agent work by construction, so report scope before discussing cost.
+
+Record measured cost facts: review scope, units read, units sampled, units unread, Jev requests with retries and failures, and agent turns or tokens when the caller exposes them. Do not claim that Jev-first review is cheaper than agent-only review without a measured comparison on the same draft. Quality and cost are separate results; a cheaper run that misses a confirmed finding is not a better run.
 
 | id | rewrite rule |
 |---|---|

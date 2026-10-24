@@ -112,6 +112,17 @@ def main() -> int:
         check(marker in text, f"SKILL.md missing failure-state marker: {marker}")
     for marker in ["P1", "P2", "P3", "P4", "P5", "P6"]:
         check(marker in questions_text, f"questions.md missing protection class: {marker}")
+    # Review scope and disposition contract: the cost claim must stay measurable.
+    for marker in ["## Review scope and cost accounting", "### Disposition test", "screened", "full"]:
+        check(marker in questions_text, f"questions.md missing scope/disposition contract: {marker}")
+    for marker in ["`confirmed`", "`optional`", "misses/sample"]:
+        check(marker in questions_text, f"questions.md missing disposition or sampling rule: {marker}")
+    for marker in ["screened", "full", "Review scope"]:
+        check(marker in text, f"SKILL.md missing review-scope marker: {marker}")
+    check("cannot save agent work by construction" in text,
+          "SKILL.md must state that Jev-first review with full reading cannot save agent work")
+    check("cannot save agent work by construction" in questions_text,
+          "questions.md must repeat the cost caveat so it survives a partial read")
     for marker in ["N1", "N2", "N3"]:
         check(marker in questions_text, f"questions.md missing narrative action: {marker}")
     for marker in ["R1", "R2", "R3", "R4", "R5", "R6", "K1", "K7", "S1", "S6"]:
@@ -144,7 +155,8 @@ def main() -> int:
         challenge_ids = {row["id"] for row in controls.get("semantic_challenges", [])}
         check(len(challenge_ids) >= 8, "semantic challenges must cover the calibrated decision classes")
         for required in ["resolved_reference", "unknown_reference", "protected_reframe",
-                         "direction_without_number", "multiple_spans"]:
+                         "direction_without_number", "multiple_spans",
+                         "concessive_confirmed", "optional_explicit_scope", "sampled_unread"]:
             check(required in challenge_ids, f"semantic challenges missing {required}")
         validation = controls.get("validation_controls", [])
         check(len(validation) >= 6, "validation_controls must provide at least six frozen texts")
@@ -156,7 +168,17 @@ def main() -> int:
                   f"validation control {row['id']} names an inactive dimension")
     for marker in ["P1", "P2", "P3", "P4", "P5", "P6"]:
         check(marker in questions_text, f"questions.md missing protection class: {marker}")
-        check(marker in text, f"SKILL.md missing protection class: {marker}")
+    # Review scope and disposition contract: the cost claim must stay measurable.
+    for marker in ["## Review scope and cost accounting", "### Disposition test", "screened", "full"]:
+        check(marker in questions_text, f"questions.md missing scope/disposition contract: {marker}")
+    for marker in ["`confirmed`", "`optional`", "misses/sample"]:
+        check(marker in questions_text, f"questions.md missing disposition or sampling rule: {marker}")
+    for marker in ["screened", "full", "Review scope"]:
+        check(marker in text, f"SKILL.md missing review-scope marker: {marker}")
+    check("cannot save agent work by construction" in text,
+          "SKILL.md must state that Jev-first review with full reading cannot save agent work")
+    check("cannot save agent work by construction" in questions_text,
+          "questions.md must repeat the cost caveat so it survives a partial read")
     for marker in ["S1", "S2", "S3", "S4", "S5", "S6"]:
         check(marker in questions_text, f"questions.md missing structural finding: {marker}")
         check(marker in text, f"SKILL.md missing structural finding: {marker}")

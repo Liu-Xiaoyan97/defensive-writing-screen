@@ -50,6 +50,19 @@ All service calls returned normally. Both complete gates failed, so no document 
 - A low deletion-preservation score can correctly identify that a span carries a fact. It does not veto an equivalent rewrite that preserves the fact.
 - Multi-paragraph requests can confuse target attribution. Prefer one unit per call.
 
+## Review-scope measurements
+
+Two aggregate runs on the same English draft compared the cost of the two review scopes. Only aggregate workload is recorded here; no document identity, section names or excerpts.
+
+| run | routing | agent reading | Jev requests | agent turns | agent output tokens |
+|---|---|---|---:|---:|---:|
+| Jev-first, every unit read | four active dimensions, gate passed | 119 of 119 units | 131 | 38 | about 46k |
+| agent-only skill, no Jev | none | whole draft, no unit ledger | 0 | 12 | about 12k |
+
+The Jev-first run that also read every unit cost roughly 3.7 times the agent output tokens of the agent-only run. That is a property of full reading, not evidence about the classifier: the same Jev requests would have supported a `screened` run that read 9 routed units, 6 candidate spans and a 20-unit sample. Do not reuse this table as a quality result; it measures workload only, and both runs used a single model.
+
+For a fair cost comparison, hold the draft, model and requirement fixed and vary only the scope. Record units read, units unread, Jev requests and failures, and the misses found in the sampled population. A cheaper run that misses a confirmed finding is a recall failure, not an efficiency gain.
+
 ## What the numbers mean
 
 Probabilities prioritize inspection, not edit permission. A passing six-control gate is a small smoke test, not a generalization result. Missing calls are null, never zero. Full reading remains mandatory even when no unit routes. Distinguish model alias from a resolved immutable version, and retain question revision, state shape and raw responses.

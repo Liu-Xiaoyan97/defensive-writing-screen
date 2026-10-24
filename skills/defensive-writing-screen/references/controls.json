@@ -130,6 +130,24 @@
       "text": "Previous work compares fixed conditions. We therefore examine changing conditions.",
       "expected": "keep_or_optional_structure",
       "reason": "A research-positioning transition is legitimate, not automatically misplaced implementation detail."
+    },
+    {
+      "id": "concessive_confirmed",
+      "text": "The procedure improves consistency but still trails the reference on precision.",
+      "expected": "confirmed_rewrite",
+      "reason": "Both facts survive a direct two-sentence statement, so the concession is a framing problem, not protected content. This case locks the confirmed-versus-optional boundary."
+    },
+    {
+      "id": "optional_explicit_scope",
+      "text": "We evaluate on the four tasks listed above. All four tasks are the tasks used in this evaluation.",
+      "expected": "optional_merge",
+      "reason": "Restating an already clear condition is presentation, not defensive framing; the change is optional."
+    },
+    {
+      "id": "sampled_unread",
+      "text": "A screened run leaves 80 of 100 units unread and finds two misses in the 20 it sampled.",
+      "expected": "report_observed_rate_not_recall",
+      "reason": "Report 2/20 and the unread count; never report recall from an unread population."
     }
   ],
   "validation_controls": [
@@ -163,5 +181,6 @@
       "text": "For the specified groups, the measured averages are 18 and 23.",
       "designated_dimension": "all"
     }
-  ]
+  ],
+  "notes": "Questions unchanged from v4; disposition and review-scope contract added in 0.12.0. Gate controls and thresholds unchanged, so existing gate measurements remain valid for this question set."
 }
