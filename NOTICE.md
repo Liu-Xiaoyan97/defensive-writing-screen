@@ -38,9 +38,11 @@ No upstream installer, script, image, or test suite is bundled. No upstream
 repository is vendored. The upstream `SKILL.md` is not reproduced verbatim; the
 adaptation is the condensed guide only.
 
-## Compatibility note
+## No runtime dependency
 
-If an `anti-defensive-writing` skill is installed alongside this one, the skill
-instructs the agent to prefer the installed skill for rewrite wording and to treat
-the bundled guide as a fallback. The two are intended to agree; where they differ,
-the installed upstream skill is authoritative for rewriting.
+Upstream is named here for attribution and provenance only. `defensive-writing-screen`
+does not import, load, read, or call `anti-defensive-writing` at run time, and does not
+require it to be installed. The skill's SKILL.md designates the bundled
+`references/rewrite-guide.md` as its only rewriting authority, and explicitly forbids
+deferring to another installed writing skill. Installing or removing the upstream
+skill changes nothing about how this skill behaves.

@@ -1,10 +1,42 @@
 # Anti-defensive rewrite guide
 
-Adapted from the `anti-defensive-writing` skill (Kiterlin, MIT, commit `f516147d017a3fe43ae99192cb89d8261b0c8679`); see `NOTICE.md`. Use it after a candidate has been verified, and keep everything the original rules protect: evidence, scope, uncertainty, prohibitions, and unfavorable results.
+Adapted from the `anti-defensive-writing` skill (Kiterlin, MIT, commit `f516147d017a3fe43ae99192cb89d8261b0c8679`); the commit, file hash, and license are recorded in `NOTICE.md`. The reference is provenance and attribution only. This file is the operative rulebook for this skill and is complete on its own: nothing in it requires the upstream skill to be installed, read, or consulted.
 
 ## Core rule
 
 Advance the claim. State what is true, what the text argues, what the evidence shows, or what the method does. Do not spend sentences on what the text does not claim, does not prove, does not cover, or does not attempt. Write as an author explaining an argument, not as an author negotiating with an imagined critic.
+
+## Preferred patterns
+
+- "This paper examines..." / "This study shows..." / "The analysis focuses on..."
+- "The evidence indicates..." / "The results suggest..."
+- "This design allows..." / "In this setting, X shapes Y by..."
+- "The central contribution is..."
+- 本文研究…… / 本研究表明…… / 本文重点分析…… / 证据表明…… / 结果提示……
+
+## Submission checks
+
+- Remove self-criticism that adds no information.
+- Narrow claims that exceed the evidence; withdraw claims the evidence does not support.
+- Remove repeated limitation statements from abstracts, introductions, and conclusions; keep the ones the claim cannot survive without.
+- Confirm the contribution stays visible in the abstract, introduction, results, and conclusion.
+- When simulating reviewers, separate demonstrated problems, items needing verification, and optional extra experiments. Fix what affects the conclusion or its interpretation; do not convert every imagined objection into a limitation.
+
+## Main argument
+
+Identify the paper's main contribution: a new capability, a mechanism, lower cost, or better scalability. Organize the abstract, introduction, experiments, and conclusion around it, keep supporting contributions, and cut unrelated setup. If a reader finishes the abstract without knowing the contribution, the structure is the problem, not the phrasing.
+
+## Writing principles
+
+- Lead with the claim; the first sentence carries the point, not a caveat.
+- Use positive scope: say what the text examines, explains, tests, compares, or contributes.
+- Strengthen with evidence, not apology.
+- One paragraph, one job. Do not mix argument, caveat, apology, exception, and clarification.
+- Use contrast only when the contrast is part of the argument.
+
+## Technical plans and SOPs
+
+For Chinese technical plans, procedures, reports, and presentations, remove redundancy and admonitory tone while keeping technical meaning, applicability conditions, prohibitions, and operational purpose. State the operation, parameters, prerequisites, and result directly. Replace vague prerequisites such as "在条件允许时" with the concrete condition the draft supports ("标定前提：……"); keep "仅在……时" and "若欲……需要……" or rewrite them equivalently, never as unconditional actions. Drop admonitions such as "切记" while keeping real prohibitions and technical conclusions. Simplify "进行……的测量" to "测量……"; use "标定", "解耦", "淬灭", or "钳定" only when they name the actual operation. Do not change an operation to make the text sound more specialized.
 
 ## What must survive
 

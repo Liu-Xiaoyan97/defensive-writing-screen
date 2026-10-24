@@ -17,7 +17,7 @@ Run these six before screening a document. The battery passes when each positive
 | `neg_neutral_setup` | We train four models on the same corpus for 10B tokens. | all | 0.002 / 0.001 / 0.004 | keep |
 | `neg_neutral_result` | Under the same conditions the two averages are 49.47% and 46.08%. | all | 0.002 / 0.002 / 0.017 | keep |
 
-The positive controls are the canonical defensive patterns listed in the upstream `anti-defensive-writing` skill; they carry no project content.
+The positive controls are the canonical defensive patterns listed in `references/rewrite-guide.md`; they carry no project content. The battery runs entirely from files in this skill.
 
 The same six controls under the deprecated v1 sufficiency wording:
 

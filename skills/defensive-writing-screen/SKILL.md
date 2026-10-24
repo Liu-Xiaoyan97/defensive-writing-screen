@@ -4,7 +4,7 @@ description: Audit drafts for defensive writing with a Jev-first triage, then co
 license: MIT
 compatibility: Needs a System One/Jev-capable caller for triage (Pi `jev_evaluate`, TypeSafe API, or a compatible endpoint). Without one, run steps 2 and 6-7 with the bundled rewrite guide and report that triage was skipped.
 metadata:
-  version: "0.3.0"
+  version: "0.4.0"
   upstream: "Kiterlin/anti-defensive-writing (MIT), adapted; see NOTICE.md"
 ---
 
@@ -12,7 +12,7 @@ metadata:
 
 Four phases, in this order: **the questions pass a control battery → Jev triages every prose unit → the agent verifies the highest-probability candidates → the agent rewrites only what it has confirmed.** Skipping verification turns a screening signal into an automated deletion policy, which this skill never authorizes. Skipping the battery turns a compressed probability scale into a false clean bill of health.
 
-This skill carries its own rewrite rulebook, adapted from the `anti-defensive-writing` skill and complete enough to run alone. If an `anti-defensive-writing` skill is also installed, load it and prefer its wording guidance; the bundled guide remains the fallback.
+This skill is self-contained. It requires no other skill, and no other skill overrides its rulebook. `references/rewrite-guide.md` is the complete, operative rewriting authority here: read it in step 6 and follow it directly. Do not delegate rewriting to, wait for, or require `anti-defensive-writing` or any other installed skill, even when one is present; treat its absence as irrelevant to whether this skill can run.
 
 Cost model: triage is cheap and parallel, so screen broadly; reading and rewriting are expensive, so spend them only on candidates plus a small sample of rejects.
 
@@ -38,4 +38,4 @@ If no System One caller is available, run steps 1-2, skip steps 3-5, and perform
 - Verification: exact excerpts, keep or change decision, classification, reason, and one proposed revision each.
 - Coverage and limits: below-threshold sampling, untriaged units, Jev or validation failures, and checks not run.
 
-Files: `references/questions.md` (calibrated request shapes, thresholds, failure handling), `references/rewrite-guide.md` (inherited anti-defensive rulebook), `references/cases.md` (control battery, labeled smoke tests, measured runs), `scripts/prepare_units.py` (offline paragraph and candidate-span extraction).
+Files: `references/questions.md` (calibrated request shapes, thresholds, failure handling), `references/rewrite-guide.md` (complete bundled rewrite rulebook, the only rewriting authority), `references/cases.md` (control battery, labeled smoke tests, measured runs), `scripts/prepare_units.py` (offline paragraph and candidate-span extraction). Every capability this skill needs is inside this directory; installing another skill adds nothing and removing another skill takes nothing away.

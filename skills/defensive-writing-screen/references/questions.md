@@ -24,7 +24,7 @@ Keep state flat and short when asking about one span. Do not include the intende
 
 ## Question set v2 (calibrated)
 
-Ask all four in one request for the paragraph. Each maps to a row of the `anti-defensive-writing` detection checklist. Each asks what the text **contains**, not whether the text **deserves** to contain it.
+Ask all four in one request for the paragraph. Each maps to a row of the detection checklist in `references/rewrite-guide.md`. Each asks what the text **contains**, not whether the text **deserves** to contain it.
 
 ```json
 {
@@ -63,7 +63,7 @@ Ask all four in one request for the paragraph. Each maps to a row of the `anti-d
 }
 ```
 
-Dimension coverage, from `anti-defensive-writing`:
+Dimension coverage, defined by these questions alone:
 
 | dimension | catches | checklist rows |
 |---|---|---|
@@ -113,7 +113,7 @@ A high `true` means the span is a deletion *candidate*. The agent still decides,
 - `0.65` is valid for v2 because the battery separates: positive controls 0.83-0.99, negative controls 0.002-0.017. It is not transferable to another question set, language, or model version without rerunning the battery.
 - Candidate precision is low by design. In the calibration screening, 5 of 13 candidates were confirmed; every reject was a notation distinction, a mechanism contrast, a setup fact, or a necessary scope statement. Report both counts.
 - Never convert a probability into a deletion without agent evidence. A probability near 0.5 means the model splits yes and no, not that the wording is half-defensive.
-- Keep this file free of project content. Control sentences come from the upstream defensive-writing patterns; screening statistics are aggregates without document identity, domain vocabulary, or draft excerpts. Project cases stay in the project and arrive as state at run time.
+- Keep this file free of project content. Control sentences are the generic defensive patterns bundled in `references/cases.md`; screening statistics are aggregates without document identity, domain vocabulary, or draft excerpts. Project cases stay in the project and arrive as state at run time.
 
 ## Batching and cost
 

@@ -10,8 +10,10 @@ and rewriting follows the bundled anti-defensive rulebook, which protects eviden
 scope, and necessary limitations.
 
 The skill is self-contained. It carries its own rewrite rules (adapted from
-[`anti-defensive-writing`](https://github.com/Kiterlin/anti-defensive-writing), MIT)
-so an agent that installs only this package still has the full editing capability.
+[`anti-defensive-writing`](https://github.com/Kiterlin/anti-defensive-writing), MIT,
+attribution only) together with its own screening questions and control battery, so
+an agent that installs only this package has the full capability. It requires no
+other skill and never defers to one.
 
 ## How it runs
 
@@ -158,9 +160,11 @@ state, so the same battery can be compared across projects.
   technical prerequisites, mathematical conditions, unfavorable results, and
   conceptual contrasts that carry the argument stay, even when they read as negative
   phrasing. In the measured run, eight of thirteen candidates were such contrasts.
-- **Rewriting capability is bundled.** `references/rewrite-guide.md` reproduces the
-  operational content of `anti-defensive-writing` needed to revise prose, with
-  attribution in `NOTICE.md`.
+- **No skill dependencies.** Every capability lives inside this directory:
+  screening questions, the control battery, the rewrite rulebook, and the unit
+  splitter. The skill neither loads nor defers to `anti-defensive-writing` or any
+  other installed skill; attribution in `NOTICE.md` is provenance, not a runtime
+  link. Install it alone, or delete the upstream skill, and behaviour is unchanged.
 
 ## Files
 
@@ -173,7 +177,7 @@ skills/defensive-writing-screen/
 ├── SKILL.md
 ├── references/
 │   ├── questions.md        request shapes, routing, calibration
-│   ├── rewrite-guide.md    inherited anti-defensive rulebook
+│   ├── rewrite-guide.md    bundled rewrite rulebook (self-sufficient)
 │   └── cases.md            labeled smoke tests and observed failures
 └── scripts/
     └── prepare_units.py    offline paragraph and candidate-span extraction
@@ -181,5 +185,6 @@ skills/defensive-writing-screen/
 
 ## License
 
-MIT. The rewrite guide is adapted from `anti-defensive-writing` by Kiterlin (MIT);
-see `NOTICE.md` for the upstream commit, file hash, and scope of the adaptation.
+MIT. The rewrite guide is adapted from `anti-defensive-writing` by Kiterlin (MIT).
+`NOTICE.md` records the upstream commit, file hash, scope of the adaptation, and the
+fact that the upstream skill is not a runtime dependency.

@@ -22,6 +22,34 @@ SKILL_DIR = ROOT / "skills" / "defensive-writing-screen"
 SKILL_MD = SKILL_DIR / "SKILL.md"
 REQUIRED_REFS = ["references/questions.md", "references/rewrite-guide.md", "references/cases.md"]
 REQUIRED_SECTIONS = ["## SOP", "## Working without Jev", "## Reporting"]
+# Capabilities the skill must supply itself; each must appear as a section in the
+# bundled rulebook so no installed skill is needed to rewrite prose.
+GUIDE_CAPABILITIES = [
+    "## Core rule",
+    "## Main argument",
+    "## Writing principles",
+    "## Technical plans and SOPs",
+    "## Preferred patterns",
+    "## Submission checks",
+    "## What must survive",
+    "## Classify before editing",
+    "## Rewrite procedure",
+    "## Detection checklist",
+    "## Discouraged patterns",
+    "## Metrics, experiments, unfavorable results",
+    "## Chinese-specific habits",
+    "## English-specific habits",
+    "## Examples",
+    "## Before returning a revision",
+]
+# Phrases that would make the skill depend on another installed skill.
+DEPENDENCY_MARKERS = [
+    "prefer its wording",
+    "remains the fallback",
+    "load it and prefer",
+    "if an `anti-defensive-writing` skill is also installed",
+    "requires the `anti-defensive-writing` skill",
+]
 
 failures: list[str] = []
 
@@ -70,6 +98,10 @@ def main() -> int:
 
     for section in REQUIRED_SECTIONS:
         check(section in text, f"SKILL.md missing section: {section}")
+    check(
+        "requires no other skill" in text,
+        "SKILL.md must state that the skill requires no other skill",
+    )
     for step in range(1, 8):
         check(f"{step}. **" in text, f"SOP step {step} missing")
 
@@ -84,8 +116,26 @@ def main() -> int:
     guide = SKILL_DIR / "references" / "rewrite-guide.md"
     if guide.is_file():
         guide_text = guide.read_text(encoding="utf-8")
-        for marker in ["## Core rule", "## Rewrite procedure", "Kiterlin", "MIT"]:
-            check(marker in guide_text, f"rewrite guide missing: {marker}")
+        for marker in GUIDE_CAPABILITIES:
+            check(marker in guide_text, f"rewrite guide missing capability: {marker}")
+        check("Kiterlin" in guide_text, "rewrite guide must keep upstream attribution")
+        check("MIT" in guide_text, "rewrite guide must keep the upstream license note")
+        check(
+            "complete on its own" in guide_text,
+            "rewrite guide must state that it is self-sufficient",
+        )
+
+    # Independence: no skill file may instruct the agent to load or defer to another skill.
+    scanned = [SKILL_MD] + [SKILL_DIR / rel for rel in REQUIRED_REFS]
+    for path in scanned:
+        if not path.is_file():
+            continue
+        body = path.read_text(encoding="utf-8")
+        for marker in DEPENDENCY_MARKERS:
+            check(
+                marker not in body,
+                f"{path.name} reintroduces a skill dependency: {marker!r}",
+            )
 
     manifest = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
     check(manifest.get("name") == "defensive-writing-screen", "package.json name mismatch")
