@@ -152,6 +152,12 @@ def main() -> int:
         check("f516147" in notice_text, "NOTICE.md must record the upstream commit")
         check("MIT" in notice_text, "NOTICE.md must record the upstream license")
 
+    merge = SKILL_DIR / "scripts" / "merge_verdicts.py"
+    check(merge.is_file(), "merge_verdicts.py missing")
+    if merge.is_file():
+        result = subprocess.run([sys.executable, str(merge), "--help"], capture_output=True, text=True)
+        check(result.returncode == 0, f"merge_verdicts --help failed: {result.stderr.strip()}")
+
     script = SKILL_DIR / "scripts" / "prepare_units.py"
     check(script.is_file(), "prepare_units.py missing")
     if script.is_file():

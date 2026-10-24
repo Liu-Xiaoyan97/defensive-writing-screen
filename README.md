@@ -181,7 +181,8 @@ skills/defensive-writing-screen/
 │   ├── rewrite-guide.md    bundled rewrite rulebook (self-sufficient)
 │   └── cases.md            labeled smoke tests and observed failures
 └── scripts/
-    └── prepare_units.py    offline paragraph and candidate-span extraction
+    ├── prepare_units.py    offline paragraph and candidate-span extraction
+    └── merge_verdicts.py   join screen, verdicts, and labels; print agreement
 ```
 
 ## License
