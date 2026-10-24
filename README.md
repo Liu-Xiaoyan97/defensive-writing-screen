@@ -57,6 +57,15 @@ git clone https://github.com/<you>/defensive-writing-screen.git
 cp -R defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
 ```
 
+With the installer, which reads this checkout when run from the repository root and
+otherwise downloads a pinned tarball:
+
+```sh
+sh install.sh                                   # -> ~/.agents/skills
+sh install.sh --dest .agents/skills             # project-level
+sh install.sh --repo <you>/defensive-writing-screen --ref v0.2.0 --force
+```
+
 With the skills CLI (layout follows the `skills/<name>/SKILL.md` convention; confirm
 with the CLI's own output):
 

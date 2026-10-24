@@ -7,6 +7,7 @@
 #   sh install.sh --dest ~/.claude/skills  # Claude Code
 #   sh install.sh --force                  # replace an existing install
 #   sh install.sh --ref v0.2.0             # pin a tag, branch, or commit
+#   sh install.sh --repo you/defensive-writing-screen --ref v0.2.0
 #
 # Reads the local checkout when run from the repository root; otherwise downloads
 # a tarball for the requested ref. No sudo, no package manager, no writes outside
@@ -15,7 +16,7 @@
 set -eu
 
 SKILL_NAME="defensive-writing-screen"
-REPO="${DEFENSIVE_WRITING_SCREEN_REPO:-Kiterlin/defensive-writing-screen}"
+REPO="${DEFENSIVE_WRITING_SCREEN_REPO:-}"
 REF="${DEFENSIVE_WRITING_SCREEN_REF:-main}"
 DEST="${HOME}/.agents/skills"
 FORCE=0
@@ -26,6 +27,7 @@ Install defensive-writing-screen.
 
 Options:
   --dest DIR     skills directory to install into (default: ~/.agents/skills)
+  --repo OWNER/REPO  GitHub repository for a remote install (default: $DEFENSIVE_WRITING_SCREEN_REPO)
   --ref REF      git tag, branch, or commit to fetch (default: main)
   --force        replace an existing installation
   -h, --help     show this help
@@ -36,6 +38,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --dest) DEST="${2:?--dest needs a directory}"; shift 2 ;;
     --ref) REF="${2:?--ref needs a value}"; shift 2 ;;
+    --repo) REPO="${2:?--repo needs owner/repo}"; shift 2 ;;
     --force) FORCE=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
@@ -58,6 +61,7 @@ SOURCE=""
 if [ -d "${SCRIPT_DIR}/skills/${SKILL_NAME}" ]; then
   SOURCE="${SCRIPT_DIR}/skills/${SKILL_NAME}"
 else
+  [ -n "$REPO" ] || { echo "no local checkout found; pass --repo OWNER/REPO for a remote install" >&2; exit 1; }
   command -v curl >/dev/null 2>&1 || { echo "curl is required for remote installs" >&2; exit 1; }
   command -v tar  >/dev/null 2>&1 || { echo "tar is required for remote installs"  >&2; exit 1; }
   TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/dws.XXXXXX")

@@ -84,7 +84,7 @@ A high `true` means the span is a deletion *candidate*. The agent still decides,
 - `triage_probability = max(all noul values)` per paragraph; sort descending.
 - Start at `0.65`, review at most five units, then tune on labeled data.
 - Two questions measure different things: `self` scores weak; `removal_preserves` scores near 0.7 for both removable and necessary wording in some Chinese cases. Treat a `removal_preserves >= 0.65` as "look here", and require agent verification of every candidate.
-- When `removal_preserves` is high but `ev idence` is thin, collect the missing facts before rewriting.
+- When `removal_preserves` is high but `evidence` is thin, collect the missing facts before rewriting.
 - Never convert a probability into a deletion without agent evidence. A probability near 0.5 means the model splits yes and no, not that the wording is half-defensive.
 
 ## Batching and cost
