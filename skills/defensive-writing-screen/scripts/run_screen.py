@@ -283,7 +283,15 @@ def main(argv: list[str]) -> int:
                       min(workers, len(items)), "gate", args.executor, args.retries)
         thresholds = controls["thresholds"]
         failures = []
-        for row, spec in zip(results, controls["controls"]):
+        # Pool results arrive in completion order: match by id, never by position.
+        by_id = {row["id"]: row for row in results}
+        missing = [spec["id"] for spec in controls["controls"] if spec["id"] not in by_id]
+        if missing:
+            failures.append(f"missing control rows: {missing}")
+        for spec in controls["controls"]:
+            row = by_id.get(spec["id"])
+            if row is None:
+                continue
             if not row["ok"]:
                 failures.append(f"{row['id']}: call failed ({row['error']})")
                 continue
@@ -293,10 +301,11 @@ def main(argv: list[str]) -> int:
                     failures.append(f"{row['id']}: neutral control above {thresholds['negative_max']}")
             elif (row.get(spec["designated_dimension"]) or 0) < thresholds["positive_min"]:
                 failures.append(f"{row['id']}: {spec['designated_dimension']} below {thresholds['positive_min']}")
-        args.out.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in results) + "\n",
+        ordered = [by_id[spec["id"]] for spec in controls["controls"] if spec["id"] in by_id]
+        args.out.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in ordered) + "\n",
                             encoding="utf-8")
-        resolved = next((r["resolved_model"] for r in results if r["resolved_model"]), None)
-        print(f"gate: {len(results) - len(failures)}/{len(results)} passed; workers {workers}; "
+        resolved = next((r["resolved_model"] for r in ordered if r["resolved_model"]), None)
+        print(f"gate: {len(ordered) - len(failures)}/{len(controls['controls'])} passed; workers {workers}; "
               f"resolved model: {resolved}", file=sys.stderr)
         for failure in failures:
             print(f"  FAIL {failure}", file=sys.stderr)

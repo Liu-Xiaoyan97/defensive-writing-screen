@@ -46,6 +46,8 @@ Run every row in `controls.json.controls`, one request per row. All four positiv
 
 A completed failing gate blocks draft Jev calls and triggers `agent-only diagnostic review`. A persistent service error triggers the same mode with a different reason. No caller also permits that mode. Continue the complete agent review with null draft probabilities and the appropriate `untriaged_*` state. This is not a successful Jev pipeline.
 
+Pool results arrive in completion order. Match controls and units by id; never pair them by position. A gate table that assigns a positive control's sentence to another control's dimension is a harness bug and must be reported as such rather than as a classifier failure.
+
 `validation_controls` is a separate frozen regression set: run it only after freezing a candidate revision. It is not included among prompt examples, not a basis for adjusting the current audit, and not a substitute for a larger independent labelled set. Once inspected it is a regression set, not a perpetually unseen test. Report failures; do not silently omit them.
 
 Read `semantic_challenges` to check the agent rules: protected facts can be reframed, necessary backward references stay, incomplete context does not license deletion, and independent spans need independent records. These expected decisions are not classifier-negative labels. Necessary scope may have high observable scores.

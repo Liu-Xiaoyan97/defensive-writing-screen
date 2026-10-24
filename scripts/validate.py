@@ -284,6 +284,9 @@ def main() -> int:
         check("Script-mode and tool-mode values are not interchangeable" in text,
               "SKILL.md must warn that script and tool paths are not interchangeable")
 
+        check("by_id = {row[\"id\"]: row for row in results}" in runner_text,
+              "gate validation must match control rows by id, not by completion order")
+
     merge = SKILL_DIR / "scripts" / "merge_verdicts.py"
     check(merge.is_file(), "merge_verdicts.py missing")
     if merge.is_file():
