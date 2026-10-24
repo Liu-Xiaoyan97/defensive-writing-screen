@@ -36,7 +36,7 @@ The response carries the original and the revision, nothing else. Write it as co
 | counts in the header and footer | adopted scores, packet excerpts, restated context |
 | codes `R1`-`R6`, `P1`-`P6` | adjectives about quality such as "important", "notable", "reasonable" |
 
-Write the reason, the kept facts and the protection class to `findings.json`. Ask before printing them. A response line longer than its original plus revision means the compression failed.
+Write the reason, the kept facts and the protection class to `findings.json`, together with the focused `removal_preserves` value for every candidate span and every proposed deletion. A finding reported without its focused value, or a deletion proposed without one, is incomplete: say so in `not_run` and keep the rewrite instead of the deletion. Ask before printing them. A response line longer than its original plus revision means the compression failed.
 
 ## Handoff packet
 

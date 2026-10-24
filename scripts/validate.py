@@ -128,6 +128,8 @@ def main() -> int:
     check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
     check("L<line> | <original sentence, verbatim>" in text,
           "SKILL.md must fix the response line format")
+    check("Focused checks are not optional" in text,
+          "SKILL.md must require focused checks before reporting findings")
     check("## Response compression" in questions_text, "questions.md must define response compression")
     check("banned in the response" in questions_text,
           "questions.md must list what the response may not contain")
@@ -202,6 +204,8 @@ def main() -> int:
     check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
     check("L<line> | <original sentence, verbatim>" in text,
           "SKILL.md must fix the response line format")
+    check("Focused checks are not optional" in text,
+          "SKILL.md must require focused checks before reporting findings")
     check("## Response compression" in questions_text, "questions.md must define response compression")
     check("banned in the response" in questions_text,
           "questions.md must list what the response may not contain")
