@@ -59,7 +59,7 @@ Only the first and last are routine deletion or compression targets. The middle 
 
 1. Name the job the sentence does. If it adds no evidence, scope, logic, precision, or reader guidance, delete it.
 2. Convert defensive limitation into positive scope. "We do not claim these cases are representative" becomes "The analysis covers three institutional settings from 2015 to 2023", and only when those facts exist in the draft.
-3. Replace stacked hedging without strengthening the evidence. "This may potentially suggest that X could influence Y" may become "These observations suggest that X may influence Y". Keep association distinct from causation and preserve warranted uncertainty. Name its source when known.
+3. Keep the strength of a warranted qualifier. A rewrite may not turn "could hardly" into "difficult", "cannot" into "may not always", or "no prior report" into "few reports". Weakening a supported claim is as wrong as inflating it. Replace stacked hedging without strengthening the evidence. "This may potentially suggest that X could influence Y" may become "These observations suggest that X may influence Y". Keep association distinct from causation and preserve warranted uncertainty. Name its source when known.
 4. Keep contrast only when the contrast is part of the argument. Drop reflexive "not X but Y", "rather than", "to be clear", "it should be noted that".
 5. Rebuild the paragraph around one job: claim first, then support, then any necessary limit. Remove repeated caveats, apology-like framing, and detours that exist only to fend off a hypothetical objection.
 6. Strengthen with evidence, not apology. If a claim feels too broad, narrow it, sharpen the concept, or point to the evidence; do not bolt on a protective clause.

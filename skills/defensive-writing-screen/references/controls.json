@@ -148,6 +148,24 @@
       "text": "A screened run leaves 80 of 100 units unread and finds two misses in the 20 it sampled.",
       "expected": "report_observed_rate_not_recall",
       "reason": "Report 2/20 and the unread count; never report recall from an unread population."
+    },
+    {
+      "id": "strength_change_forbidden",
+      "text": "With only these two coordinate classes, a single readout could hardly recover the value at a fixed lag.",
+      "expected": "keep_or_strengthen_only",
+      "reason": "A rewrite may not turn 'could hardly' into 'difficult' or 'may not always'. Weakening a warranted near-impossibility changes the claim, so keep it or state the same strength."
+    },
+    {
+      "id": "warranted_uncertainty",
+      "text": "To our knowledge, no previous report measures this effect at this scale.",
+      "expected": "keep",
+      "reason": "A named epistemic limit is not defensive padding. Removing it would overstate the literature claim."
+    },
+    {
+      "id": "compression_out_of_scope",
+      "text": "Two adjacent sentences give the same comparison in different words.",
+      "expected": "optional_compression_not_a_defensive_finding",
+      "reason": "Tighter prose is a legitimate edit but not a defensive-writing finding; label it optional and never count it as detection."
     }
   ],
   "validation_controls": [

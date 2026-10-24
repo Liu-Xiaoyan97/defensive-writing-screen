@@ -128,6 +128,10 @@ def main() -> int:
     check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
     check("L<line> | <original sentence, verbatim>" in text,
           "SKILL.md must fix the response line format")
+    check("keep the modal strength and degree" in text,
+          "SKILL.md must forbid changing modal strength in a revision")
+    check("not defensive-writing findings" in text,
+          "SKILL.md must state that compression is not a defensive finding")
     check("Focused checks are not optional" in text,
           "SKILL.md must require focused checks before reporting findings")
     check("## Response compression" in questions_text, "questions.md must define response compression")
@@ -176,7 +180,9 @@ def main() -> int:
         check(len(challenge_ids) >= 8, "semantic challenges must cover the calibrated decision classes")
         for required in ["resolved_reference", "unknown_reference", "protected_reframe",
                          "direction_without_number", "multiple_spans",
-                         "concessive_confirmed", "optional_explicit_scope", "sampled_unread"]:
+                         "concessive_confirmed", "optional_explicit_scope", "sampled_unread",
+                         "strength_change_forbidden", "warranted_uncertainty",
+                         "compression_out_of_scope"]:
             check(required in challenge_ids, f"semantic challenges missing {required}")
         validation = controls.get("validation_controls", [])
         check(len(validation) >= 6, "validation_controls must provide at least six frozen texts")
@@ -204,6 +210,10 @@ def main() -> int:
     check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
     check("L<line> | <original sentence, verbatim>" in text,
           "SKILL.md must fix the response line format")
+    check("keep the modal strength and degree" in text,
+          "SKILL.md must forbid changing modal strength in a revision")
+    check("not defensive-writing findings" in text,
+          "SKILL.md must state that compression is not a defensive finding")
     check("Focused checks are not optional" in text,
           "SKILL.md must require focused checks before reporting findings")
     check("## Response compression" in questions_text, "questions.md must define response compression")
