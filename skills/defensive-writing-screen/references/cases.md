@@ -68,6 +68,12 @@ The same environment was measured twice: once through per-unit agent tool calls 
 
 Routing agreed on the same eight units. Individual values differed by up to about 0.04, so the two paths are not interchangeable within one measurement and a run must name the path it used. The script also returns the resolved model identifier, which the tool path did not expose. A resumed run retried only the single failed unit and finished in seconds.
 
+## Coverage instead of sampling
+
+Sampling was introduced when review attention was assumed expensive. On a 20-paper corpus the random 12-unit probe covered about 28 percent of units and recovered no consistent recall, while deterministic surfaces did: every unit at or above 0.35, every candidate-span unit, and sentence-level hits together covered 17 of the 18 findings a full agent read produced as valid, at about 35 percent of units read. Sentence-level screening alone raised one document from 11 routed units to 17.
+
+The lesson is that recall should come from a score floor and finer granularity, not from drawing a sample. Keep a small probe only to estimate bias.
+
 ## Review-scope measurements
 
 Two aggregate runs on the same English draft compared the cost of the two review scopes. Only aggregate workload is recorded here; no document identity, section names or excerpts.

@@ -42,7 +42,7 @@ Write the reason, the kept facts and the protection class to `findings.json`, to
 
 ## Handoff packet
 
-The script owns the machine record; the agent owns judgment. `run_screen.py summarize` emits one packet containing only the units at or above the threshold: id, line range, four scores, the maximum, the exact paragraph, and the failed ids. The agent judges that packet and writes findings, not a ledger. `--sample N` (default 12 when the skill runs it) adds evenly spaced non-routed units, because the baseline's advantage is broad reading and the screen should test its own misses rather than assume they are absent.
+The script owns the machine record; the agent owns judgment. `run_screen.py summarize` emits one packet containing only the units at or above the threshold: id, line range, four scores, the maximum, the exact paragraph, and the failed ids. The agent judges that packet and writes findings, not a ledger. Coverage is a knob, not a lottery: lower `--min-score` to read more, add `--sentence-screen` from `scripts/split_sentences.py` to recover units whose paragraph score hides one defensive sentence, and keep `--sample` only as a bias probe. On a 20-paper corpus, a floor of 0.35 plus candidate spans covered 17 of the 18 findings an agent-only full read produced as valid.
 
 Paragraph judgment does not depend on document order, so units are evaluated in completion order and joined by id. Order only matters when the agent needs the paragraph's neighbors to interpret a backward reference; then it opens the source at the recorded line range instead of rereading the document.
 
@@ -135,7 +135,7 @@ Choose one scope before reading and report it with the result.
 
 | scope | reads | when |
 |---|---|---|
-| `screened` | All routed units, all focused candidates, the 0.45-0.65 band when small, plus a stratified sample of the rest: everything when 20 or fewer, otherwise at least 20 spread across the document. The response carries routed rows and a sample summary; the full table goes to an artifact. | Default when Jev passed the gate and the goal is triage. |
+| `screened` | Every unit at or above the score floor (default 0.35), every candidate-span unit, and every sentence-level hit. Deterministic; no random sample selects what gets read. | Default when Jev passed the gate. |
 | `full` | Every unit. | Publication acceptance, exhaustive requests, or any agent-only run. |
 
 In `screened` mode, count misses found in the sampled unread population and report `misses/sample`, never a recall claim. Unsampled units are reported as unread, not as clean. A Jev-first run that also reads every unit cannot save agent work by construction, so report scope before discussing cost.

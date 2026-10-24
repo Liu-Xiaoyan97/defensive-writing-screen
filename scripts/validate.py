@@ -124,6 +124,10 @@ def main() -> int:
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
     check("report only what carries risk" in text.lower(),
           "SKILL.md must state that only risk-bearing results are recorded")
+    check("no random sample decides what gets read" in text,
+          "SKILL.md must make coverage deterministic")
+    check("--min-score" in text, "SKILL.md must expose the score floor")
+    (SKILL_DIR / "scripts" / "split_sentences.py").is_file() or failures.append("split_sentences.py missing")
     check("review scope" in text or "review_scope" in text, "SKILL.md must name the review scope in the response")
     check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
     check("L<line> | <original sentence, verbatim>" in text,
@@ -206,6 +210,10 @@ def main() -> int:
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
     check("report only what carries risk" in text.lower(),
           "SKILL.md must state that only risk-bearing results are recorded")
+    check("no random sample decides what gets read" in text,
+          "SKILL.md must make coverage deterministic")
+    check("--min-score" in text, "SKILL.md must expose the score floor")
+    (SKILL_DIR / "scripts" / "split_sentences.py").is_file() or failures.append("split_sentences.py missing")
     check("review scope" in text or "review_scope" in text, "SKILL.md must name the review scope in the response")
     check("ASD-STE100" in text, "SKILL.md must name the controlled-language discipline for the response")
     check("L<line> | <original sentence, verbatim>" in text,

@@ -233,7 +233,13 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--screen", type=Path, help="summarize: triage output to read")
     parser.add_argument("--threshold", type=float, default=0.65, help="summarize: routing threshold")
     parser.add_argument("--sample", type=int, default=0,
-                        help="summarize: also hand over N evenly spaced non-routed units for miss checking")
+                        help="summarize: optional bias probe only; recall comes from --min-score and candidates")
+    parser.add_argument("--min-score", type=float, default=0.35,
+                        help="summarize: include units at or above this score, not only routed ones")
+    parser.add_argument("--markers-from", type=Path,
+                        help="summarize: units.jsonl whose candidate spans route a unit regardless of score")
+    parser.add_argument("--sentence-screen", type=Path,
+                        help="summarize: sentence-level triage output; parent units with a hit are routed")
     parser.add_argument("--chars", type=int, default=1200, help="summarize: per-unit text limit")
     parser.add_argument("--resume", action="store_true",
                         help="keep succeeded rows from --out and retry only missing or failed ids")
@@ -249,7 +255,29 @@ def main(argv: list[str]) -> int:
         texts = {}
         if args.units and args.units.is_file():
             texts = {unit["id"]: unit for unit in read_jsonl(args.units)}
-        routed = [r for r in rows if r.get("ok") and (r.get("triage") or 0) >= args.threshold]
+        routed = [r for r in rows if r.get("ok") and (r.get("triage") or 0) >= args.min_score]
+        marked: set[str] = set()
+        source = args.markers_from or args.units
+        if source and source.is_file():
+            for unit in read_jsonl(source):
+                if unit.get("candidates"):
+                    marked.add(unit["id"])
+        routed += [{"id": unit_id, "triage": None, "triage_dim": "candidate", "ok": True,
+                    "candidate_only": True}
+                   for unit_id in sorted(marked - {row["id"] for row in routed})]
+        sentence_hits: dict[str, dict] = {}
+        if args.sentence_screen and args.sentence_screen.is_file():
+            for row in read_jsonl(args.sentence_screen):
+                if not row.get("ok") or (row.get("triage") or 0) < args.threshold:
+                    continue
+                parent = row["id"].rsplit("_s", 1)[0]
+                best = sentence_hits.get(parent)
+                if best is None or (row.get("triage") or 0) > (best.get("triage") or 0):
+                    sentence_hits[parent] = row
+        already = {row.get("id") for row in routed}
+        routed += [{"id": parent, "triage": hit.get("triage"), "triage_dim": hit.get("triage_dim"),
+                    "sentence": hit.get("id"), "ok": True}
+                   for parent, hit in sorted(sentence_hits.items()) if parent not in already]
         routed.sort(key=lambda r: -(r.get("triage") or 0))
         failed = [r["id"] for r in rows if not r.get("ok")]
         unread = [r["id"] for r in rows if not r.get("ok") or (r.get("triage") or 0) < args.threshold]
@@ -262,12 +290,13 @@ def main(argv: list[str]) -> int:
         for row in routed:
             unit = texts.get(row["id"], {})
             scores = ", ".join(f"{name}={row.get(name):.3f}" for name in questions
-                               if isinstance(row.get(name), (int, float)))
+                               if isinstance(row.get(name), (int, float))) or "no score: candidate span only"
             text = " ".join((unit.get("text") or "").split())
             if args.chars and len(text) > args.chars:
                 text = text[: args.chars] + " ..."
-            out.append(f"## {row['id']} | lines {unit.get('start', '?')}-{unit.get('end', '?')} | "
-                       f"max {row.get('triage_dim')} {row.get('triage'):.3f}")
+            origin = f" via {row['sentence']}" if row.get("sentence") else ""
+            score = "candidate span" if row.get("candidate_only") else f"max {row.get('triage_dim')} {row['triage']:.3f}"
+            out.append(f"## {row['id']} | lines {unit.get('start', '?')}-{unit.get('end', '?')} | {score}{origin}")
             out.append(f"{scores}")
             out.append("")
             out.append(text)
@@ -287,8 +316,9 @@ def main(argv: list[str]) -> int:
                 out.append(text)
                 out.append("")
         args.out.write_text("\n".join(out).rstrip() + "\n", encoding="utf-8")
-        print(f"summarize: {len(routed)} routed handed over; {len(failed)} failed; {args.sample} sampled",
-              file=sys.stderr)
+        print(f"summarize: {len(routed)} units handed over ({len(sentence_hits)} from sentence hits, "
+              f"{len(marked)} by candidate span); "
+              f"{len(failed)} failed; {args.sample} sampled", file=sys.stderr)
         return 0
 
     endpoint = args.endpoint or (args.base.rstrip("/") + args.path)
