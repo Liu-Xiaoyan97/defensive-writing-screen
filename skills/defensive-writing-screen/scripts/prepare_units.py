@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+"""Split a Markdown or plain-text draft into screening units.
+
+Emits one JSON object per prose paragraph: stable id, line range, verbatim
+text, and optional defensive-phrase candidate spans. No network, no
+dependencies, no writes.
+
+Usage:
+    python3 prepare_units.py draft.md > units.jsonl
+    python3 prepare_units.py draft.md --max-units 40
+    python3 prepare_units.py draft.md --candidates
+    cat draft.md | python3 prepare_units.py - --candidates
+
+Output fields:
+    id          <slug>_p<N>, stable for the same input and options
+    start,end   1-based line range
+    paragraph   paragraph index within the emitted set
+    text        verbatim paragraph text, blank lines collapsed to one space
+    candidates  exact substrings that may deserve a focused Jev question
+
+Candidates are retrieval hints only. A paragraph without a candidate span is
+still screened; absence of a phrase proves nothing.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+# Phrases that commonly mark defensive or self-undermining phrasing.
+# They are retrieval hints, not verdicts. Extend per language and genre.
+PATTERNS_ZH = [
+    r"仅仅[^。；，]{0,20}",
+    r"只是[^。；，]{0,20}初步[^。；，]{0,20}",
+    r"只能提供[^。；，]{0,12}",
+    r"尚不能[^。；，]{0,20}",
+    r"仍有[^。；，]{0,12}提升空间",
+    r"并不声称[^。；，]{0,30}",
+    r"无意[^。；，]{0,20}",
+    r"不意味着[^。；，]{0,30}",
+    r"不应被理解为[^。；，]{0,30}",
+    r"值得注意的是[^。；，]{0,20}",
+    r"需要澄清的是[^。；，]{0,20}",
+    r"并非[^。；，]{0,20}而是[^。；，]{0,20}",
+]
+PATTERNS_EN = [
+    r"\bnot claim[^.;]{0,40}",
+    r"\bdo(?:es)? not attempt to[^.;]{0,40}",
+    r"\brather than[^.;]{0,30}",
+    r"\bshould not be (?:taken|read|understood)[^.;]{0,30}",
+    r"\bgoal is not[^.;]{0,30}",
+    r"\bto be clear\b",
+    r"\bit (?:is|should be) worth noting\b",
+    r"\bof course,[^.;]{0,40}",
+    r"\bonly a preliminary[^.;]{0,30}",
+    r"\bmay potentially[^.;]{0,40}",
+    r"\bcould possibly[^.;]{0,40}",
+]
+
+SKIP_PREFIXES = ("```", "~~~", "|", "![", "<img", "<table", "$$", "\\[", "\\begin{", "%")
+HEADING = re.compile(r"^#{1,6}\s")
+FOOTNOTE_DEF = re.compile(r"^\[\^[^\]]+\]:")
+
+
+def slugify(value: str) -> str:
+    cleaned = re.sub(r"[^A-Za-z0-9._-]+", "-", value).strip("-._")
+    return cleaned or "draft"
+
+
+def normalize(block: str) -> str:
+    return re.sub(r"\s*\n\s*", " ", block).strip()
+
+
+def is_prose(block: str, min_chars: int) -> bool:
+    stripped = block.lstrip()
+    if HEADING.match(stripped) or FOOTNOTE_DEF.match(stripped):
+        return False
+    if stripped.startswith(SKIP_PREFIXES):
+        return False
+    if re.fullmatch(r"[-*_=\s]{3,}", stripped):
+        return False
+    has_letters = re.search(r"[\w\u4e00-\u9fff]", stripped) is not None
+    return has_letters and len(stripped) >= min_chars
+
+
+def iter_blocks(text: str):
+    """Yield (start_line, end_line, block), splitting on blank lines outside fences."""
+    in_fence = False
+    start = None
+    buf: list[str] = []
+    for number, line in enumerate(text.splitlines(), start=1):
+        stripped = line.strip()
+        if stripped.startswith("```") or stripped.startswith("~~~"):
+            in_fence = not in_fence
+            if start is None:
+                start = number
+            buf.append(line)
+            continue
+        if in_fence:
+            buf.append(line)
+            continue
+        if not stripped:
+            if buf:
+                yield start, number - 1, "\n".join(buf)
+            start, buf = None, []
+            continue
+        if start is None:
+            start = number
+        buf.append(line)
+    if buf:
+        yield start, number, "\n".join(buf)
+
+
+def find_candidates(text: str) -> list[str]:
+    found: list[str] = []
+    for pattern in PATTERNS_ZH + PATTERNS_EN:
+        for match in re.finditer(pattern, text, flags=re.IGNORECASE):
+            span = match.group(0).strip(" \t，,。；;：:")
+            if len(span) > 16 and span[-1] not in "。.，,；;：:!?！？" and " " in span:
+                span = span.rsplit(" ", 1)[0]
+            if len(span) >= 2 and span not in found:
+                found.append(span)
+    return found
+
+
+def main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description="Split a draft into screening units.")
+    parser.add_argument("source", nargs="?", default="-", help="Markdown/text file, or - for stdin")
+    parser.add_argument("--name", help="slug for unit ids; defaults to file stem")
+    parser.add_argument("--candidates", action="store_true", help="include defensive-phrase candidate spans")
+    parser.add_argument("--max-units", type=int, default=0, help="emit at most N units (0 = all)")
+    parser.add_argument("--min-chars", type=int, default=12, help="skip blocks shorter than this")
+    args = parser.parse_args(argv)
+
+    if args.source == "-":
+        text = sys.stdin.read()
+        name = args.name or "draft"
+    else:
+        path = Path(args.source)
+        text = path.read_text(encoding="utf-8")
+        name = args.name or path.stem
+
+    slug = slugify(name)
+    emitted = 0
+    for start, end, block in iter_blocks(text):
+        paragraph = normalize(block)
+        if len(paragraph) < args.min_chars or not is_prose(block, args.min_chars):
+            continue
+        unit = {
+            "id": f"{slug}_p{emitted}",
+            "start": start,
+            "end": end,
+            "paragraph": emitted,
+            "text": paragraph,
+        }
+        if args.candidates:
+            unit["candidates"] = find_candidates(paragraph)
+        print(json.dumps(unit, ensure_ascii=False))
+        emitted += 1
+        if args.max_units and emitted >= args.max_units:
+            break
+
+    if emitted == 0:
+        print("no prose units found", file=sys.stderr)
+        return 1
+    print(f"{emitted} unit(s) emitted", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

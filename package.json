@@ -1,0 +1,26 @@
+{
+  "name": "defensive-writing-screen",
+  "version": "0.2.0",
+  "description": "Jev-first defensive-writing audit for agent skills: screen paragraphs with calibrated yes/no judgments, confirm high-probability candidates with the agent, then rewrite using bundled anti-defensive rules.",
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "agent-skill",
+    "agent-skills",
+    "writing",
+    "academic-writing",
+    "jev",
+    "typesafe",
+    "editing"
+  ],
+  "files": [
+    "skills",
+    "scripts",
+    "LICENSE",
+    "NOTICE.md",
+    "README.md"
+  ],
+  "pi": {
+    "skills": ["./skills"]
+  }
+}
