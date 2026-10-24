@@ -143,6 +143,33 @@ value. They fix the expected action so two readers can compare records.
 | `n3_duplicate_fact` | The same setup sentence appears in a related-work subsection and again in the setup subsection. | N3 relocate; keep the setup subsection | must name the section that keeps it |
 | `n3_kept_where_needed` | A control condition appears once, immediately before the comparison it governs. | keep | the fact is already where the reader needs it |
 
+### Protection controls (question set v3)
+
+Each sentence below routes high on a dimension yet must stay, because removing or
+restating it would change what a reader can verify, reproduce, or interpret. The class
+is the record, not the probability.
+
+| id | text | routes | class | expected agent decision |
+|---|---|---|---:|---|
+| `protect_unfavorable` | The method scores 55.1 against 67.5 for the baseline on the fourth task. | 0.897 (`claim_negation`) | P1 | keep; the number and its direction stay |
+| `protect_metric_semantics` | The activated count measures the parameters that reach the output rather than the arithmetic actually performed. | 0.946 (`claim_negation`) | P1, P6 | keep; the sentence defines the metric |
+| `protect_proof_scope` | The stability conclusion applies to the unbounded recurrence, not to the floored implementation. | 0.998 (`claim_negation`) | P2 | keep; the proof scope is a fact |
+| `protect_protocol` | The two groups differ in corpus, tokenizer, budget, and context length. | 0.412 (`vague_hedge`) | P3 | keep; reproduction conditions |
+| `protect_intervention_scope` | The replacement test measures the whole path and does not isolate its components. | 0.363 (`vague_hedge`) | P4 | keep; what the check did not isolate |
+| `protect_premise` | The auxiliary objective exists to keep the assignment from collapsing onto a few units. | 0.279 (`claim_negation`) | P5 | keep; the reason the component exists |
+
+A keep that is not routed needs no class. A routed keep without one is an incomplete
+record, because the reason it stays is exactly what the probability could not see.
+
+### Structure controls (S1-S4)
+
+| id | input | flags | expected agent decision |
+|---|---|---|---|
+| `structure_missing_conclusion` | Sections: Abstract, Introduction, Method, Experiments, Limitations. | `missing_conclusion`, `ends_on_limitations` | report S1 and S2; propose a conclusion section |
+| `structure_complete` | Sections: Abstract, Introduction, Related Work, Method, Experiments, Conclusion, Limitations. | none | no structural finding |
+| `structure_folded_related` | Sections: Abstract, Introduction, Method, Experiments, Conclusion. | `related_work_absent_or_folded` | report S4 as informational, not a defect |
+| `structure_supplement` | Fourteen appendix sections, no abstract or introduction. | `sparse_structure` | no defect; the genre carries no such roles |
+
 ## What the numbers mean
 
 - **Sufficiency wording compresses the scale.** v1 scored the canonical defensive sentences at 0.15-0.45, below the gate it shipped with, and returned no candidate on a draft that contained several. A low v1 score is not evidence about a document.

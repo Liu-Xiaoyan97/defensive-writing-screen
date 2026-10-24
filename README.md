@@ -47,6 +47,14 @@ evidence covers, and N3 relocates or consolidates a fact that interrupts its uni
 appears in two sections. Each action keeps every number, direction, and condition;
 N1 may not turn a deficit into a match, and N3 must name where the fact lands.
 
+Six protection classes keep the screen away from facts: measured results and their
+direction, mathematical and proof conditions, measurement and reproduction conditions,
+the scope of an intervention, design premises, and the semantics of a comparison. A high
+score never overrides them, and every routed keep records the class it belongs to. A
+structure check reports a missing conclusion, a document that ends on limitations, a
+missing limitations statement, and related work that is absent or folded into the
+introduction.
+
 ## Install
 
 The package is plain files: a skill directory, three references, and two stdlib

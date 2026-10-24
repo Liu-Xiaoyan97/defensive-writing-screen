@@ -128,9 +128,45 @@ Use for every span returned by `scripts/prepare_units.py --candidates`, independ
 
 A high `true` means the span is a deletion *candidate*. A low value means the span carries something, so the options are keep or restructure, not delete. The agent still decides, because `evidence` may be incomplete. Observed span values: 0.93 for a contrast clause that repeats a fact stated elsewhere, 0.72 for a vague weakening clause, 0.70 for a disclaimer whose content belongs in a setup section, 0.66 for a summary sentence restating earlier content, 0.60 for a duplicated scope reminder, and 0.39 for a harmless restatement that the agent kept. The question orders removable spans above harmless ones but does not separate removable from necessary wording on its own, so it never authorizes deletion.
 
+## Protection classes (P1-P6)
+
+These are not verdict categories. They are the classes a span belongs to when removing
+or restating it would change what a reader can verify, reproduce, or interpret. Apply
+the test before any rewrite: a routed unit that belongs to one of them stays, and the
+record names the class next to the keep category.
+
+| id | class | test |
+|---|---|---|
+| P1 | Measured result | Would removal change a number, its sign, its direction, or the comparison it belongs to? Unfavorable results and metric direction belong here. |
+| P2 | Mathematical or proof condition | Would removal drop a bound, a floor, an identity case, an assumption, or the scope within which a proof holds? |
+| P3 | Measurement or reproduction condition | Would removal drop the corpus, tokenizer, budget, context length, precision, protocol, implementation path, or configuration that a reader needs to reproduce or interpret the number? |
+| P4 | Scope of an intervention or check | Would removal drop what was varied, what was held fixed, what the check covered, or what it did not isolate? |
+| P5 | Design premise or motivation | Would removal drop the reason a component exists, the problem it answers, or the baseline the design is measured against? |
+| P6 | Comparison semantics | Would removal turn a ranked comparison into a spread, or change a per-item difference into a summary that hides it? |
+
+A high Jev probability never overrides a protection class. The two measured failures that
+created this section are representatives of the class: a metric-semantics sentence about
+what an activated count does and does not measure routed at 0.946, and an unfavorable
+per-task comparison routed at 0.897. Both stay.
+
+## Structural findings (S1-S4)
+
+Document-level, from `scripts/check_structure.py`. They are reported next to the unit
+record, never as a unit verdict, and each states whether the genre requires the role.
+
+| id | finding | note |
+|---|---|---|
+| S1 | No conclusion-like section | A paper's closing section should restate what was solved, proposed, and shown. |
+| S2 | Document ends on limitations | The last section a reader meets is a withdrawal rather than the takeaway. |
+| S3 | No limitations statement | Required when the draft makes claims whose scope is not bounded in the sections themselves. |
+| S4 | Related work absent or folded into the introduction | Often legitimate; report where the prior-work discussion sits. |
+
+A supplement, appendix, extended abstract, letter, or proposal carries a different set.
+Say which absences the genre allows instead of reporting them as defects.
+
 ## Verdict categories
 
-Every unit gets one verdict. A rewrite cites one rule and may carry narrative actions, recorded together as `R6+N3`; a narrative action on its own cites one action id; a keep cites one category. Each list is closed so that two readers can compare their records.
+Every unit gets one verdict. A rewrite cites one rule and may carry narrative actions, recorded together as `R6+N3`; a narrative action on its own cites one action id; a keep cites one category, plus its protection class when the unit was routed, as in `K5+P3`. Each list is closed so that two readers can compare their records.
 
 Rewrite rules:
 

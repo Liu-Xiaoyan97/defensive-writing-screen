@@ -124,6 +124,34 @@ The test is the same for all three: after the move, every number, metric directi
 condition, and unfavorable result is still present, and the sentence that carries the
 result is the one a reader meets first. A unit that fails the test keeps its verdict.
 
+## Protection before rewriting
+
+Six classes of statement stay even when a score says otherwise, because removing or
+restating them changes what a reader can verify, reproduce, or interpret: a measured
+result and its direction, a mathematical or proof condition, a measurement or
+reproduction condition, the scope of an intervention or check, a design premise or
+motivation, and the semantics of a comparison. Check them before drafting any
+replacement. A sentence that reports an unfavorable number is not defensive writing; it
+is evidence. A sentence that names a corpus, budget, precision, or configuration is not
+a caveat; it is a condition. A sentence that says what an intervention did not isolate
+is not a disclaimer; it is the scope of the claim.
+
+The distinction is testable: ask what a reader could no longer verify, reproduce, or
+interpret if the span disappeared. If the answer is anything, the span stays and the
+record names the class.
+
+## Document structure
+
+A paper normally carries an abstract, an introduction, related work, a method,
+experiments, a conclusion, and a limitations statement. Related work may fold into the
+introduction, and limitations may sit inside a discussion. A draft that ends on its
+limitations section leaves the reader with a withdrawal instead of the takeaway, and a
+draft with no closing section at all leaves the reader without a statement of what was
+solved, proposed, and shown. Both are structural findings, reported once at the document
+level. Absence is not automatically a defect: a supplement, appendix, extended abstract,
+letter, or proposal carries a different set, and the report says which roles the genre
+does not require.
+
 ## Metrics, experiments, unfavorable results
 
 - When a metric is unfavorable, state the condition, metric, and number, then the tradeoff. Do not turn one weaker metric into a verdict on the whole method, and do not switch evaluation criteria to avoid the result. "Accuracy falls from 90% to 89% while latency falls from 100 ms to 60 ms" stays a two-sided statement.

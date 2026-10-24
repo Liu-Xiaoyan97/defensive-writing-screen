@@ -38,6 +38,8 @@ GUIDE_CAPABILITIES = [
     "## Discouraged patterns",
     "## Retreating tails",
     "## Narrative placement",
+    "## Protection before rewriting",
+    "## Document structure",
     "## Metrics, experiments, unfavorable results",
     "## Chinese-specific habits",
     "## English-specific habits",
@@ -105,6 +107,12 @@ def main() -> int:
     for marker in ["scope_tail", "| R6 |", "Tail calibration"]:
         check(marker in questions_text, f"questions.md missing v3 marker: {marker}")
     check("Narrative actions" in questions_text, "questions.md missing the narrative action section")
+    for marker in ["P1", "P2", "P3", "P4", "P5", "P6"]:
+        check(marker in questions_text, f"questions.md missing protection class: {marker}")
+        check(marker in text, f"SKILL.md missing protection class: {marker}")
+    for marker in ["S1", "S2", "S3", "S4"]:
+        check(marker in questions_text, f"questions.md missing structural finding: {marker}")
+        check(marker in text, f"SKILL.md missing structural finding: {marker}")
     for marker in ["N1", "N2", "N3"]:
         check(marker in questions_text, f"questions.md missing narrative action id: {marker}")
         check(marker in text, f"SKILL.md missing narrative action id: {marker}")
@@ -112,7 +120,7 @@ def main() -> int:
         "requires no other skill" in text,
         "SKILL.md must state that the skill requires no other skill",
     )
-    for step in range(1, 8):
+    for step in range(1, 9):
         check(f"{step}. **" in text, f"SOP step {step} missing")
 
     for rel in REQUIRED_REFS:
@@ -167,6 +175,16 @@ def main() -> int:
     if merge.is_file():
         result = subprocess.run([sys.executable, str(merge), "--help"], capture_output=True, text=True)
         check(result.returncode == 0, f"merge_verdicts --help failed: {result.stderr.strip()}")
+
+    structure = SKILL_DIR / "scripts" / "check_structure.py"
+    check(structure.is_file(), "check_structure.py missing")
+    if structure.is_file():
+        sample = "# Abstract\n\nText.\n\n# Introduction\n\nText.\n\n# Limitations\n\nText.\n"
+        result = subprocess.run([sys.executable, str(structure), "-"], input=sample,
+                                capture_output=True, text=True)
+        check(result.returncode == 0, f"check_structure failed: {result.stderr.strip()}")
+        check("missing_conclusion" in result.stdout, "check_structure should flag a missing conclusion")
+        check("ends_on_limitations" in result.stdout, "check_structure should flag a limitations ending")
 
     script = SKILL_DIR / "scripts" / "prepare_units.py"
     check(script.is_file(), "prepare_units.py missing")
