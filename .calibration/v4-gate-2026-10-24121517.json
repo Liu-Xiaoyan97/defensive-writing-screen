@@ -1,0 +1,116 @@
+{
+  "model_alias": "jev-latest",
+  "questions_revision": "v4",
+  "events": [
+    {
+      "id": "pos_do_not_claim",
+      "designated": "claim_negation",
+      "probs": {
+        "claim_negation": 0.998599,
+        "negative_contrast": 0.001968,
+        "vague_hedge": 0.096747,
+        "concessive_hedge": 0.054821
+      },
+      "max": 0.998599,
+      "pass": true
+    },
+    {
+      "id": "pos_not_x_but_y",
+      "designated": "negative_contrast",
+      "probs": {
+        "claim_negation": 0.993031,
+        "negative_contrast": 0.936753,
+        "vague_hedge": 0.138627,
+        "concessive_hedge": 0.318569
+      },
+      "max": 0.993031,
+      "pass": true
+    },
+    {
+      "id": "pos_although_limited",
+      "designated": "concessive_hedge",
+      "probs": {
+        "claim_negation": 0.816173,
+        "negative_contrast": 0.032046,
+        "vague_hedge": 0.391803,
+        "concessive_hedge": 0.995095
+      },
+      "max": 0.995095,
+      "pass": true
+    },
+    {
+      "id": "pos_stacked_hedge",
+      "designated": "vague_hedge",
+      "probs": {
+        "claim_negation": 0.001595,
+        "negative_contrast": 0.000401,
+        "vague_hedge": 0.983292,
+        "concessive_hedge": 0.024968
+      },
+      "max": 0.983292,
+      "pass": true
+    },
+    {
+      "id": "neg_neutral_setup",
+      "designated": "all",
+      "probs": {
+        "claim_negation": 0.000547,
+        "negative_contrast": 0.00077,
+        "vague_hedge": 0.007932,
+        "concessive_hedge": 0.00081
+      },
+      "max": 0.007932,
+      "pass": true
+    },
+    {
+      "id": "neg_neutral_result",
+      "designated": "all",
+      "probs": {
+        "claim_negation": 0.000743,
+        "negative_contrast": 0.001166,
+        "vague_hedge": 0.005746,
+        "concessive_hedge": 0.010396
+      },
+      "max": 0.010396,
+      "pass": true
+    }
+  ],
+  "raw": [
+    {
+      "id": "pos_do_not_claim",
+      "dimension": "claim_negation",
+      "text": "We do not claim that these cases are representative of all settings.",
+      "raw": "{\n  \"claim_negation\": {\n    \"type\": \"noul\",\n    \"value\": 0.9985988998575565,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.9985988998575565\n    }\n  },\n  \"negative_contrast\": {\n    \"type\": \"noul\",\n    \"value\": 0.001967831143785534,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.001967831143785534\n    }\n  },\n  \"vague_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.09674654740069541,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.09674654740069541\n    }\n  },\n  \"concessive_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.05482089178217499,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.05482089178217499\n    }\n  }\n}"
+    },
+    {
+      "id": "pos_not_x_but_y",
+      "dimension": "negative_contrast",
+      "text": "This paper is not intended to provide a comprehensive account of the phenomenon, but rather to examine one specific mechanism.",
+      "raw": "{\n  \"claim_negation\": {\n    \"type\": \"noul\",\n    \"value\": 0.9930313043774751,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.9930313043774751\n    }\n  },\n  \"negative_contrast\": {\n    \"type\": \"noul\",\n    \"value\": 0.936752749393014,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.936752749393014\n    }\n  },\n  \"vague_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.13862745867966175,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.13862745867966175\n    }\n  },\n  \"concessive_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.31856881027965916,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.31856881027965916\n    }\n  }\n}"
+    },
+    {
+      "id": "pos_although_limited",
+      "dimension": "concessive_hedge",
+      "text": "While the sample is limited and cannot capture every variation, it still offers useful insights.",
+      "raw": "{\n  \"claim_negation\": {\n    \"type\": \"noul\",\n    \"value\": 0.8161729142426151,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.8161729142426151\n    }\n  },\n  \"negative_contrast\": {\n    \"type\": \"noul\",\n    \"value\": 0.03204602897876362,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.03204602897876362\n    }\n  },\n  \"vague_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.39180264901480766,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.39180264901480766\n    }\n  },\n  \"concessive_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.9950953300279326,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.9950953300279326\n    }\n  }\n}"
+    },
+    {
+      "id": "pos_stacked_hedge",
+      "dimension": "vague_hedge",
+      "text": "This may potentially suggest that X could possibly be associated with Y.",
+      "raw": "{\n  \"claim_negation\": {\n    \"type\": \"noul\",\n    \"value\": 0.0015950078752089555,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.0015950078752089555\n    }\n  },\n  \"negative_contrast\": {\n    \"type\": \"noul\",\n    \"value\": 0.00040124719800516904,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.00040124719800516904\n    }\n  },\n  \"vague_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.983291991302155,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.983291991302155\n    }\n  },\n  \"concessive_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.02496809226862914,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.02496809226862914\n    }\n  }\n}"
+    },
+    {
+      "id": "neg_neutral_setup",
+      "dimension": "all",
+      "text": "We analyze four cases over the same period.",
+      "raw": "{\n  \"claim_negation\": {\n    \"type\": \"noul\",\n    \"value\": 0.0005467263411363665,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.0005467263411363665\n    }\n  },\n  \"negative_contrast\": {\n    \"type\": \"noul\",\n    \"value\": 0.0007700561765423476,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.0007700561765423476\n    }\n  },\n  \"vague_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.00793203811831262,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.00793203811831262\n    }\n  },\n  \"concessive_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.0008096838955919807,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.0008096838955919807\n    }\n  }\n}"
+    },
+    {
+      "id": "neg_neutral_result",
+      "dimension": "all",
+      "text": "Under the same conditions the two estimates are 49.47% and 46.08%.",
+      "raw": "{\n  \"claim_negation\": {\n    \"type\": \"noul\",\n    \"value\": 0.000743338050633593,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.000743338050633593\n    }\n  },\n  \"negative_contrast\": {\n    \"type\": \"noul\",\n    \"value\": 0.0011660721613939056,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.0011660721613939056\n    }\n  },\n  \"vague_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.005745594943385112,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.005745594943385112\n    }\n  },\n  \"concessive_hedge\": {\n    \"type\": \"noul\",\n    \"value\": 0.010395718736500274,\n    \"raw\": {\n      \"type\": \"noul\",\n      \"noul\": 0.010395718736500274\n    }\n  }\n}"
+    }
+  ]
+}

@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "defensive-writing-screen"
 SKILL_MD = SKILL_DIR / "SKILL.md"
-REQUIRED_REFS = ["references/questions.md", "references/rewrite-guide.md", "references/cases.md"]
+REQUIRED_REFS = ["references/questions.md", "references/rewrite-guide.md", "references/cases.md", "references/controls.json"]
 REQUIRED_SECTIONS = ["## SOP", "## Working without Jev", "## Reporting"]
 # Capabilities the skill must supply itself; each must appear as a section in the
 # bundled rulebook so no installed skill is needed to rewrite prose.
@@ -102,11 +102,58 @@ def main() -> int:
 
     for section in REQUIRED_SECTIONS:
         check(section in text, f"SKILL.md missing section: {section}")
-    check("scope_tail" in text, "SKILL.md must name the scope_tail dimension")
+    unknown=set(text.split("active_dimensions")) and None
     questions_text = (SKILL_DIR / "references" / "questions.md").read_text(encoding="utf-8")
-    for marker in ["scope_tail", "| R6 |", "Tail calibration"]:
-        check(marker in questions_text, f"questions.md missing v3 marker: {marker}")
-    check("Narrative actions" in questions_text, "questions.md missing the narrative action section")
+    for marker in ["| R6 |", "Tail calibration history", "Protection classes"]:
+        check(marker in questions_text, f"questions.md missing marker: {marker}")
+    check("scope_tail" in text, "SKILL.md must state that scope_tail is retired")
+    check("retired" in text, "SKILL.md must state that scope_tail is retired")
+    for marker in ["null", "untriaged_control_failed", "agent-only"]:
+        check(marker in text, f"SKILL.md missing failure-state marker: {marker}")
+    for marker in ["P1", "P2", "P3", "P4", "P5", "P6"]:
+        check(marker in questions_text, f"questions.md missing protection class: {marker}")
+    for marker in ["N1", "N2", "N3"]:
+        check(marker in questions_text, f"questions.md missing narrative action: {marker}")
+    for marker in ["R1", "R2", "R3", "R4", "R5", "R6", "K1", "K7", "S1", "S6"]:
+        check(marker in questions_text, f"questions.md missing verdict/structural id: {marker}")
+
+    # Canonical questions and controls: single source of truth, fixed counts and ids.
+    controls_path = SKILL_DIR / "references" / "controls.json"
+    check(controls_path.is_file(), "controls.json missing")
+    if controls_path.is_file():
+        controls = json.loads(controls_path.read_text(encoding="utf-8"))
+        questions = controls.get("questions", {})
+        check(set(questions) == {"claim_negation", "negative_contrast", "vague_hedge", "concessive_hedge"},
+              f"active question set must contain exactly four dimensions, got {sorted(questions)}")
+        check(controls.get("active_dimensions") == list(questions),
+              "active_dimensions must match the question keys in order")
+        check("scope_tail" not in questions, "scope_tail must not be an active Jev dimension in v4")
+        check("scope_tail" not in controls.get("active_dimensions", []),
+              "scope_tail must not be listed as active")
+        rows = controls.get("controls", [])
+        positives = [r for r in rows if r["id"].startswith("pos_")]
+        negatives = [r for r in rows if r["id"].startswith("neg_")]
+        check(len(positives) == 4, f"control gate must list four positive controls, got {len(positives)}")
+        check(len(negatives) == 2, f"control gate must list two negative controls, got {len(negatives)}")
+        check(controls.get("thresholds") == {"positive_min": 0.65, "negative_max": 0.20},
+              "control thresholds must be positive_min 0.65 and negative_max 0.20")
+        for row in rows:
+            check(row.get("designated_dimension") in {*questions, "all"},
+                  f"control {row['id']} names an inactive dimension")
+            check(bool(row.get("text")), f"control {row['id']} has no text")
+        challenge_ids = {row["id"] for row in controls.get("semantic_challenges", [])}
+        check(len(challenge_ids) >= 8, "semantic challenges must cover the calibrated decision classes")
+        for required in ["resolved_reference", "unknown_reference", "protected_reframe",
+                         "direction_without_number", "multiple_spans"]:
+            check(required in challenge_ids, f"semantic challenges missing {required}")
+        validation = controls.get("validation_controls", [])
+        check(len(validation) >= 6, "validation_controls must provide at least six frozen texts")
+        gate_texts = {row["text"] for row in rows}
+        check(not ({row["text"] for row in validation} & gate_texts),
+              "validation_controls must not reuse gate control texts")
+        for row in validation:
+            check(row.get("designated_dimension") in {*questions, "all"},
+                  f"validation control {row['id']} names an inactive dimension")
     for marker in ["P1", "P2", "P3", "P4", "P5", "P6"]:
         check(marker in questions_text, f"questions.md missing protection class: {marker}")
         check(marker in text, f"SKILL.md missing protection class: {marker}")
@@ -205,6 +252,65 @@ def main() -> int:
                 check(key in unit, f"unit missing key: {key}")
             for span in unit.get("candidates", []):
                 check(span in unit["text"], "candidate span must be a verbatim substring")
+
+        phrase = "Within recurrent memory, the states do not by themselves provide history."
+        result = subprocess.run([sys.executable, str(script), "-", "--format", "text", "--candidates"],
+                                input=phrase + "\n", capture_output=True, text=True)
+        check(result.returncode == 0, "prepare_units --format text failed")
+        spans = json.loads(result.stdout.splitlines()[0]).get("candidates", []) if result.stdout.strip() else []
+        check("not by themselves" in spans,
+              f"candidate extraction must keep a complete fixed phrase, got {spans}")
+
+        tex = ("\\documentclass{article}\n\\begin{document}\n"
+               "\\section{Experiments}\n\\label{sec:exp}\n"
+               "At a 1B-token budget the model reaches 63.2.\n\\begin{equation}\nP=1\n\\end{equation}\n"
+               "\\begin{table}\n\\begin{tabular}{lr}\nrow & 1 \\\\\n\\end{tabular}\n\\caption{A caption.}\n\\end{table}\n"
+               "The check covers all layers at the measured tolerance.\n\\end{document}\n")
+        result = subprocess.run([sys.executable, str(script), "-", "--format", "latex"],
+                                input=tex, capture_output=True, text=True)
+        check(result.returncode == 0, f"prepare_units latex mode failed: {result.stderr.strip()}")
+        tex_units = [json.loads(line) for line in result.stdout.splitlines() if line.strip()]
+        joined = " ".join(u["text"] for u in tex_units)
+        check("At a 1B-token budget" in joined, "latex mode must keep body prose")
+        check("The check covers all layers" in joined, "latex mode must keep prose after a table")
+        check("P=1" not in joined, "latex mode must drop display math")
+        check("row & 1" not in joined, "latex mode must drop table cells")
+        check("\\label" not in joined and "\\section" not in joined, "latex mode must drop layout commands")
+        check(all(u.get("source_text") for u in tex_units), "latex mode must record source_text")
+
+    # merge_verdicts: null stays untriaged, findings survive, precision is unit-based.
+    merge_script = SKILL_DIR / "scripts" / "merge_verdicts.py"
+    if merge_script.is_file():
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            (tmp_path / "screen.jsonl").write_text(
+                json.dumps({"id": "u1", "line": 1, "claim_negation": None, "negative_contrast": None,
+                            "vague_hedge": None, "concessive_hedge": None,
+                            "screen_state": "untriaged_control_failed"}) + "\n" +
+                json.dumps({"id": "u2", "line": 2, "claim_negation": 0.9, "negative_contrast": 0.1,
+                            "vague_hedge": 0.2, "concessive_hedge": 0.1}) + "\n",
+                encoding="utf-8")
+            (tmp_path / "verdicts.jsonl").write_text(
+                json.dumps({"id": "u1", "verdict": "rewrite",
+                            "findings": [{"id": "f1", "rule": "R3", "disposition": "confirmed"}]}) + "\n" +
+                json.dumps({"id": "u2", "verdict": "rewrite",
+                            "findings": [{"id": "f2", "rule": "R2", "disposition": "confirmed"}]}) + "\n",
+                encoding="utf-8")
+            result = subprocess.run([sys.executable, str(merge_script),
+                                     "--screen", str(tmp_path / "screen.jsonl"),
+                                     "--verdicts", str(tmp_path / "verdicts.jsonl"),
+                                     "--out", str(tmp_path / "table.tsv")],
+                                    capture_output=True, text=True)
+            check(result.returncode == 0, f"merge_verdicts failed on null probabilities: {result.stderr.strip()}")
+            table = (tmp_path / "table.tsv").read_text(encoding="utf-8")
+            check("untriaged_control_failed" in table, "merge must keep the untriaged state")
+            check("\tnull\t" in table or "null" in table, "merge must print null, not 0, for unrun dimensions")
+            findings = (tmp_path / "table.findings.tsv").read_text(encoding="utf-8")
+            check("f1" in findings, "merge must preserve span findings")
+            check("routing precision 1/1" in result.stderr,
+                  f"routing precision must count confirmed rewrites among routed units only: {result.stderr.strip()}")
+            check("untriaged 1" in result.stderr, "an untriaged unit must not count as routed")
 
     if failures:
         print("FAILED")

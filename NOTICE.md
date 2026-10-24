@@ -46,3 +46,13 @@ require it to be installed. The skill's SKILL.md designates the bundled
 `references/rewrite-guide.md` as its only rewriting authority, and explicitly forbids
 deferring to another installed writing skill. Installing or removing the upstream
 skill changes nothing about how this skill behaves.
+
+## Version notes
+
+0.11.0 is an adaptation, not a port. It retires `scope_tail` from default Jev
+routing, records the failed control measurements that motivated the change, moves
+the canonical question and control definitions into `references/controls.json`,
+adds per-span findings, treats null as a first-class untriaged state, and replaces
+byte-for-byte comparison of protected wording with meaning-preserving judgment. The
+bundled rewrite guide remains the only rewriting authority; upstream is referenced
+for provenance and MIT compliance only.

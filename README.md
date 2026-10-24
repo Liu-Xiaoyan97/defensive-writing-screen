@@ -33,27 +33,30 @@ probability means "read this", not "delete this".
 
 ## What it screens
 
-Five calibrated yes/no questions per paragraph: `claim_negation`,
-`negative_contrast`, `vague_hedge`, `concessive_hedge`, and `scope_tail`.
-The last one routes retreating tails, a qualifier added after a result is complete
-that points at the document's own conditions without naming them ("under this
-setup", "at the measured positions"). Rule R6 rewrites those tails and keeps any
-qualifier that names its condition, precision, protocol, implementation, or
-version, and any qualifier that reports what an intervention covered.
+Four calibrated yes/no questions per paragraph: `claim_negation`,
+`negative_contrast`, `vague_hedge`, and `concessive_hedge`. `scope_tail` was retired
+from default routing in 0.11.0 because it failed its own controls in both directions;
+tail interpretation moved to the agent as rule R6. R6 fires only on a genuinely empty
+retreat: a qualifier that refers to conditions the paragraph already established is
+kept, and an isolated deictic phrase with missing context is reported as unresolved,
+not deleted. Repetition is agent-side as well.
 
 Three narrative actions run agent-side, with no routing value: N1 restates a unit so
-the result it already reports comes first, N2 narrows a claim to what the unit's
-evidence covers, and N3 relocates or consolidates a fact that interrupts its unit or
-appears in two sections. Each action keeps every number, direction, and condition;
+the result it already reports comes first, N2 narrows an unsupported claim without
+deleting a supported interpretation of reported numbers, and N3 relocates or
+consolidates a fact that interrupts its unit or appears in two sections. Each action keeps every number, direction, and condition;
 N1 may not turn a deficit into a match, and N3 must name where the fact lands.
 
 Six protection classes keep the screen away from facts: measured results and their
 direction, mathematical and proof conditions, measurement and reproduction conditions,
-the scope of an intervention, design premises, and the semantics of a comparison. A high
-score never overrides them, and every routed keep records the class it belongs to. A
-structure check reports a missing conclusion, a document that ends on limitations, a
-missing limitations statement, and related work that is absent or folded into the
-introduction.
+the scope of an intervention, design premises, and the semantics of a comparison.
+Protection covers meaning, not wording: a necessary limitation can keep its facts while
+an apologetic frame is restated, and a clear direction-only comparison is not treated as
+defensive because its numbers sit in a table. Each unit may carry several span findings,
+so one paragraph's first problem does not hide the second. A structure check reports a
+missing conclusion, a document that ends on limitations, a missing scope statement,
+related work that is absent or folded, evidence placed away from its claim, and review
+sections that end on the draft's own design.
 
 ## Install
 
@@ -197,10 +200,18 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.11.0 moves the question and control definitions into
+`references/controls.json` so the prompt, the gate, and the challenge cases cannot
+drift apart, retires `scope_tail` after it failed its controls in both directions,
+adds per-span findings, and makes null a first-class state: an unrun or failed
+judgment is `untriaged`, never `0` and never `not_selected`. The canonical gate is now
+four positives and two neutrals. `validation_controls` holds six frozen texts that are
+inspected only after a revision is frozen; they are a regression set, not fresh evidence.
+
 The shipped `0.65` threshold is valid only for the current question set, language,
-and model version. Rerun `references/cases.md` before screening a new genre, and
-report the six battery values with any result. A failing battery invalidates the
-run; it does not make the document clean. Chinese and other CJK inputs are accepted
+and model version. Run the gate before screening a new genre and report all six
+control rows with any result. A failing gate blocks draft Jev calls and switches the
+run to an explicitly marked agent-only review; it never makes the document clean. Chinese and other CJK inputs are accepted
 by Jev but score lower than English, so calibrate separately and keep the agent
 verification step. Record the model version with any tuning result.
 

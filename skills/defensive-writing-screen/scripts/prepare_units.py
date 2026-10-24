@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Split a Markdown or plain-text draft into screening units.
+"""Split Markdown, plain text, or conservative LaTeX into screening units.
 
 Emits one JSON object per prose paragraph: stable id, line range, verbatim
 text, and optional defensive-phrase candidate spans. No network, no
@@ -135,17 +135,100 @@ def find_candidates(text: str) -> list[str]:
     for pattern in PATTERNS_ZH + PATTERNS_EN:
         for match in re.finditer(pattern, text, flags=re.IGNORECASE):
             span = match.group(0).strip(" \t，,。；;：:")
-            if len(span) > 16 and span[-1] not in "。.，,；;：:!?！？" and " " in span:
+            # Trim only a regex match ending inside a source word, not a complete
+            # fixed phrase such as "not by themselves".
+            if (match.end() < len(text) and text[match.end()].isalnum()
+                    and match.group(0)[-1].isalnum() and " " in span):
                 span = span.rsplit(" ", 1)[0]
             if len(span) >= 2 and span not in found:
                 found.append(span)
     return found
 
 
+def latex_blocks(text: str):
+    """Conservative extraction; preserve line positions, not TeX execution.
+
+    No macro expansion or input-file loading. Mask non-prose while retaining
+    newlines. Inline math/citations remain in prose. source_text in the output
+    supplies the unchanged source range when wrappers are stripped.
+    """
+    def blank(match):
+        return re.sub(r"[^\n]", " ", match.group(0))
+
+    body = text
+    document = re.search(r"\\begin\{document\}", body)
+    if document:
+        body = re.sub(r"[^\n]", " ", body[:document.end()]) + body[document.end():]
+    # A percent escaped by an odd number of backslashes is a literal percent.
+    lines = []
+    for line in body.splitlines(keepends=True):
+        for i, char in enumerate(line):
+            if char != "%":
+                continue
+            backslashes = len(line[:i]) - len(line[:i].rstrip("\\"))
+            if backslashes % 2 == 0:
+                line = line[:i] + re.sub(r"[^\n]", " ", line[i:])
+                break
+        lines.append(line)
+    body = "".join(lines)
+    skipped = r"equation\*?|align\*?|alignat\*?|gather\*?|multline\*?|displaymath|math|tabular\*?|tabularx|longtable|thebibliography|verbatim\*?|lstlisting|tikzpicture"
+    body = re.sub(r"\\begin\{(" + skipped + r")\}[\s\S]*?\\end\{\1\}", blank, body)
+    body = re.sub(r"\\\[[\s\S]*?\\\]|\$\$[\s\S]*?\$\$", blank, body)
+
+    # Strip complete balanced argument commands. Preserve contents only for
+    # authorial titles/captions; nested inline commands survive unchanged.
+    command = re.compile(r"\\(caption|title|section\*?|subsection\*?|subsubsection\*?|label|includegraphics|bibliography|bibliographystyle|input|include)(?:\[[^\]]*\])?\s*\{")
+    cursor = 0
+    parts = []
+    while True:
+        match = command.search(body, cursor)
+        if not match:
+            parts.append(body[cursor:])
+            break
+        depth, end = 1, match.end()
+        while end < len(body) and depth:
+            char = body[end]
+            slashes = len(body[:end]) - len(body[:end].rstrip("\\"))
+            if slashes % 2 == 0:
+                depth += (char == "{") - (char == "}")
+            end += 1
+        if depth:
+            print("warning: unmatched LaTeX argument; inspect coverage manually", file=sys.stderr)
+            parts.append(body[cursor:])
+            break
+        parts.append(body[cursor:match.start()])
+        fragment = body[match.start():end]
+        if match.group(1) in {"caption", "title"}:
+            prefix = re.sub(r"[^\n]", " ", body[match.start():match.end()])
+            parts.append(prefix + body[match.end():end-1] + " ")
+        else:
+            if match.group(1) in {"input", "include"}:
+                print("warning: LaTeX includes are not expanded; inspect referenced prose manually", file=sys.stderr)
+            parts.append(re.sub(r"[^\n]", " ", fragment))
+        cursor = end
+    body = "".join(parts)
+    body = re.sub(r"\\(?:begin|end)\{[^}]+\}(?:\[[^\]]*\])?", blank, body)
+    body = re.sub(r"\\item(?:\[[^\]]*\])?", "", body)
+    body = re.sub(r"\\(?:maketitle|centering|par)\b", "", body)
+    body = re.sub(r"\\looseness\s*=\s*-?\d+", "", body)
+    cleaned = []
+    for line in body.splitlines():
+        stripped = line.strip()
+        # Standalone layout commands are not prose; citation-led sentences stay.
+        if (re.match(r"^\\(?:setlength|renewcommand|newcommand|vspace|hspace|clearpage|newpage|pagebreak|noindent|small|footnotesize)\b", stripped)
+                or stripped in {"{", "}"}):
+            cleaned.append("")
+        else:
+            cleaned.append(line)
+    yield from iter_blocks("\n".join(cleaned))
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Split a draft into screening units.")
     parser.add_argument("source", nargs="?", default="-", help="Markdown/text file, or - for stdin")
     parser.add_argument("--name", help="slug for unit ids; defaults to file stem")
+    parser.add_argument("--format", choices=("auto", "text", "latex"), default="auto",
+                        help="auto selects latex for .tex files; use latex explicitly for stdin")
     parser.add_argument("--candidates", action="store_true", help="include defensive-phrase candidate spans")
     parser.add_argument("--max-units", type=int, default=0, help="emit at most N units (0 = all)")
     parser.add_argument("--min-chars", type=int, default=12, help="skip blocks shorter than this")
@@ -161,7 +244,10 @@ def main(argv: list[str]) -> int:
 
     slug = slugify(name)
     emitted = 0
-    for start, end, block in iter_blocks(text):
+    use_latex = args.format == "latex" or (args.format == "auto" and args.source.endswith(".tex"))
+    blocks = latex_blocks(text) if use_latex else iter_blocks(text)
+    source_lines = text.splitlines()
+    for start, end, block in blocks:
         paragraph = normalize(block)
         if len(paragraph) < args.min_chars or not is_prose(block, args.min_chars):
             continue
@@ -172,6 +258,9 @@ def main(argv: list[str]) -> int:
             "paragraph": emitted,
             "text": paragraph,
         }
+        if use_latex:
+            unit["source_text"] = "\n".join(source_lines[start - 1:end])
+            unit["format"] = "latex"
         if args.candidates:
             unit["candidates"] = find_candidates(paragraph)
         print(json.dumps(unit, ensure_ascii=False))

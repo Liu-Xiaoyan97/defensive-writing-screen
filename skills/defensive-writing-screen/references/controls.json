@@ -1,0 +1,167 @@
+{
+  "revision": "v4",
+  "active_dimensions": [
+    "claim_negation",
+    "negative_contrast",
+    "vague_hedge",
+    "concessive_hedge"
+  ],
+  "thresholds": {
+    "positive_min": 0.65,
+    "negative_max": 0.2
+  },
+  "questions": {
+    "claim_negation": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` contain a sentence or clause stating a negation of a claim, that is, saying what the method, paper, model, or result does not do, does not claim, does not prove, does not provide, or does not include? Markers: do not claim, not intended to, should not be taken to mean; 并不声称、无意、不意味着、不应被理解为、不代表、不涉及、不能据此.",
+      "criteria": {
+        "true": "At least one sentence or clause explicitly negates a claim or capability",
+        "false": "No sentence or clause explicitly negates a claim or capability"
+      }
+    },
+    "negative_contrast": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` contain a 'not X but Y', 'rather than', 'instead of', or 'as opposed to' contrast used to redirect an expected reading? Markers: 并非…而是、不是…而是、与其说…不如说.",
+      "criteria": {
+        "true": "At least one such contrast construction is present",
+        "false": "No such contrast construction is present"
+      }
+    },
+    "vague_hedge": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` contain a vague weakening word or phrase that lowers the force of a statement without naming the source of uncertainty? Markers: could hardly, may potentially, to some extent, it should be noted, of course; 仅、只能、初步、难以、尚不能、仍有提升空间、在一定程度上、或许. Do not count an explicit prohibition or a required restriction, such as 不得、must not、cannot be used, or a condition that names the specific case it governs.",
+      "criteria": {
+        "true": "At least one such vague weakening expression is present and it is not a prohibition or a condition that names its case",
+        "false": "No such weakening expression, or the negative wording is a prohibition or a named condition"
+      }
+    },
+    "concessive_hedge": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` use a concessive construction that softens a claim or pre-frames a limitation instead of stating the result directly? Markers: although, while, however; 虽然、尽管、但、然而、仍.",
+      "criteria": {
+        "true": "At least one concessive construction softens a claim or pre-frames a limitation",
+        "false": "No concessive construction is used to soften a claim"
+      }
+    }
+  },
+  "controls": [
+    {
+      "id": "pos_do_not_claim",
+      "text": "We do not claim that these cases are representative of all settings.",
+      "designated_dimension": "claim_negation"
+    },
+    {
+      "id": "pos_not_x_but_y",
+      "text": "This paper is not intended to provide a comprehensive account of the phenomenon, but rather to examine one specific mechanism.",
+      "designated_dimension": "negative_contrast"
+    },
+    {
+      "id": "pos_although_limited",
+      "text": "While the sample is limited and cannot capture every variation, it still offers useful insights.",
+      "designated_dimension": "concessive_hedge"
+    },
+    {
+      "id": "pos_stacked_hedge",
+      "text": "This may potentially suggest that X could possibly be associated with Y.",
+      "designated_dimension": "vague_hedge"
+    },
+    {
+      "id": "neg_neutral_setup",
+      "text": "We analyze four cases over the same period.",
+      "designated_dimension": "all"
+    },
+    {
+      "id": "neg_neutral_result",
+      "text": "Under the same conditions the two estimates are 49.47% and 46.08%.",
+      "designated_dimension": "all"
+    }
+  ],
+  "semantic_challenges": [
+    {
+      "id": "resolved_reference",
+      "text": "We test the procedure at three specified temperatures. The error falls under these conditions.",
+      "expected": "keep",
+      "reason": "The reference inherits specified scope; do not replace the whole scope with one selected condition."
+    },
+    {
+      "id": "resolved_coverage",
+      "text": "The inspection covers the first two stations and the final station. The check confirms agreement at the inspected stations.",
+      "expected": "keep",
+      "reason": "The backward reference limits coverage without repeating the list."
+    },
+    {
+      "id": "unknown_reference",
+      "text": "The intervention lowers the measured error by 4.5 points under this setup.",
+      "expected": "unresolved_or_keep",
+      "reason": "Former tail positive. Missing setup context is not evidence that the restriction is empty. Do not delete or invent a condition."
+    },
+    {
+      "id": "empty_retreat",
+      "text": "The specified comparison establishes the reported difference. We add this reminder only to avoid sounding too confident.",
+      "expected": "rewrite",
+      "reason": "The second sentence expressly adds rhetorical retreat, not scope; retain the comparison."
+    },
+    {
+      "id": "protected_reframe",
+      "text": "The procedure improves consistency but still trails the reference on precision.",
+      "expected": "optional_reframe",
+      "reason": "Both comparison facts survive in direct sentences. Protect meaning, not the exact concession."
+    },
+    {
+      "id": "direction_without_number",
+      "text": "The procedure has lower precision than the two reference procedures.",
+      "expected": "keep",
+      "reason": "Named direction and objects remain meaningful without restating a table."
+    },
+    {
+      "id": "useful_interpretation",
+      "text": "The two groups contribute equally to the average. A gain in one group offsets the loss in the other.",
+      "expected": "keep",
+      "reason": "An arithmetic interpretation can help the reader; not automatically an unsupported claim."
+    },
+    {
+      "id": "multiple_spans",
+      "text": "We do not claim to answer every possible question. The change may potentially suggest an improvement.",
+      "expected": "two_independent_findings",
+      "reason": "Inspect disclaimer and stacked hedge separately; retain uncertainty and actual scope."
+    },
+    {
+      "id": "related_transition",
+      "text": "Previous work compares fixed conditions. We therefore examine changing conditions.",
+      "expected": "keep_or_optional_structure",
+      "reason": "A research-positioning transition is legitimate, not automatically misplaced implementation detail."
+    }
+  ],
+  "validation_controls": [
+    {
+      "id": "holdout_negation",
+      "text": "Our report does not claim that the findings apply to every organization.",
+      "designated_dimension": "claim_negation"
+    },
+    {
+      "id": "holdout_contrast",
+      "text": "The aim is not to classify every incident but to explain a single recurring pattern.",
+      "designated_dimension": "negative_contrast"
+    },
+    {
+      "id": "holdout_hedge",
+      "text": "The association may potentially indicate that the revised process could possibly help.",
+      "designated_dimension": "vague_hedge"
+    },
+    {
+      "id": "holdout_concession",
+      "text": "Although the investigation is limited, it nevertheless yields useful observations.",
+      "designated_dimension": "concessive_hedge"
+    },
+    {
+      "id": "holdout_setup",
+      "text": "The comparison includes three groups observed over twelve weeks.",
+      "designated_dimension": "all"
+    },
+    {
+      "id": "holdout_result",
+      "text": "For the specified groups, the measured averages are 18 and 23.",
+      "designated_dimension": "all"
+    }
+  ]
+}

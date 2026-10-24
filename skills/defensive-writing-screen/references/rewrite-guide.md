@@ -59,7 +59,7 @@ Only the first and last are routine deletion or compression targets. The middle 
 
 1. Name the job the sentence does. If it adds no evidence, scope, logic, precision, or reader guidance, delete it.
 2. Convert defensive limitation into positive scope. "We do not claim these cases are representative" becomes "The analysis covers three institutional settings from 2015 to 2023", and only when those facts exist in the draft.
-3. Replace stacked hedging with precision. "This may potentially suggest that X could influence Y" becomes "X influences Y in these cases". If uncertainty is real, name its source: "The design does not estimate population-level effects".
+3. Replace stacked hedging without strengthening the evidence. "This may potentially suggest that X could influence Y" may become "These observations suggest that X may influence Y". Keep association distinct from causation and preserve warranted uncertainty. Name its source when known.
 4. Keep contrast only when the contrast is part of the argument. Drop reflexive "not X but Y", "rather than", "to be clear", "it should be noted that".
 5. Rebuild the paragraph around one job: claim first, then support, then any necessary limit. Remove repeated caveats, apology-like framing, and detours that exist only to fend off a hypothetical objection.
 6. Strengthen with evidence, not apology. If a claim feels too broad, narrow it, sharpen the concept, or point to the evidence; do not bolt on a protective clause.
@@ -76,7 +76,7 @@ Only the first and last are routine deletion or compression targets. The middle 
 - self-undermining contribution statements ("only a preliminary attempt", "of limited reference value");
 - reflexive "not X but Y";
 - redundant "however", "nevertheless", "although" transitions;
-- retreating tails that point at the setup instead of naming it;
+- genuinely empty retreating tails, distinguished from useful references to conditions already stated;
 - a result demoted behind a retreat while a stronger fact sits in the main clause;
 - a claim wider than the evidence, or a fact stated in two sections.
 
@@ -86,19 +86,15 @@ Only the first and last are routine deletion or compression targets. The middle 
 
 ## Retreating tails
 
-A tail is a qualifier added after the statement is already complete. It does not
-carry a condition; it points at one. "The intervention lowers the measured error
-by 4.5 points under this setup" names no budget, precision, or range, so the
-reader learns only that something limits the result. Replace the tail with the
-condition the draft already supplies, or drop it.
+A genuinely empty tail adds rhetorical retreat without necessary scope or uncertainty. A backward reference is not automatically such a tail. Read the whole paragraph and neighboring context: "under this setup" may refer accurately to several conditions just established. Keep a useful reference instead of repeating the setup in every sentence. Do not replace a multi-condition scope with just one selected condition. With missing or ambiguous context, retain the qualifier or ask for clarification; absence of an antecedent in an isolated sentence does not justify deletion. Sentence-initial conditions are not appended tails.
 
 - A qualifier that names its condition stays: "at the 2B-step budget", "with
   0-shot evaluation", "within 1e-5", "in the current implementation".
 - A qualifier whose removal would drop the fact of what was tested stays: "the
   contribution of the full path, not its components" reports the scope of the
   intervention, and a rewrite keeps it.
-- A tail on a method statement follows the same test: if the sentence reads
-  correctly without it and no information is lost, the tail was decoration.
+- Apply the same semantic test to method statements. Grammatical completeness without a qualifier does not establish that its scope or uncertainty can be removed.
+- Optional explicit restatement of an already clear condition is a style choice, not a confirmed defensive-writing defect.
 - Do not use this rule to remove a result. The tail goes; the number, the metric
   direction, and the unfavorable outcome stay, in the place where the result is
   discussed.
@@ -113,12 +109,7 @@ repair, and none may change a number, a unit, a direction, or a condition.
   points below the baseline while using 12% of its steps" becomes "Using 12% of its
   steps, the estimate comes within 0.7 points of the baseline". It never becomes "the
   estimate matches the baseline".
-- **Narrow.** When a claim covers more than the evidence, cut it back to what was
-  measured. The same action covers an accounting clause: a sentence that draws a
-  conclusion from numbers already reported, such as "the other tasks offset part of the
-  shortfall", adds interpretation rather than a condition, so the clause goes and the
-  numbers stay. Narrowing is not a licence to drop an unfavorable number or to stop
-  making a comparison the unit already makes.
+- **Narrow.** When a claim covers more than the evidence, limit it to what was measured. An interpretation of reported numbers may help explain a comparison or aggregate; do not remove it solely because it adds no new number or condition. Remove only unsupported or genuinely redundant interpretation. Narrowing never hides an unfavorable result or stops a supported comparison merely to improve tone.
 - **Relocate.** When a fact interrupts its unit or appears in more than one section,
   keep one statement where the reader needs it and name the location that keeps it.
   Relocating never deletes the fact.
@@ -129,22 +120,9 @@ result is the one a reader meets first. A unit that fails the test keeps its ver
 
 ## Protection before rewriting
 
-Six classes of statement stay even when a score says otherwise, because removing or
-restating them changes what a reader can verify, reproduce, or interpret: a measured
-result and its direction, a mathematical or proof condition, a measurement or
-reproduction condition, the scope of an intervention or check, a design premise or
-motivation, and the semantics of a comparison. Check them before drafting any
-replacement. A sentence that reports an unfavorable number is not defensive writing; it
-is evidence. A sentence that names a corpus, budget, precision, or configuration is not
-a caveat; it is a condition. A sentence that says what an intervention did not isolate
-is not a disclaimer; it is the scope of the claim.
+Protect six classes of meaning: P1 results and directions, P2 mathematical/proof conditions, P3 measurement/reproduction conditions, P4 intervention/check scope, P5 design premises, P6 comparison semantics. A high probability never permits their removal. Protection does not freeze the exact words: a concession or apologetic frame may be restated if all favorable and unfavorable facts, uncertainty, objects and conditions survive.
 
-The distinction is testable: ask what a reader could no longer verify, reproduce, or
-interpret if the span disappeared. If the answer is anything, the span stays and the
-record names the class. Apply the test to the span, not to the paragraph: a unit that
-reports a number does not protect a sentence that restates a direction in words while the
-value lives in a table. That sentence names no bound, so it is rewritten to carry the
-value or removed.
+Judge independent spans, not whole paragraphs. A clear direction-only comparison remains meaningful when its numbers are in a table; missing repeated numbers do not make it defensive or require a longer replacement. Conversely, the presence of a protected result does not shield a separate empty disclaimer. Record multiple findings within one paragraph rather than stopping after its first rewrite rule. Separate deletion from equivalent restructuring and confirmed defects from optional style choices.
 
 ## Document structure
 
@@ -158,11 +136,7 @@ level. Absence is not automatically a defect: a supplement, appendix, extended a
 letter, or proposal carries a different set, and the report says which roles the genre
 does not require.
 
-Placement is also structural. A piece of mechanism evidence should sit beside the claim it
-supports; a mechanism experiment that carries the advantage and appears after a later section makes
-the reader carry the argument across the document. A review section should close on the
-review, not on the draft's own evaluation design, which belongs to the method or the
-setup. Both are reported once, at the document level.
+Placement is also structural, but there is no mandatory experiment order. Move evidence only when its distance from a claim creates a concrete reading problem. Related work may legitimately end by positioning the current study or motivating its design. Distinguish such transitions from redundant implementation instructions. Report optional reorganizations separately and name where any moved facts remain.
 
 ## Metrics, experiments, unfavorable results
 
@@ -196,8 +170,8 @@ Direct: "The sample covers the variation relevant to the study's question." (onl
 Defensive: "We are not arguing that this model is superior in every situation."
 Direct: "The model is most useful when the task requires interpretable comparisons across cases."
 
-Defensive: "The comparison supports the benefit of the additional term under this setup."
-Direct: "Across the four cases, the additional term lowers the mean error by 4.5 points." (only if the draft supplies that comparison)
+Context-dependent: "The comparison supports the benefit of the additional term under this setup."
+Keep when the setup has already been specified and limits the conclusion. If the antecedent is unclear, ask or clarify from available evidence; do not delete the qualifier merely because it is deictic.
 
 Examples show phrasing only. They never supply facts to a draft that lacks them.
 
