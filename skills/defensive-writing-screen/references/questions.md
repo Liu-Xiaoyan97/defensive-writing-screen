@@ -117,6 +117,36 @@ Use for every span returned by `scripts/prepare_units.py --candidates`, independ
 
 A high `true` means the span is a deletion *candidate*. A low value means the span carries something, so the options are keep or restructure, not delete. The agent still decides, because `evidence` may be incomplete. Observed span values: 0.93 for a contrast clause that repeats a fact stated elsewhere, 0.72 for a vague weakening clause, 0.70 for a disclaimer whose content belongs in a setup section, 0.66 for a summary sentence restating earlier content, 0.60 for a duplicated scope reminder, and 0.39 for a harmless restatement that the agent kept. The question orders removable spans above harmless ones but does not separate removable from necessary wording on its own, so it never authorizes deletion.
 
+## Verdict categories
+
+Every unit gets one verdict. A rewrite cites one rule; a keep cites one category.
+The list is closed so that two readers can compare their records.
+
+Rewrite rules:
+
+| id | rule |
+|---|---|
+| R1 | A difficulty word or vague qualifier with no stated bound, range, degree, or governing condition. |
+| R2 | A concessive frame that puts the limitation and the conclusion in one sentence, so the conclusion only appears after a turn. |
+| R3 | An explicit statement of what the work does not claim, prove, or address, carrying no method, data, or scope information. |
+| R4 | A not-A-but-B contrast used to pre-empt a misreading, where the contrast carries no argument or distinction. |
+| R5 | The same limit, scope, or fact stated twice in one unit, the second occurrence adding nothing. |
+
+Keep categories:
+
+| id | category |
+|---|---|
+| K1 | Definition, notation, formula, or symbol explanation. |
+| K2 | Reported number, metric direction, per-item difference, or analysis setup. |
+| K3 | Conditional baseline describing the object that the design improves on. |
+| K4 | Constraint naming its object and its failure mode or bound. |
+| K5 | Causal limit, safety prohibition, scope of application, methodological premise. |
+| K6 | Contrast that distinguishes mechanisms, notation, or settings. |
+| K7 | Caption, table lead-in, reference list, or section roadmap. |
+
+A keep record carries the category and, in one short clause, what makes the unit
+that category. Without that clause the record shows a label, not a judgment.
+
 ## Routing
 
 - `triage_probability = max(claim_negation, negative_contrast, vague_hedge, concessive_hedge)` per paragraph; sort descending. Keep `repeated_scope` and `removal_preserves` as separate columns.
