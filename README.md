@@ -200,6 +200,11 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.12.2 records only risk-bearing results. The response keeps the gate table,
+every finding regardless of score, one line per routed unit, one aggregate line per
+sampling group, structure observations and cost facts. A read unit with no finding
+appears only in the count. The full ledger stays in a file artifact.
+
 Version 0.12.1 bounds the record after measurement showed it dominates cost: a
 screened run that read 34 of 118 units still produced more agent output than an
 agent-only full read because the response inlined a 119-row probability table. The

@@ -122,6 +122,14 @@ def main() -> int:
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
+    check("Report only what carries risk" in text,
+          "SKILL.md must state that only risk-bearing results are recorded")
+    check("no finding get no individual record" in text,
+          "SKILL.md must exempt low-risk read units from individual records")
+    check("aggregate line" in questions_text,
+          "questions.md must define the aggregate record for read units without findings")
+    check("a finding at any score is recorded" in questions_text,
+          "questions.md must forbid suppressing a finding because its score is low")
     check("Recording dominates cost" in questions_text,
           "questions.md must record that response size, not only reading, drives agent cost")
     check("cannot save agent work by construction" in questions_text,
@@ -181,6 +189,14 @@ def main() -> int:
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
+    check("Report only what carries risk" in text,
+          "SKILL.md must state that only risk-bearing results are recorded")
+    check("no finding get no individual record" in text,
+          "SKILL.md must exempt low-risk read units from individual records")
+    check("aggregate line" in questions_text,
+          "questions.md must define the aggregate record for read units without findings")
+    check("a finding at any score is recorded" in questions_text,
+          "questions.md must forbid suppressing a finding because its score is low")
     check("Recording dominates cost" in questions_text,
           "questions.md must record that response size, not only reading, drives agent cost")
     check("cannot save agent work by construction" in questions_text,

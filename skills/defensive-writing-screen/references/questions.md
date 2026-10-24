@@ -109,6 +109,8 @@ In `screened` mode, count misses found in the sampled unread population and repo
 
 Record measured cost facts: review scope, units read, units sampled, units unread, Jev requests with retries and failures, and agent turns or tokens when the caller exposes them.
 
+Record only risk-bearing results. The response carries: the gate table, every finding with its span, one line per routed unit, one aggregate line per sampling group, structure observations, and cost facts. A read unit with no finding contributes only to the aggregate count; a finding at any score is recorded. This keeps the audit trail where it matters and drops the row-per-unit ledger that dominated cost.
+
 Recording dominates cost in measured runs: a screened run that read 34 of 118 units still produced more agent output than an agent-only full read, because the response inlined a 119-row probability table. Put the full table in a file artifact, keep one row per routed unit plus one aggregate line for the sample in the response, and treat the response length as a cost to report rather than proof of thoroughness. Do not claim that Jev-first review is cheaper than agent-only review without a measured comparison on the same draft. Quality and cost are separate results; a cheaper run that misses a confirmed finding is not a better run.
 
 | id | rewrite rule |
