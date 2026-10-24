@@ -121,6 +121,9 @@ def main() -> int:
         check(marker in text, f"SKILL.md missing review-scope marker: {marker}")
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
+    check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
+    check("Recording dominates cost" in questions_text,
+          "questions.md must record that response size, not only reading, drives agent cost")
     check("cannot save agent work by construction" in questions_text,
           "questions.md must repeat the cost caveat so it survives a partial read")
     for marker in ["N1", "N2", "N3"]:
@@ -177,6 +180,9 @@ def main() -> int:
         check(marker in text, f"SKILL.md missing review-scope marker: {marker}")
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
+    check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
+    check("Recording dominates cost" in questions_text,
+          "questions.md must record that response size, not only reading, drives agent cost")
     check("cannot save agent work by construction" in questions_text,
           "questions.md must repeat the cost caveat so it survives a partial read")
     for marker in ["S1", "S2", "S3", "S4", "S5", "S6"]:

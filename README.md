@@ -200,6 +200,12 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.12.1 bounds the record after measurement showed it dominates cost: a
+screened run that read 34 of 118 units still produced more agent output than an
+agent-only full read because the response inlined a 119-row probability table. The
+full table now goes to a file artifact, the response carries routed rows plus one
+sample summary, and response size is reported as cost rather than read as evidence.
+
 Version 0.12.0 adds two review scopes and a disposition contract. `screened` reads
 routed units, candidate spans and a labelled sample; `full` reads every unit and is
 required for publication acceptance or any agent-only run. Findings are `confirmed`

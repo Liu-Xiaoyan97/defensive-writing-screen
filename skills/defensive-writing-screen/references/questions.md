@@ -102,12 +102,14 @@ Choose one scope before reading and report it with the result.
 
 | scope | reads | when |
 |---|---|---|
-| `screened` | All routed units, all focused candidates, the 0.45-0.65 band when small, plus a stratified sample of the rest: everything when 20 or fewer, otherwise at least 20 spread across the document. | Default when Jev passed the gate and the goal is triage. |
+| `screened` | All routed units, all focused candidates, the 0.45-0.65 band when small, plus a stratified sample of the rest: everything when 20 or fewer, otherwise at least 20 spread across the document. The response carries routed rows and a sample summary; the full table goes to an artifact. | Default when Jev passed the gate and the goal is triage. |
 | `full` | Every unit. | Publication acceptance, exhaustive requests, or any agent-only run. |
 
 In `screened` mode, count misses found in the sampled unread population and report `misses/sample`, never a recall claim. Unsampled units are reported as unread, not as clean. A Jev-first run that also reads every unit cannot save agent work by construction, so report scope before discussing cost.
 
-Record measured cost facts: review scope, units read, units sampled, units unread, Jev requests with retries and failures, and agent turns or tokens when the caller exposes them. Do not claim that Jev-first review is cheaper than agent-only review without a measured comparison on the same draft. Quality and cost are separate results; a cheaper run that misses a confirmed finding is not a better run.
+Record measured cost facts: review scope, units read, units sampled, units unread, Jev requests with retries and failures, and agent turns or tokens when the caller exposes them.
+
+Recording dominates cost in measured runs: a screened run that read 34 of 118 units still produced more agent output than an agent-only full read, because the response inlined a 119-row probability table. Put the full table in a file artifact, keep one row per routed unit plus one aggregate line for the sample in the response, and treat the response length as a cost to report rather than proof of thoroughness. Do not claim that Jev-first review is cheaper than agent-only review without a measured comparison on the same draft. Quality and cost are separate results; a cheaper run that misses a confirmed finding is not a better run.
 
 | id | rewrite rule |
 |---|---|

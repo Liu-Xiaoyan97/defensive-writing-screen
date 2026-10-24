@@ -104,8 +104,8 @@
     {
       "id": "protected_reframe",
       "text": "The procedure improves consistency but still trails the reference on precision.",
-      "expected": "optional_reframe",
-      "reason": "Both comparison facts survive in direct sentences. Protect meaning, not the exact concession."
+      "expected": "keep_or_optional",
+      "reason": "Both comparison facts survive in direct sentences. A scope-limited two-way comparison may stay as keep when it reads as a meaningful contrast, or be restated as optional presentation. Protect meaning, not the concession form."
     },
     {
       "id": "direction_without_number",
