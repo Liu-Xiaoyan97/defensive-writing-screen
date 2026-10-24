@@ -45,22 +45,22 @@ The `vague_hedge` question excludes explicit prohibitions and conditions that na
 
 ### Repetition controls (agent-side only)
 
-| id | text | `repeated_scope` / `repeated_fact` | expected agent decision |
+| id | text | `repeated_fact` | expected agent decision |
 |---|---|---:|---|
-| `repeat_genuine` | 未选中专家的输出权重为零。（前句已说明只有选中专家参与加权聚合） | 0.29 / 0.36 | rewrite; the second sentence restates the first |
-| `repeat_constructed` | 样本规模有限，说明样本规模不足，因此结论仅限本组案例，本组案例之外不作推断。 | — / 0.38 | rewrite; deliberate repetition |
-| `repeat_neutral` | 本文在两个案例上评估该方法，报告其准确率与耗时。 | — / 0.34 | keep |
+| `repeat_constructed` | 样本规模有限，说明样本规模不足，因此结论仅限本组案例，本组案例之外不作推断。 | 0.384 | rewrite; deliberate repetition |
+| `repeat_neutral` | 本文在两个案例上评估该方法，报告其准确率与耗时。 | 0.343 | keep |
 
-The constructed control scores 0.38 against 0.34 for neutral prose, so neither question separates the class. Repetition is therefore not a routing dimension; step 6 assigns it to the agent.
+A deliberate repetition scores 0.384 against 0.343 for neutral prose, so neither question separates the class. A milder redundant pair timed out on four attempts and stays unmeasured. Repetition is therefore not a routing dimension; step 6 assigns it to the agent.
 
 ### Conditional controls
 
 | id | text | value on its strongest dimension | expected agent decision |
 |---|---|---:|---|
-| `conditional_vague` | 若仅采用这两类记录，不同位置的取值会合并到共享状态，难以按固定位置单独读取。 | 0.643 (`vague_hedge`) | rewrite the closing clause; keep the conditional |
-| `conditional_precise` | 该流程沿时间共享同一组规则，无法在该步骤内部根据输入改变处理方式。 | 0.060 (`vague_hedge`) | keep; the constraint names its object |
+| `conditional_vague` | 若仅采用单一账号，不同渠道的记录会合并到同一汇总，难以按来源单独核对。 | 0.207 (`vague_hedge`) | rewrite the closing clause; keep the conditional |
+| `conditional_vague_strong` | 若仅采用单一账号，不同渠道的记录会合并到同一汇总，几乎无法按来源单独核对。 | 0.338 (`vague_hedge`) | rewrite the closing clause; keep the conditional |
+| `conditional_precise` | 该模板对所有章节使用同一格式，无法在单个章节内根据内容调整版式。 | 0.077 (`vague_hedge`) | keep; the constraint names its object |
 
-`conditional_vague` sits just below the gate, so a vague clause inside a conditional baseline is a borderline case: route it when other content pushes the unit over 0.65, otherwise reach it through the deterministic candidate search.
+Vagueness inside a conditional baseline does not route reliably: constructed instances scored 0.207 and 0.338, both below the gate. Treat this as an agent judgment rule and reach such units through the deterministic candidate search.
 
 The same six controls under the deprecated v1 sufficiency wording:
 

@@ -10,7 +10,7 @@ One paragraph per request during adoption and whenever ambiguity is high:
 {
   "paragraph": {
     "text": "<exact paragraph, verbatim>",
-    "location": "section 4.3, line 784"
+    "location": "section 4.3"
   },
   "genre": "academic paper, English, methods section",
   "context": "reported metric direction and units; only facts supplied by the user",
