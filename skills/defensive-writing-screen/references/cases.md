@@ -52,7 +52,7 @@ All service calls returned normally. Both complete gates failed, so no document 
 
 ## Concurrency and handoff size
 
-Units were screened at four, eight and twelve pool workers on the same draft and question set. Results were identical in routing; wall time stayed between 55 and 58 seconds at every setting, which matches a four-slot service limit rather than a client bottleneck. Keep four as the default, treat higher values as an experiment, and record retries because the service returned intermittent 502s under load.
+Units were screened at four, eight and twelve pool workers on the same draft and question set against a four-slot endpoint. Results were identical in routing and wall time stayed between 55 and 58 seconds, which is the service limit rather than a client bottleneck. On a sixty-four-slot endpoint the same work finishes in seconds, so the pool size must track the served limit and be recorded with every measurement. Record retries as well: the service returned intermittent 502s under load.
 
 The handoff packet for that draft contained 8 high-risk units and 6 sampled units in 71 lines. The agent judged the packet instead of the document, so its reading shrank to the routed units while the machine record stayed in the script output.
 
