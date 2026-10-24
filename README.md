@@ -33,33 +33,70 @@ probability means "read this", not "delete this".
 
 ## Install
 
-### 1. From npm
+The package is plain files: a skill directory, three references, and two stdlib
+Python scripts. It has no build step and no runtime dependency, so every install
+route below lands the same contents.
+
+### 1. Directly from GitHub with npm (no npm account or registry publish needed)
 
 ```sh
-npm install defensive-writing-screen
+npm install github:Liu-Xiaoyan97/defensive-writing-screen
 ```
 
-The package ships the skill directory, its references, and its two helper scripts.
-Point your agent at `node_modules/defensive-writing-screen/skills/defensive-writing-screen/`,
-or copy that directory into a skills location your agent reads:
+Pin a release or a commit so installs stay reproducible:
+
+```sh
+npm install github:Liu-Xiaoyan97/defensive-writing-screen#v0.6.0
+npm install github:Liu-Xiaoyan97/defensive-writing-screen#<commit-sha>
+```
+
+Equivalent forms, if you prefer an explicit URL or protocol:
+
+```sh
+npm install git+https://github.com/Liu-Xiaoyan97/defensive-writing-screen.git
+npm install git+ssh://git@github.com/Liu-Xiaoyan97/defensive-writing-screen.git
+```
+
+Add it to a project manifest with the same spec:
+
+```sh
+npm install --save github:Liu-Xiaoyan97/defensive-writing-screen#v0.6.0
+# package.json gains: "defensive-writing-screen": "github:Liu-Xiaoyan97/defensive-writing-screen#v0.6.0"
+```
+
+These forms need `git` on the machine and reach `github.com`, not the npm
+registry. npm clones the repository, reads `package.json`, and skips installation
+of dependencies because there are none.
+
+Then point your agent at the installed skill directory:
 
 ```sh
 mkdir -p ~/.agents/skills
 cp -R node_modules/defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
 ```
 
+Or reference it in place, for example
+`node_modules/defensive-writing-screen/skills/defensive-writing-screen/SKILL.md`.
 Claude Code reads `~/.claude/skills/` or `.claude/skills/` instead. Keep the
-`references/` and `scripts/` subdirectories: the skill resolves them relative to its
-own directory, and `references/rewrite-guide.md` supplies the rewriting rules.
+`references/` and `scripts/` subdirectories: the skill resolves them relative to
+its own directory.
 
-### 2. As a Pi package
+### 2. From npm, once published
 
 ```sh
+npm install defensive-writing-screen
+```
+
+Same contents, resolved through the registry instead of git. Use this when the
+public package is available; use route 1 otherwise.
+
+### 3. As a Pi package
+
+```sh
+pi install git:github.com/Liu-Xiaoyan97/defensive-writing-screen@v0.6.0
+# or, once published
 pi install npm:defensive-writing-screen
-# or pin a version
-pi install npm:defensive-writing-screen@0.6.0
-# or from git or a local checkout
-pi install git:github.com/Liu-Xiaoyan97/defensive-writing-screen
+# or from a local checkout
 pi install ./defensive-writing-screen
 ```
 
@@ -67,7 +104,7 @@ pi install ./defensive-writing-screen
 other Pi resources. Run `/reload` in an existing session, then invoke it with
 `/skill:defensive-writing-screen`.
 
-### 3. From a checkout
+### 4. From a checkout
 
 ```sh
 git clone https://github.com/Liu-Xiaoyan97/defensive-writing-screen.git
