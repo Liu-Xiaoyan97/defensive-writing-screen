@@ -15,6 +15,10 @@ The four dimensions detect observable wording, not defective writing:
 
 English and Chinese markers are included in the canonical questions, but the gate controls are English. An English pass is not Chinese calibration. For another language, prepare a separately identified matched-language variant and control set before the audit.
 
+## Running the screen from a script
+
+`scripts/run_screen.py` performs the gate, the per-unit triage and the focused deletion check without per-unit tool calls: one process, concurrency four by default (`JEV_CONCURRENCY`), retries on transport errors, null for persistent failures, `--resume` to retry only failed ids, and the resolved model captured from each response. Prefer it over individual tool calls. Two consequences follow. The agent reads the aggregate output instead of carrying dozens of raw responses, and failures become per-row data rather than lost calls. Script mode and tool mode are measured paths, not synonyms: the same gate differed by up to about 0.04 between them, so one run uses one path and reports which.
+
 ## State
 
 One paragraph per request; include local context so backward references can be resolved. Do not insert a proposed rewrite, desired verdict or invented evidence.
@@ -108,6 +112,8 @@ Choose one scope before reading and report it with the result.
 In `screened` mode, count misses found in the sampled unread population and report `misses/sample`, never a recall claim. Unsampled units are reported as unread, not as clean. A Jev-first run that also reads every unit cannot save agent work by construction, so report scope before discussing cost.
 
 Record measured cost facts: review scope, units read, units sampled, units unread, Jev requests with retries and failures, and agent turns or tokens when the caller exposes them.
+
+When the script is used, the response describes the aggregate file and the failing rows; it does not replay raw responses.
 
 Record only risk-bearing results. The response carries: the gate table, every finding with its span, one line per routed unit, one aggregate line per sampling group, structure observations, and cost facts. A read unit with no finding contributes only to the aggregate count; a finding at any score is recorded. This keeps the audit trail where it matters and drops the row-per-unit ledger that dominated cost.
 

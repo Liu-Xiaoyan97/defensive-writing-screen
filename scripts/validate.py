@@ -261,6 +261,19 @@ def main() -> int:
         check("f516147" in notice_text, "NOTICE.md must record the upstream commit")
         check("MIT" in notice_text, "NOTICE.md must record the upstream license")
 
+    runner = SKILL_DIR / "scripts" / "run_screen.py"
+    check(runner.is_file(), "run_screen.py missing")
+    if runner.is_file():
+        result = subprocess.run([sys.executable, str(runner), "--help"], capture_output=True, text=True)
+        check(result.returncode == 0, f"run_screen --help failed: {result.stderr.strip()}")
+        runner_text = runner.read_text(encoding="utf-8")
+        for marker in ("/v1/systemone", "--resume", "resolved_model"):
+            check(marker in runner_text, f"run_screen.py missing: {marker}")
+        check("JEV_CONCURRENCY" in runner_text, "run_screen.py must expose the concurrency setting")
+        check("run_screen.py" in text, "SKILL.md must point at run_screen.py")
+        check("Script-mode and tool-mode values are not interchangeable" in text,
+              "SKILL.md must warn that script and tool paths are not interchangeable")
+
     merge = SKILL_DIR / "scripts" / "merge_verdicts.py"
     check(merge.is_file(), "merge_verdicts.py missing")
     if merge.is_file():

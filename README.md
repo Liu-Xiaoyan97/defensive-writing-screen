@@ -200,6 +200,13 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.13.0 runs the screen from a script. `run_screen.py` performs the gate, the
+per-unit triage and the focused deletion check in one process at concurrency four,
+retries transport errors, keeps null for persistent failures, resumes failed ids only,
+and records the resolved model. In a measured run, 119 units took about 57 seconds and
+produced the same eight routed units as 131 individual tool calls, with values within
+about 0.04. Prefer the script; keep one path per run and say which one produced a result.
+
 Version 0.12.2 records only risk-bearing results. The response keeps the gate table,
 every finding regardless of score, one line per routed unit, one aggregate line per
 sampling group, structure observations and cost facts. A read unit with no finding

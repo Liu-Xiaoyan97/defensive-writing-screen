@@ -50,6 +50,17 @@ All service calls returned normally. Both complete gates failed, so no document 
 - A low deletion-preservation score can correctly identify that a span carries a fact. It does not veto an equivalent rewrite that preserves the fact.
 - Multi-paragraph requests can confuse target attribution. Prefer one unit per call.
 
+## Script path versus tool path
+
+The same environment was measured twice: once through per-unit agent tool calls and once through `scripts/run_screen.py` with concurrency four. Both used the same questions, controls and thresholds.
+
+| path | calls | wall time | resolved model | routed units at 0.65 |
+|---|---|---:|---|---:|
+| individual tool calls | 131 | minutes, interleaved with agent turns | not returned | 8 |
+| script, concurrency four | 119 triage calls | about 57 s | StartLux-Decision-v1.1-4B-AutoThink | 8 |
+
+Routing agreed on the same eight units. Individual values differed by up to about 0.04, so the two paths are not interchangeable within one measurement and a run must name the path it used. The script also returns the resolved model identifier, which the tool path did not expose. A resumed run retried only the single failed unit and finished in seconds.
+
 ## Review-scope measurements
 
 Two aggregate runs on the same English draft compared the cost of the two review scopes. Only aggregate workload is recorded here; no document identity, section names or excerpts.
