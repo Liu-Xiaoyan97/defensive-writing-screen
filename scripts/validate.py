@@ -122,9 +122,9 @@ def main() -> int:
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
-    check("Report only what carries risk" in text,
+    check("report only what carries risk" in text.lower(),
           "SKILL.md must state that only risk-bearing results are recorded")
-    check("no finding get no individual record" in text,
+    check("appears only in the aggregate count" in text,
           "SKILL.md must exempt low-risk read units from individual records")
     check("aggregate line" in questions_text,
           "questions.md must define the aggregate record for read units without findings")
@@ -189,9 +189,9 @@ def main() -> int:
     check("cannot save agent work by construction" in text,
           "SKILL.md must state that Jev-first review with full reading cannot save agent work")
     check("artifact" in text, "SKILL.md must route the full per-unit table to an artifact instead of the response")
-    check("Report only what carries risk" in text,
+    check("report only what carries risk" in text.lower(),
           "SKILL.md must state that only risk-bearing results are recorded")
-    check("no finding get no individual record" in text,
+    check("appears only in the aggregate count" in text,
           "SKILL.md must exempt low-risk read units from individual records")
     check("aggregate line" in questions_text,
           "questions.md must define the aggregate record for read units without findings")
@@ -280,6 +280,9 @@ def main() -> int:
               "questions.md must state that the agent writes findings, not a ledger")
         check("do not write a per-unit ledger" in text,
               "SKILL.md must forbid the per-unit ledger in the response")
+        check("Spend it" in text, "SKILL.md must state that saved context is spent on verification")
+        check("adjudicate the two finding sets against the document" in questions_text,
+              "questions.md must define detection-first comparison against a baseline")
         check("run_screen.py" in text, "SKILL.md must point at run_screen.py")
         check("Script-mode and tool-mode values are not interchangeable" in text,
               "SKILL.md must warn that script and tool paths are not interchangeable")

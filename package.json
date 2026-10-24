@@ -1,6 +1,6 @@
 {
   "name": "defensive-writing-screen",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "Jev-first defensive-writing audit as an agent skill: a control battery, calibrated observable yes/no judgments, per-unit agent verdicts, then rewriting with bundled anti-defensive rules.",
   "license": "MIT",
   "keywords": [

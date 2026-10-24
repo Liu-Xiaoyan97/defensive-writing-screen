@@ -200,6 +200,13 @@ academic draft of several hundred units returned no candidate at all. The observ
 same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
 returned 13 candidates, of which 5 survived review.
 
+Version 0.16.0 states the purpose: the script absorbs Jev traffic so the agent spends its
+attention on judgment. A packet run must read neighbors, decide sentence by sentence and
+test a 12-unit miss-check sample; the response stays compact because saved context belongs
+in verification, not in restating machine output. Detection is the success metric, so a
+comparison against an agent-only baseline adjudicates both finding sets against the
+document rather than comparing report sizes.
+
 Version 0.15.0 stops the skill from writing a ledger. `run_screen.py summarize` emits one
 packet holding only the units at or above the threshold, with scores, line ranges and
 exact text; the agent judges that packet, writes findings and cites the packet file

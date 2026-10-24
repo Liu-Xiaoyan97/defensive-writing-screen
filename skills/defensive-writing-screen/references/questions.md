@@ -19,9 +19,15 @@ English and Chinese markers are included in the canonical questions, but the gat
 
 `scripts/run_screen.py` performs the gate, the per-unit triage and the focused deletion check without per-unit tool calls. One invocation runs a process pool whose workers claim units from a shared queue (default four, `JEV_CONCURRENCY`; `--executor thread` where forking is unavailable). Each finished row is appended to the output file and flushed, so an interrupted run keeps completed work; transport errors retry with backoff, persistent failures stay null, `--resume` re-calls only failed ids, and the resolved model is captured from each response. Process mode isolates a crashing worker to one unit instead of ending the run. Prefer it over individual tool calls. Two consequences follow. The agent reads the aggregate output instead of carrying dozens of raw responses, and failures become per-row data rather than lost calls. Script mode and tool mode are measured paths, not synonyms: the same gate differed by up to about 0.04 between them, so one run uses one path and reports which.
 
+## Where the saved context goes
+
+A script-driven screen is not a cheaper agent pass; it is a different allocation of attention. The script handles the Jev traffic, the packet removes the need to regurgitate scores, and the freed context is spent on verification the single-pass reading cannot afford: neighbors of each high-risk unit, sentence-by-sentence judgment, protection classes, the disposition test, and the miss-check sample.
+
+Judge quality by detection, not by response length. A run that writes a shorter report and misses a confirmable problem has failed even though it saved tokens. When comparing against an agent-only baseline, adjudicate the two finding sets against the document instead of comparing their sizes.
+
 ## Handoff packet
 
-The script owns the machine record; the agent owns judgment. `run_screen.py summarize` emits one packet containing only the units at or above the threshold: id, line range, four scores, the maximum, the exact paragraph, and the failed ids. The agent judges that packet and writes findings, not a ledger. `--sample N` adds evenly spaced non-routed units for a miss check; without it, those units stay unread and are reported as a count.
+The script owns the machine record; the agent owns judgment. `run_screen.py summarize` emits one packet containing only the units at or above the threshold: id, line range, four scores, the maximum, the exact paragraph, and the failed ids. The agent judges that packet and writes findings, not a ledger. `--sample N` (default 12 when the skill runs it) adds evenly spaced non-routed units, because the baseline's advantage is broad reading and the screen should test its own misses rather than assume they are absent.
 
 Paragraph judgment does not depend on document order, so units are evaluated in completion order and joined by id. Order only matters when the agent needs the paragraph's neighbors to interpret a backward reference; then it opens the source at the recorded line range instead of rereading the document.
 
