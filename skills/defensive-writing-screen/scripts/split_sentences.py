@@ -1,60 +1,62 @@
 #!/usr/bin/env python3
-"""Split screening units into sentences so Jev can score finer than a paragraph.
+"""Optional sentence triage with exact parent offsets and full local context.
 
-Random sampling existed only because review attention was assumed expensive. When Jev
-calls are free, recall should come from deterministic granularity instead of luck.
-
-Usage:
-    python3 split_sentences.py units.jsonl > sentences.jsonl
-
-Input fields: id, start, end, text.
-Output fields: id (parent_sN), parent, start, end, text (one sentence).
+Sentence splitting is a heuristic, not a grammatical or semantic classifier.
+Run triage on this file only when paragraph screening needs finer inspection.
+Usage: python3 split_sentences.py units.jsonl > sentences.jsonl
 """
-
 from __future__ import annotations
-
 import argparse
 import json
 import re
 import sys
 from pathlib import Path
 
-BOUNDARY = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9(\[\"\u2018\u201c])")
-MIN_CHARS = 30
+from handoff import read_rows, unit_snapshot
+
+BOUNDARY = re.compile(r'(?<=[.!?。！？])\s+(?=[A-Z0-9(\["\u2018\u201c\u4e00-\u9fff])')
 
 
-def sentences(text: str) -> list[str]:
-    parts = [part.strip() for part in BOUNDARY.split(text)]
-    merged: list[str] = []
-    for part in parts:
-        if merged and len(part) < MIN_CHARS:
-            merged[-1] = f"{merged[-1]} {part}"
-        else:
-            merged.append(part)
-    return [part for part in merged if part]
+def sentence_spans(text):
+    """Return exact slices; do not drop short sentences or normalize their words."""
+    boundaries = [0] + [m.end() for m in BOUNDARY.finditer(text)] + [len(text)]
+    for left, right in zip(boundaries, boundaries[1:]):
+        while left < right and text[left].isspace():
+            left += 1
+        while right > left and text[right-1].isspace():
+            right -= 1
+        if left < right:
+            yield left, right, text[left:right]
 
 
-def read_jsonl(path: Path) -> list[dict]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+def sentences(text):
+    return [part for _, _, part in sentence_spans(text)]
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("units", nargs="?", default="-")
+def split_units(rows):
+    if len({r['id'] for r in rows}) != len(rows):
+        raise ValueError('duplicate unit ids')
+    for i, row in enumerate(rows):
+        neighbors = [unit_snapshot(rows[j]) for j in (i-1, i+1) if 0 <= j < len(rows)]
+        for n, (start, end, text) in enumerate(sentence_spans(row['text'])):
+            yield {'id': f"{row['id']}_s{n}", 'parent': row['id'],
+                   'start': row.get('start'), 'end': row.get('end'),
+                   'line_range_kind': 'parent_unit', 'char_start': start, 'char_end': end,
+                   'text': text, 'context': {'parent': unit_snapshot(row), 'neighbors': neighbors}}
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('units', nargs='?', default='-')
     args = parser.parse_args(argv)
-
-    rows = read_jsonl(Path(args.units)) if args.units != "-" else [
-        json.loads(line) for line in sys.stdin if line.strip()]
+    rows = read_rows(Path(args.units)) if args.units != '-' else [json.loads(l) for l in sys.stdin if l.strip()]
     emitted = 0
-    for row in rows:
-        for index, sentence in enumerate(sentences(row["text"])):
-            print(json.dumps({"id": f"{row['id']}_s{index}", "parent": row["id"],
-                              "start": row.get("start"), "end": row.get("end"),
-                              "text": sentence}, ensure_ascii=False))
-            emitted += 1
-    print(f"{emitted} sentence(s) from {len(rows)} unit(s)", file=sys.stderr)
+    for row in split_units(rows):
+        print(json.dumps(row, ensure_ascii=False))
+        emitted += 1
+    print(f'{emitted} sentence(s) from {len(rows)} unit(s); exact offsets, full context', file=sys.stderr)
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

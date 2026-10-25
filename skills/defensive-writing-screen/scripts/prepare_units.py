@@ -25,6 +25,7 @@ still screened; absence of a phrase proves nothing.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -107,7 +108,7 @@ def iter_blocks(text: str):
     in_fence = False
     start = None
     buf: list[str] = []
-    for number, line in enumerate(text.splitlines(), start=1):
+    for number, line in enumerate(text.split("\n"), start=1):
         stripped = line.strip()
         if stripped.startswith("```") or stripped.startswith("~~~"):
             in_fence = not in_fence
@@ -161,7 +162,7 @@ def latex_blocks(text: str):
         body = re.sub(r"[^\n]", " ", body[:document.end()]) + body[document.end():]
     # A percent escaped by an odd number of backslashes is a literal percent.
     lines = []
-    for line in body.splitlines(keepends=True):
+    for line in body.split("\n"):
         for i, char in enumerate(line):
             if char != "%":
                 continue
@@ -170,7 +171,7 @@ def latex_blocks(text: str):
                 line = line[:i] + re.sub(r"[^\n]", " ", line[i:])
                 break
         lines.append(line)
-    body = "".join(lines)
+    body = "\n".join(lines)
     skipped = r"equation\*?|align\*?|alignat\*?|gather\*?|multline\*?|displaymath|math|tabular\*?|tabularx|longtable|thebibliography|verbatim\*?|lstlisting|tikzpicture"
     body = re.sub(r"\\begin\{(" + skipped + r")\}[\s\S]*?\\end\{\1\}", blank, body)
     body = re.sub(r"\\\[[\s\S]*?\\\]|\$\$[\s\S]*?\$\$", blank, body)
@@ -212,7 +213,7 @@ def latex_blocks(text: str):
     body = re.sub(r"\\(?:maketitle|centering|par)\b", "", body)
     body = re.sub(r"\\looseness\s*=\s*-?\d+", "", body)
     cleaned = []
-    for line in body.splitlines():
+    for line in body.split("\n"):
         stripped = line.strip()
         # Standalone layout commands are not prose; citation-led sentences stay.
         if (re.match(r"^\\(?:setlength|renewcommand|newcommand|vspace|hspace|clearpage|newpage|pagebreak|noindent|small|footnotesize)\b", stripped)
@@ -239,14 +240,15 @@ def main(argv: list[str]) -> int:
         name = args.name or "draft"
     else:
         path = Path(args.source)
-        text = path.read_text(encoding="utf-8")
+        text = path.read_bytes().decode("utf-8")
         name = args.name or path.stem
 
     slug = slugify(name)
     emitted = 0
     use_latex = args.format == "latex" or (args.format == "auto" and args.source.endswith(".tex"))
     blocks = latex_blocks(text) if use_latex else iter_blocks(text)
-    source_lines = text.splitlines()
+    source_lines = text.split("\n")
+    source_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
     for start, end, block in blocks:
         paragraph = normalize(block)
         if len(paragraph) < args.min_chars or not is_prose(block, args.min_chars):
@@ -258,9 +260,11 @@ def main(argv: list[str]) -> int:
             "paragraph": emitted,
             "text": paragraph,
         }
-        if use_latex:
-            unit["source_text"] = "\n".join(source_lines[start - 1:end])
-            unit["format"] = "latex"
+        unit["source_text"] = "\n".join(source_lines[start - 1:end])
+        unit["source_sha256"] = source_sha256
+        unit["source_name"] = args.source
+        unit["line_basis"] = "LF"
+        unit["format"] = "latex" if use_latex else "text"
         if args.candidates:
             unit["candidates"] = find_candidates(paragraph)
         print(json.dumps(unit, ensure_ascii=False))

@@ -1,180 +1,161 @@
 # Anti-defensive rewrite guide
 
-Adapted from the `anti-defensive-writing` skill (Kiterlin, MIT, commit `f516147d017a3fe43ae99192cb89d8261b0c8679`); the commit, file hash, and license are recorded in `NOTICE.md`. The reference is provenance and attribution only. This file is the operative rulebook for this skill and is complete on its own: nothing in it requires the upstream skill to be installed, read, or consulted.
+Adapted from `anti-defensive-writing` by Kiterlin (MIT, commit `f516147d017a3fe43ae99192cb89d8261b0c8679`). Attribution and the upstream hash remain in `NOTICE.md`. This bundled guide is complete on its own. No other skill is loaded, consulted or required.
 
 ## Core rule
 
-Advance the claim. State what is true, what the text argues, what the evidence shows, or what the method does. Do not spend sentences on what the text does not claim, does not prove, does not cover, or does not attempt. Write as an author explaining an argument, not as an author negotiating with an imagined critic.
+Explain the work directly and accurately. Remove unnecessary authorial apology, uncheckable effort assurances and empty defenses against hypothetical criticism. A disclaimer about authorial intent can be empty when it adds no reader-relevant distinction. Preserve every fact, uncertainty, limitation and inference boundary that helps the reader understand the work.
 
-## Preferred patterns
-
-- "This paper examines..." / "This study shows..." / "The analysis focuses on..."
-- "The evidence indicates..." / "The results suggest..."
-- "This design allows..." / "In this setting, X shapes Y by..."
-- "The central contribution is..."
-- 本文研究…… / 本研究表明…… / 本文重点分析…… / 证据表明…… / 结果提示……
-
-## Submission checks
-
-- Remove self-criticism that adds no information.
-- Narrow claims that exceed the evidence; withdraw claims the evidence does not support.
-- Remove repeated limitation statements from abstracts, introductions, and conclusions; keep the ones the claim cannot survive without.
-- Confirm the contribution stays visible in the abstract, introduction, results, and conclusion.
-- When simulating reviewers, separate demonstrated problems, items needing verification, and optional extra experiments. Fix what affects the conclusion or its interpretation; do not convert every imagined objection into a limitation.
+Detect a communicative problem, not a grammatical pattern. Negation, concession and repetition can be useful. A shorter positive version is not evidence that the source was defensive. Information preservation is necessary, not sufficient, for confirming a defect.
 
 ## Main argument
 
-Identify the paper's main contribution: a new capability, a mechanism, lower cost, or better scalability. Organize the abstract, introduction, experiments, and conclusion around it, keep supporting contributions, and cut unrelated setup. If a reader finishes the abstract without knowing the contribution, the structure is the problem, not the phrasing.
+Make the contribution identifiable and connect claims to their evidence. Supporting contributions and unfavorable results remain. Do not impose a triumphant narrative on uncertain or negative evidence. Missing explanation of the contribution is a structural issue, not automatically a defensive phrase.
 
 ## Writing principles
 
-- Lead with the claim; the first sentence carries the point, not a caveat.
-- Use positive scope: say what the text examines, explains, tests, compares, or contributes.
-- Strengthen with evidence, not apology.
-- One paragraph, one job. Do not mix argument, caveat, apology, exception, and clarification.
-- Use contrast only when the contrast is part of the argument.
+- Prefer direct statements where they preserve the same meaning.
+- Begin with a condition when the result depends on it. Claim-first is not mandatory.
+- State the scope positively or negatively according to clarity, not a ban on negation.
+- Keep contrasts that distinguish methods, metrics, mechanisms or outcomes.
+- Let evidence determine strength. Do not strengthen or weaken a claim for tone.
+- Distinguish scientific criticism from authorial self-justification.
 
 ## Technical plans and SOPs
 
-For Chinese technical plans, procedures, reports, and presentations, remove redundancy and admonitory tone while keeping technical meaning, applicability conditions, prohibitions, and operational purpose. State the operation, parameters, prerequisites, and result directly. Replace vague prerequisites such as "在条件允许时" with the concrete condition the draft supports ("标定前提：……"); keep "仅在……时" and "若欲……需要……" or rewrite them equivalently, never as unconditional actions. Drop admonitions such as "切记" while keeping real prohibitions and technical conclusions. Simplify "进行……的测量" to "测量……"; use "标定", "解耦", "淬灭", or "钳定" only when they name the actual operation. Do not change an operation to make the text sound more specialized.
+Preserve prerequisites, prohibitions, applicability, tolerances and operational purpose. “Only when”, “must not” and “cannot be used” may be critical safety information. Replace a vague prerequisite only with a condition already established in the source; never invent one. Removing admonitory tone or simplifying nominalizations is usually optional style, not a defensive-writing hit. Keep precise technical terminology rather than making the wording sound more specialized.
+
+## Preferred patterns
+
+Use “The analysis examines…”, “The evidence suggests…”, “The test covers…” or “The method does not establish…” as appropriate. None is privileged over a necessary negative statement. In Chinese, “本文研究……”, “结果提示……” and “本次测试不能确定……” are all legitimate when they match the evidence.
+
+## Submission checks
+
+Separate demonstrated defects, evidence gaps and optional presentation changes. Do not label every plausible reviewer question a manuscript failure. Check source quotations, scope, attribution and modal degree before recommending edits. Keep limitations wherever an independently read claim requires them, including abstracts and conclusions.
 
 ## What must survive
 
-Keep a limitation when omitting it would change the validity of the claim, the interpretation of the evidence, the scope of application, the research design, a safety or legal requirement, or the reader's ability to use the result correctly. A qualifier that names the budget, precision, protocol, implementation, or version under test is such a limitation, and so is one that reports what an intervention covered. State such a limitation once, calmly, in the place where it belongs: methods, results, discussion, limitations, or the exact sentence that depends on it. Do not scatter it through abstracts, contribution lists, topic sentences, or conclusions.
+Preserve numbers, units, metric directions, comparison objects, effect degree, modal strength, causal status, mathematical assumptions, tested conditions, intervention scope, safety/legal/ethical restrictions and unfavorable results. A meaningful interpretation may add no new number and still be necessary. A backward reference can efficiently retain a previously specified scope.
+
+Do not remove a restriction just because its facts also appear elsewhere. The question is whether the reader at this location would lose an inference boundary. Repetition across independently read sections can be useful.
 
 ## Classify before editing
 
-Label each flagged item as one of:
+First classify the function: result, scope, methodological limitation, attribution, useful contrast, evidence qualification, navigation, ordinary presentation, or unnecessary rhetorical defense. A protected fact and an empty apology may occupy different spans of one sentence.
 
-- unnecessary disclaimer;
-- necessary scope condition;
-- real methodological limitation;
-- useful conceptual contrast;
-- evidence-based qualification;
-- redundant clarification.
+For every asserted defense, name the exact span, explain its unnecessary function and cite contextual evidence. Before deciding that none exists in a selected unit, actively scan all of its sentences and headings for effort/rigor/responsibility assurances, apologies, author-intent or value disclaimers, non-claims, anticipated-reader rebuttals, reasons for omitting experiments, model scales, baselines or repeated prior results, explanations discounting unfavorable outcomes, and repeated caveats. Search semantically, including question-and-answer responses and claims about what is needed, useful, beneficial, in scope or worth repeating. In FAQ/Q&A clusters, compare generic purpose/genre disclaimers across neighboring answers. Repeated “this is not a benchmarking paper” or “all we need to show” wording may function as an empty rebuttal when the same scope or burden has already been explained; do not assume this from the phrase alone. Preserve repeated answers that distinguish separate comparison objects, design rationales, scopes or evidence limits. When an answer says there is “no benefit” in repeating prior negative results, verify those results cover the same population or system, conditions, research question, comparison and inference; results from a related but narrower setting do not establish that an evaluation at the queried scope has no value. When “all we need to show” narrows the burden, verify that existence is actually the theorem or predeclared research objective instead of treating the asserted burden as its own justification. For a non-claim immediately followed by the same positive result, compare proposition, direction and degree against evidence already stated; preserve distinct subgroup uncertainty and scope. Markers are retrieval cues, not a complete checklist. Record the candidate before checking whether it has a legitimate reader function; safe rewrite availability is a separate later test. Keep a separate per-unit candidate ledger with exact spans, possible defensive functions, decisions and concrete KEEP rationales. In Pass B, each `decision_reason` must state the exact candidate proposition/function, the local evidence proposition or reader function offered in its favor, whether they match on the relevant object/conditions/comparison/question/inference, and whether unnecessary authorial evaluation remains after protected content is preserved. A KEEP rationale that names only a related fact or plausible design reason is incomplete. Record `candidate_scan: none` only after inspecting the complete unit and context. The ledger audits discovery and is not a positive label. For omitted-work rationales, test separately whether the wording dismisses a reasonable scope question and whether it supplies a concrete design reason; lack of evidence alone does not establish defensive function. For a broad evaluation such as “no benefit,” “does not contradict,” “necessary,” or “scope creep,” write down the exact proposition and the proposition supported by nearby facts or cited work. Compare population/system, conditions, comparison, question, and inference. A citation on the same topic or a relevant fact does not by itself establish that the evidence answers the exact claim; equally, a direct match plus a separate stated aim can support a real scope boundary. A non-claim immediately followed by the direct result it denies is a candidate only when it adds no distinct inferential boundary. When a qualifier follows subgroup estimates, preserve differences in precision, significance, and group scope; do not collapse an overall estimate into a subgroup claim. A disclaimer about not framing prior work or limitations negatively is a candidate when the substantive analysis follows and the disclaimer adds no method, evidence, or scope. Do not infer the author's actual motives or emotions. Judge the wording's role in the argument.
 
-Only the first and last are routine deletion or compression targets. The middle four are rewritten for precision, not removed.
+For an explanation of an unfavorable or mixed result, separate observed directions from the proposed interpretation and the evidence that links them. A specific interpretation can be scientifically useful even when the defensive-writing review cannot independently verify it. Missing support is an evidence-alignment question, not a defensive-writing hit by itself. Do not upgrade, downgrade, delete, or relabel the interpretation under this screen. Mark the evidence relation unresolved when needed, while preserving the original modality.
+
+Do not conflate evidence alignment with defensive writing. An unsupported causal explanation may need separate qualification or evidence review, but it is not defensive solely because support is missing. Do not use a defensive-writing rewrite to change a categorical attribution into a possibility, or otherwise change its modality. Preserve the original claim and report the evidence concern separately; when the evidence cannot be assessed, mark the issue unresolved.
+
+For each retained candidate, name the specific fact, method, scope, attribution, comparison, audit purpose or inference boundary it preserves. “Necessary caveat” without that explanation is not a completed KEEP test. Required AI-use and responsibility disclosures remain protected unless a separate empty rhetorical span is established.
+
+Then independently classify the repair. A real issue remains established even when no safe rewrite is found; that case is partial or unresolved, not an absent issue.
+- confirmed: issue established, repaired, source anchored and all meaning preserved;
+- partial: issue established but repair unsafe or ineffective;
+- optional: safe presentation improvement without a defensive problem;
+- keep: no change required;
+- unresolved: missing context, ambiguous source or unverified meaning.
 
 ## Rewrite procedure
 
-1. Name the job the sentence does. If it adds no evidence, scope, logic, precision, or reader guidance, delete it.
-2. Convert defensive limitation into positive scope. "We do not claim these cases are representative" becomes "The analysis covers three institutional settings from 2015 to 2023", and only when those facts exist in the draft.
-3. Keep the strength of a warranted qualifier. A rewrite may not turn "could hardly" into "difficult", "cannot" into "may not always", or "no prior report" into "few reports". Weakening a supported claim is as wrong as inflating it. Replace stacked hedging without strengthening the evidence. "This may potentially suggest that X could influence Y" may become "These observations suggest that X may influence Y". Keep association distinct from causation and preserve warranted uncertainty. Name its source when known.
-4. Keep contrast only when the contrast is part of the argument. Drop reflexive "not X but Y", "rather than", "to be clear", "it should be noted that".
-5. Rebuild the paragraph around one job: claim first, then support, then any necessary limit. Remove repeated caveats, apology-like framing, and detours that exist only to fend off a hypothetical objection.
-6. Strengthen with evidence, not apology. If a claim feels too broad, narrow it, sharpen the concept, or point to the evidence; do not bolt on a protective clause.
-7. Do not manufacture facts to make a sentence land. Data, settings, mechanisms, causal links, and advantages must already be in the draft or the supplied evidence.
+1. Read the full paragraph and relevant neighbors. Resolve references before editing.
+2. Establish the problem without looking for a convenient rewrite first.
+3. Mark protected information separately from unnecessary rhetoric.
+4. Propose the smallest repair that removes the actual problem.
+5. Check facts, strength and issue removal independently. Record a reason for each.
+6. If the repair merely swaps although/but for punctuation, ask whether any separate defect existed. Normally this is optional presentation.
+7. Keep an unresolved condition. Do not invent conditions, mechanisms or results to make a fluent replacement.
+8. Verify the original quotation against the source. Failed anchors block accepted edits.
+9. Whole-sentence deletion, even inside a larger rewrite, requires the focused check and complete known evidence. A high deletion score is not a diagnosis.
 
 ## Detection checklist
 
-- unnecessary disclaimer or preemptive rebuttal;
-- repeated statements of what the text does not claim;
-- stacked hedges, or hedges on results the evidence already supports;
-- caveats in high-impact positions: abstract, contribution list, topic sentence, conclusion;
-- paragraph opening with a limitation before stating its point;
-- negative framing where positive scope is available;
-- self-undermining contribution statements ("only a preliminary attempt", "of limited reference value");
-- reflexive "not X but Y";
-- redundant "however", "nevertheless", "although" transitions;
-- genuinely empty retreating tails, distinguished from useful references to conditions already stated;
-- a result demoted behind a retreat while a stronger fact sits in the main clause;
-- a claim wider than the evidence, or a fact stated in two sections.
+Investigate, but do not automatically condemn:
+- authorial apology unrelated to the measured result;
+- an assurance of effort or rigor that supplies no method or evidence;
+- a disclaimer repeating the same locally available scope without a reader function;
+- a retreat explicitly intended only to sound less confident;
+- a broad disclaimer about authorial intent when it precedes substantive analysis;
+- a non-claim immediately followed by the direct result it denies, if it adds no distinct boundary;
+- a broad claim that an omitted experiment has "no benefit" when it supplies no design rationale and dismisses a reasonable scope question. Keep prior results and the actual study scope; do not infer that every omitted experiment needs to be run;
+- authorial effort or rigor assurance even when nearby method details are present; assess whether the assurance adds evidence beyond those details;
+- a defense of a poor result, testing whether its wording goes beyond an evidence-supported interpretation; if the problem is real but no equivalent repair is supportable, retain the claim and disposition it partial or unresolved rather than strengthening or weakening it;
+- a justification for an unfavorable result that exceeds the evidence. Assess the unsupported attribution separately and do not change its modality under this skill.
+
+Exclude as defects unless there is an independent problem:
+- actual tradeoffs and ranked comparisons;
+- limits of causal identification, statistical power or external validity;
+- contribution attribution and evaluation scope;
+- audit history and disclosure of selection procedures;
+- ordinary “it should be noted” lead-ins;
+- duplicated words, sentence merging and changes of emphasis.
 
 ## Discouraged patterns
 
-"This paper does not claim..."; "We do not attempt to..."; "This is not to say that..."; "This should not be taken to mean..."; "The goal is not X but Y"; "Rather than arguing X, this paper argues Y"; "Although this study has limitations..."; "Of course, this does not fully capture..."; "It is worth noting that..."; "To be clear...". Keep any of them only when the sentence carries accuracy that would otherwise be lost.
+There is no blacklist of “although”, “however”, “only”, “not”, “rather than” or “we do not claim”. These are retrieval hints. A sentence that cannot establish clinical safety or a theorem outside its assumptions must say so. An apology that supplies no such restriction may be removed. Read context to tell the difference.
 
 ## Retreating tails
 
-A genuinely empty tail adds rhetorical retreat without necessary scope or uncertainty. A backward reference is not automatically such a tail. Read the whole paragraph and neighboring context: "under this setup" may refer accurately to several conditions just established. Keep a useful reference instead of repeating the setup in every sentence. Do not replace a multi-condition scope with just one selected condition. With missing or ambiguous context, retain the qualifier or ask for clarification; absence of an antecedent in an isolated sentence does not justify deletion. Sentence-initial conditions are not appended tails.
-
-- A qualifier that names its condition stays: "at the 2B-step budget", "with
-  0-shot evaluation", "within 1e-5", "in the current implementation".
-- A qualifier whose removal would drop the fact of what was tested stays: "the
-  contribution of the full path, not its components" reports the scope of the
-  intervention, and a rewrite keeps it.
-- Apply the same semantic test to method statements. Grammatical completeness without a qualifier does not establish that its scope or uncertainty can be removed.
-- Optional explicit restatement of an already clear condition is a style choice, not a confirmed defensive-writing defect.
-- Do not use this rule to remove a result. The tail goes; the number, the metric
-  direction, and the unfavorable outcome stay, in the place where the result is
-  discussed.
+A tail is empty only when it adds rhetorical withdrawal without necessary uncertainty, scope or navigation. “Under these conditions” can refer to several conditions already specified; preserve that reference. A missing antecedent requires more context, not deletion. Do not replace a multi-condition scope with one selected budget. Conditions at the beginning of a sentence are not appended retreats.
 
 ## Narrative placement
 
-Three moves carry the same facts into a stronger position. None of them is a style
-repair, and none may change a number, a unit, a direction, or a condition.
-
-- **Restate.** When a sentence puts its own result behind a retreat while a stronger
-  fact it already reports sits in the main clause, swap them. "The estimate is 0.7
-  points below the baseline while using 12% of its steps" becomes "Using 12% of its
-  steps, the estimate comes within 0.7 points of the baseline". It never becomes "the
-  estimate matches the baseline".
-- **Narrow.** When a claim covers more than the evidence, limit it to what was measured. An interpretation of reported numbers may help explain a comparison or aggregate; do not remove it solely because it adds no new number or condition. Remove only unsupported or genuinely redundant interpretation. Narrowing never hides an unfavorable result or stops a supported comparison merely to improve tone.
-- **Relocate.** When a fact interrupts its unit or appears in more than one section,
-  keep one statement where the reader needs it and name the location that keeps it.
-  Relocating never deletes the fact.
-
-The test is the same for all three: after the move, every number, metric direction,
-condition, and unfavorable result is still present, and the sentence that carries the
-result is the one a reader meets first. A unit that fails the test keeps its verdict.
+N1 restates emphasis, N2 narrows an unsupported claim, N3 relocates material. N1 and N3 are often optional presentation and never detection hits merely because they improve flow. N2 is evidence alignment; keep it distinct from defensive rhetoric. Every relocation names a destination. Do not describe a deficit as a match or choose a favorable metric to hide an unfavorable one.
 
 ## Protection before rewriting
 
-Protect six classes of meaning: P1 results and directions, P2 mathematical/proof conditions, P3 measurement/reproduction conditions, P4 intervention/check scope, P5 design premises, P6 comparison semantics. A high probability never permits their removal. Protection does not freeze the exact words: a concession or apologetic frame may be restated if all favorable and unfavorable facts, uncertainty, objects and conditions survive.
+P1 protects results and directions, P2 mathematical conditions, P3 measurement/reproduction conditions, P4 intervention scope, P5 design premises, P6 comparison semantics. Protection concerns meaning, but does not prove that alternative framing is needed. A separate unnecessary apology beside a result can be repaired without changing the result. Record independent spans rather than labelling the entire paragraph defective.
 
-Judge independent spans, not whole paragraphs. A clear direction-only comparison remains meaningful when its numbers are in a table; missing repeated numbers do not make it defensive or require a longer replacement. Conversely, the presence of a protected result does not shield a separate empty disclaimer. Record multiple findings within one paragraph rather than stopping after its first rewrite rule. Separate deletion from equivalent restructuring and confirmed defects from optional style choices.
+Keep the same modal strength and degree. “Could hardly” must not become either “difficult” or an absolute “cannot”. “May”, “suggests”, “some”, “partly”, “only” and “not necessarily” can carry information. Stacked hedges are not permission to silently upgrade evidence. If an equivalent repair is unavailable, KEEP.
 
 ## Document structure
 
-A paper normally carries an abstract, an introduction, related work, a method,
-experiments, a conclusion, and a limitations statement. Related work may fold into the
-introduction, and limitations may sit inside a discussion. A draft that ends on its
-limitations section leaves the reader with a withdrawal instead of the takeaway, and a
-draft with no closing section at all leaves the reader without a statement of what was
-solved, proposed, and shown. Both are structural findings, reported once at the document
-level. Absence is not automatically a defect: a supplement, appendix, extended abstract,
-letter, or proposal carries a different set, and the report says which roles the genre
-does not require.
-
-Placement is also structural, but there is no mandatory experiment order. Move evidence only when its distance from a claim creates a concrete reading problem. Related work may legitimately end by positioning the current study or motivating its design. Distinguish such transitions from redundant implementation instructions. Report optional reorganizations separately and name where any moved facts remain.
+S1 missing conclusion, S2 ending on limitations, S3 missing necessary scope, S4 absent/folded related work, S5 distant evidence and S6 redundant implementation detail are observations. Genre, venue and reader function determine whether a change is warranted. A required final limitations section is not a defect. Related work can motivate the current design. Do not impose one experiment order or move a restriction away from the claim that needs it.
 
 ## Metrics, experiments, unfavorable results
 
-- When a metric is unfavorable, state the condition, metric, and number, then the tradeoff. Do not turn one weaker metric into a verdict on the whole method, and do not switch evaluation criteria to avoid the result. "Accuracy falls from 90% to 89% while latency falls from 100 ms to 60 ms" stays a two-sided statement.
-- Each experiment should answer at least one of: does the method work, what explains the gain, can alternatives be ruled out, when does it apply. When a supporting experiment is missing, name the specific claim that loses support instead of writing "the experiments are insufficient".
-- Keep results that affect the central conclusion. Report them where the conclusion is discussed, not only in a limitations section.
-- Do not attribute an effect to one component without the corresponding intervention test, and do not describe a local observation as a general defect.
+Report benefits and drawbacks together when that comparison answers the research question. “Sensitivity rises but specificity falls” is a useful result, not defense. An insignificant contrast does not establish equivalence. More conditions do not replace repeated random seeds. A possible explanation of a poor outcome must remain a hypothesis unless the evidence identifies it. For mixed metrics, inspect whether the proposed mechanism explains the direction difference and whether the text states the evidential limit; do not require the interpretation to be treated as fact. Neither deleting that hypothesis wholesale nor changing its connector necessarily repairs an unsupported attribution.
 
 ## Chinese-specific habits
 
-Check habitual modesty: "仅仅做了初步尝试", "只能提供有限参考", "仍有很大提升空间". Replace with what was done: "本文在两个案例上评估该方法". Keep "初步", "可能", and "提示" when the evidence warrants them; do not add "显著" or "全面领先" to sound stronger. Remove admonitory tone ("切记") while keeping real prohibitions and technical conclusions. Keep necessary conditions such as "仅在……时" or "若欲……需要……" and rewrite them equivalently; never drop them to sound decisive.
+“仅”, “初步”, “可能”, “尚不能” and “在一定程度上” may state actual scope or evidence strength. “我们对此深感抱歉” may instead be unnecessary authorial posture. Do not decide from the word alone. Simplifications such as “进行测量” to “测量” are optional style. Preserve real prohibitions such as “不得” and requirements such as “仅在……时”.
 
 ## English-specific habits
 
-Remove stacked modals ("may potentially suggest", "could possibly be associated with"). Keep a single modal or explicit uncertainty when warranted. An association stays an association. Do not delete "may", "suggests", or "under these conditions" mechanically; decide from the evidence.
+Meaningful “not X but Y” contrasts, literature qualifications such as “to our knowledge”, and actual “although” tradeoffs stay. Removing a metadiscursive lead-in is normally optional. Compare the complete original and revision, including quantifiers and hypothetical status, rather than counting hedges.
 
 ## Examples
 
-Defensive: "We do not claim that these cases are representative of all contexts."
-Direct: "The cases show how the mechanism operates across three institutional settings." (only if the draft establishes three settings)
+**Candidate:** “We therefore do not claim that the within-group relationship is absent. It is present and weak.” When the same local context already reports the relationship and its strength, the denial adds no distinct boundary. “The within-group relationship is weak but present” retains direction and degree. If the non-claim instead limits a different analysis or population, keep it.
 
-Defensive: "This paper is not intended to provide a comprehensive theory, but rather to examine one mechanism."
-Direct: "This paper examines one mechanism through which platform governance reshapes participation."
+**Candidate:** “We are not framing these limitations negatively; rather, they show how the design constrains interpretation.” The intent disclaimer adds no information about the limitations. “These limitations show how the design constrains interpretation” preserves the analysis. Keep descriptions of the limitations, their consequences and mitigation.
 
-Defensive: "This does not mean that policy design alone determines implementation outcomes."
-Direct: "Implementation outcomes depend on how policy design interacts with administrative capacity."
+**Keep for this screen; assess evidence separately:** “The regression is a normalization artifact rather than a failure of initialization.” Whether the causal attribution is supported is not itself a defensive-writing decision. Do not rewrite it as “may be consistent with” unless the author separately authorizes an evidence-alignment edit.
 
-Defensive: "While the sample is limited and cannot capture every variation, it still offers useful insights."
-Direct: "The sample covers the variation relevant to the study's question." (only if the draft supports that claim)
+**Keep:** “We report the full search path so readers can check whether selection depended on searching until something worked.” This names an audit purpose and the disclosed procedure. Anticipating a concern is not automatically an empty disclaimer.
 
-Defensive: "We are not arguing that this model is superior in every situation."
-Direct: "The model is most useful when the task requires interpretable comparisons across cases."
+**Contextual candidate:** “There is no benefit in repeating established negative results.” If this answers a reasonable question about why a relevant experiment is omitted, but gives no design reason, retain the reported prior result and state the scope studied. Do not infer that every omitted experiment should be repeated.
 
-Context-dependent: "The comparison supports the benefit of the additional term under this setup."
-Keep when the setup has already been specified and limits the conclusion. If the antecedent is unclear, ask or clarify from available evidence; do not delete the qualifier merely because it is deictic.
+**Keep:** “The change raises sensitivity but reduces specificity.” Both directions are results. A semicolon is optional.
 
-Examples show phrasing only. They never supply facts to a draft that lacks them.
+**Keep:** “We evaluate an existing algorithm; we do not introduce a new one.” This attributes the contribution.
+
+**Keep:** “The interval is wide and cannot rule out an important difference.” This calibrates uncertainty.
+
+**Unresolved:** “The effect holds under that setup.” Read the antecedent before judging scope.
+
+**Optional:** “It should be noted that the tests use different units.” The unit distinction must remain; shortening the lead-in is not a defensive hit.
+
+**Defensive candidate:** “We humbly present measurements from two settings.” If “humbly” only evaluates authorial posture, “We present measurements from two settings” removes it without changing scope.
+
+**Defensive candidate with protected content:** “We apologize for not offering a grand result. The experiment measured two conditions.” The apology may be unnecessary; the measured scope stays. A whole-sentence deletion still needs the focused check.
+
+**Unsafe repair:** Replacing “may reflect several causes” with “reflects the cause” changes both uncertainty and multiplicity. Reject it regardless of fluency.
+
+Examples are synthetic and supply no missing facts to a manuscript. Context can change a decision.
 
 ## Before returning a revision
 
-Remove any sentence that exists mainly to preempt an imagined objection. Confirm that no number, unit, condition, metric direction, prohibition, or unfavorable result changed. Confirm the paragraph still has one job and opens with its point.
+Ask separately: Is the issue real? Does this repair remove it? Are all facts and uncertainty preserved? Is the quote verified against the current source? Are required deletion checks complete? If any required answer is unknown, do not present the edit as confirmed. Keep partial, optional, KEEP and unresolved out of the confirmed count.

@@ -1,7 +1,7 @@
 {
   "name": "defensive-writing-screen",
-  "version": "0.19.0",
-  "description": "Jev-first defensive-writing audit as an agent skill: a control battery, calibrated observable yes/no judgments, per-unit agent verdicts, then rewriting with bundled anti-defensive rules.",
+  "version": "0.30.0",
+  "description": "Standalone Jev-first writing audit with contextual issue detection, separate repair checks, lossless evidence packets and source-anchored suggestions.",
   "license": "MIT",
   "keywords": [
     "pi-package",
@@ -14,8 +14,12 @@
     "editing"
   ],
   "files": [
-    "skills",
-    "scripts",
+    "skills/**/SKILL.md",
+    "skills/**/references/*.md",
+    "skills/**/references/*.json",
+    "skills/**/scripts/*.py",
+    "scripts/*.py",
+    "tests/*.py",
     "LICENSE",
     "NOTICE.md",
     "README.md"

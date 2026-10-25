@@ -1,5 +1,20 @@
 {
-  "revision": "v4",
+  "revision": "0.30.0",
+  "triage_revision": "v4",
+  "review_contract": {
+    "issue_test": "On each selected unit, actively scan all sentences for authorial self-defense, effort assurances, broad non-claims, dismissals of omitted experiments, explanations that discount unfavorable results, meta-level evaluations of the work's necessity or coherence, and anticipated-reader rebuttals. In Q&A/FAQ clusters compare generic scope and genre disclaimers across neighboring answers; repeated labels may be candidates even when a distinct answer contains a legitimate rationale. For evaluative conclusions (e.g. no benefit, no contradiction, necessity, scope creep), identify the exact proposition asserted and compare it with the evidence proposition: topic similarity or a nearby fact alone does not establish that population, conditions, comparison, question, and inference match. Also identify any distinct reader-relevant fact, scope, evidence, method, attribution, comparison object, or inference boundary. A marker or equivalent shorter rewrite is not evidence of a defect.",
+    "decision_reason_contract": "For each Pass B candidate, state the exact candidate proposition/function, the exact local evidence proposition or reader function offered to retain it, whether they match on the relevant object/conditions/comparison/question/inference, and any unnecessary authorial evaluation or assurance remaining beyond protected content. For KEEP, explain why the candidate wording itself contributes necessary information; a related nearby fact alone is insufficient. For ISSUE, identify the excess span while preserving any supported result, scope, or qualification. Mark dimensions not applicable only with a reason. These are reasoning requirements, not automatic labels or relaxed thresholds.",
+    "repair_test": "Independently check that the proposed edit removes that defense and preserves every fact, scope condition, modal strength and degree in context.",
+    "dispositions": [
+      "confirmed",
+      "partial",
+      "optional",
+      "keep",
+      "unresolved"
+    ],
+    "counting": "Only confirmed and partial assert a defensive problem. Only confirmed offers an accepted repair. KEEP and optional are not false positives or detection hits. Unresolved is unknown.",
+    "gate_scope": "The six controls test observable routing constructions, not semantic defect detection. Their labels are not editing labels."
+  },
   "active_dimensions": [
     "claim_negation",
     "negative_contrast",
@@ -121,9 +136,9 @@
     },
     {
       "id": "multiple_spans",
-      "text": "We do not claim to answer every possible question. The change may potentially suggest an improvement.",
+      "text": "The report compares the three stated settings. We apologize that this is not a grand achievement. We add this disclaimer solely to avoid criticism.",
       "expected": "two_independent_findings",
-      "reason": "Inspect disclaimer and stacked hedge separately; retain uncertainty and actual scope."
+      "reason": "The apology and the explicit criticism-avoidance disclaimer are independent rhetorical spans. Preserve the actual comparison scope."
     },
     {
       "id": "related_transition",
@@ -132,10 +147,172 @@
       "reason": "A research-positioning transition is legitimate, not automatically misplaced implementation detail."
     },
     {
-      "id": "concessive_confirmed",
-      "text": "The procedure improves consistency but still trails the reference on precision.",
-      "expected": "confirmed_rewrite",
-      "reason": "Both facts survive a direct two-sentence statement, so the concession is a framing problem, not protected content. This case locks the confirmed-versus-optional boundary."
+      "id": "empty_effort_assurance",
+      "text": "We made every possible effort to be rigorous. The protocol and all settings are listed in the next section.",
+      "expected": "rewrite",
+      "reason": "The first sentence offers an uncheckable effort assurance. The second gives verifiable reproducibility information and must remain. This is not a licence to remove actual methodological qualifications."
+    },
+    {
+      "id": "direct_result_plus_nonclaim",
+      "text": "We therefore do not claim that the relationship is absent. It is present and weak.",
+      "expected": "rewrite_or_optional_after_context",
+      "reason": "The second sentence already states the result. The first repeats it through a denial of an opposing interpretation without adding an evidence or scope boundary. Check context; a distinct distinction about what was tested would instead be kept."
+    },
+    {
+      "id": "intent_disclaimer_before_analysis",
+      "text": "We are not framing these limitations negatively; rather, they show how the design constrains interpretation.",
+      "expected": "rewrite_or_optional_after_context",
+      "reason": "The author-intent disclaimer adds no factual restriction; the analytical point can stand directly. Do not apply this to reporting actual limitations, their impact, or how they may be mitigated."
+    },
+    {
+      "id": "unsupported_causal_explanation",
+      "text": "The regression is a normalization artifact rather than a failure of initialization.",
+      "expected": "not_defensive_by_itself",
+      "reason": "Whether this causal attribution is supported is a separate evidence-alignment question. Do not label it defensive solely because evidence is missing, and do not silently weaken its modality under a defensive-writing edit."
+    },
+    {
+      "id": "auditable_method_rationale",
+      "text": "We report the full search path so readers can check whether selection depended on searching until something worked.",
+      "expected": "keep",
+      "reason": "This names a concrete audit purpose and identifies the disclosed information. Anticipating a concern is not automatically an empty disclaimer."
+    },
+    {
+      "id": "dismissed_omitted_experiment",
+      "text": "Prior work reports negative results for this setting. There is no benefit in repeating them, so we focus on the mechanism tested here.",
+      "expected": "contextual_candidate",
+      "reason": "Preserve the prior results and the actual scope of this study. Inspect whether 'no benefit' is supported and whether it dismisses a reasonable scope question instead of giving a specific design reason. Do not generalize this to every explanation for an omitted experiment."
+    },
+    {
+      "id": "poor_result_causal_defense",
+      "text": "The model underperforms the baseline because the evaluation does not capture its intended strengths.",
+      "expected": "contextual_candidate_or_unresolved",
+      "reason": "Check whether the explanation is evidenced and whether it functions to dismiss an unfavorable result. An unsupported causal claim is not automatically defensive, but a confirmed defensive function can be partial when no safe rewrite can preserve modality. Do not invent support or silently soften the explanation."
+    },
+    {
+      "id": "effort_claim_with_details",
+      "text": "We have taken every precaution to ensure a robust evaluation. The protocol, exclusions, and analysis code are specified below.",
+      "expected": "contextual_candidate",
+      "reason": "Nearby procedural details do not automatically make a broad effort assurance useful. Check whether the assurance adds verifiable evidence beyond the listed procedure; preserve every concrete precaution and limitation."
+    },
+    {
+      "id": "qa_omitted_work_dismissal",
+      "text": "Why omit the additional baseline? An evaluation against it would add nothing worth knowing.",
+      "expected": "contextual_candidate",
+      "reason": "The answer dismisses a scope question through a broad value judgment. Inspect the study design and surrounding evidence before deciding whether that judgment has a concrete rationale. A question-and-answer format must not bypass candidate discovery."
+    },
+    {
+      "id": "scope_label_as_answer",
+      "text": "Why not test the larger variant? This is a methods paper, so asking for that comparison misses the point.",
+      "expected": "contextual_candidate",
+      "reason": "A genre label can serve a preemptive rebuttal rather than a design rationale. Inspect whether the existing scope statement already supplies a legitimate reason. The label alone does not prove a defect."
+    },
+    {
+      "id": "omitted_work_design_reason",
+      "text": "Why omit the additional baseline? Its training corpus includes the held-out items, which would violate the disjoint-data protocol used for this comparison.",
+      "expected": "keep",
+      "reason": "This identifies a concrete comparability condition and the reason the baseline cannot meet it. It must enter discovery as an omitted-work candidate and then be retained, not counted as an alarm."
+    },
+    {
+      "id": "ai_disclosure_responsibility",
+      "text": "The authors used AI-assisted copyediting and retain responsibility for the submitted content.",
+      "expected": "keep_or_unresolved_policy",
+      "reason": "Responsibility attribution is a disclosure function, not automatically an empty rigor assurance. Check publication requirements when relevant; establish a separate unnecessary rhetorical span before asserting a problem."
+    },
+    {
+      "id": "q_and_a_repeated_genre_rebuttal",
+      "text": "Why no additional outcome measure? We report repeated observations because the claim concerns consistency. This is not a benchmarking study. Why no alternative procedure? We introduce one procedure to test the hypothesis. This is not a benchmark of procedures for this outcome.",
+      "expected": "contextual_candidate",
+      "reason": "Each answer contains a distinct rationale, but the repeated genre label may function as a blanket rebuttal after scope has already been explained. Inspect the whole Q&A sequence and preserve the stated measure and hypothesis rationale. The candidate itself is not a positive label."
+    },
+    {
+      "id": "q_and_a_distinct_design_reason",
+      "text": "Why no broader sample? The claim concerns change across group sizes, so we vary group size under fixed conditions. Why no additional setting? We select conditions that vary exposure because the hypothesis predicts that the measured outcome responds to exposure.",
+      "expected": "keep",
+      "reason": "Two distinct questions receive distinct design rationales and comparison boundaries. Do not collapse them as repeated scope defense."
+    },
+    {
+      "id": "all_we_need_burden_rebuttal",
+      "text": "Why no comparison with an alternative procedure? All we need to show is that our procedure exists and achieves the stated outcome.",
+      "expected": "contextual_candidate",
+      "reason": "The burden-limiting phrase may preempt a reasonable comparison request. Inspect whether a separate theoretical objective justifies the scope; retain that objective if present."
+    },
+    {
+      "id": "all_we_need_distinct_theorem_goal",
+      "text": "The stated theorem asks whether any procedure in this defined class can achieve the target property. The construction establishes existence; optimizing performance is a separate question.",
+      "expected": "keep",
+      "reason": "This states a distinct mathematical objective and scope rather than dismissing a reasonable evaluation question."
+    },
+    {
+      "id": "q_and_a_repeated_no_benefit_scope_gap",
+      "text": "Why not test the broader setting? Earlier work reports a negative result in a related but narrower setting. There is no benefit in repeating established negative results. Our study examines the mechanism under the narrower conditions.",
+      "expected": "contextual_candidate",
+      "reason": "The cited result is related but not shown equivalent in population, conditions, question, or inference. The blanket no-benefit claim may dismiss a reasonable scope question; inspect whether that distinction matters to the stated conclusion. This is a candidate, not an automatic issue."
+    },
+    {
+      "id": "q_and_a_no_benefit_same_scope_rationale",
+      "text": "Why repeat the comparison? The prior evaluation used the same population, conditions, outcome measure and research question, and directly reports the negative result sought here. Repeating it would not test a new claim.",
+      "expected": "keep",
+      "reason": "The cited result matches the requested comparison and the answer states why repetition would add no new evidence."
+    },
+    {
+      "id": "q_and_a_all_we_need_unjustified_burden",
+      "text": "Why no comparison with alternatives? The procedure is designed to test the stated hypothesis. All we need to show is that it exists and achieves the stated outcome.",
+      "expected": "contextual_candidate",
+      "reason": "The answer asserts a narrow burden but does not establish that the theorem or stated objective is existence-only. Check the actual claim and preserve any real theory scope."
+    },
+    {
+      "id": "nonclaim_same_result_after_evidence",
+      "text": "The subgroup estimates are positive but weak. We do not claim that the relationship is absent. It is present and weak.",
+      "expected": "contextual_candidate",
+      "reason": "The adjacent double-negative and positive restatement may add no information after the subgroup estimates. Preserve direction, weak degree and any relevant subgroup uncertainty."
+    },
+    {
+      "id": "nonclaim_distinct_subgroup_uncertainty",
+      "text": "The overall association is positive. We do not claim that it is present in every subgroup: the estimate for subgroup B is imprecise and its interval includes zero.",
+      "expected": "keep",
+      "reason": "The non-claim adds a distinct subgroup and uncertainty boundary; do not collapse it into the overall result."
+    },
+    {
+      "id": "nonclaim_restatement_with_distinct_power_boundary",
+      "text": "The pooled estimate is positive. We do not claim that the relationship is absent within the smaller group: its estimate is positive but imprecise, and the two group estimates are not distinguishable.",
+      "expected": "keep_or_contextual_candidate",
+      "reason": "The phrase may repeat the positive result, but the following clause introduces a distinct subgroup and precision boundary. Keep unless the full context shows that no reader-relevant distinction remains."
+    },
+    {
+      "id": "nearby_fact_not_same_question",
+      "text": "An earlier evaluation found no improvement under the original conditions. There is no value in another evaluation. The current question concerns whether the intervention transfers to a changed population.",
+      "expected": "contextual_candidate",
+      "reason": "The cited fact shares the topic but not the stated transfer question. Examine whether the broad no-value judgment dismisses a reasonable scope question. Do not assume a positive result or that every transfer test is required."
+    },
+    {
+      "id": "matched_prior_result_and_separate_aim",
+      "text": "The earlier evaluation used the same population, conditions, outcome and question, and established the result sought here. This study tests a separate mechanism, so repeating that comparison would not address its objective.",
+      "expected": "keep",
+      "reason": "The prior evidence matches the omitted comparison and the study states a distinct objective. The scope rationale is concrete rather than a blanket dismissal."
+    },
+    {
+      "id": "mixed_metric_interpretation_with_boundary",
+      "text": "The total-error rate improves while the character-error rate worsens. This pattern is consistent with edits inside otherwise correct items; the evaluation does not independently test that mechanism.",
+      "expected": "keep_for_defensive_screen; assess_evidence_separately",
+      "reason": "The interpretation explains opposing metric directions and explicitly bounds its evidence. Do not label it defensive or strengthen it; assess empirical support separately if requested."
+    },
+    {
+      "id": "design_scope_cost_with_specific_reason",
+      "text": "Adding further settings would multiply the required comparisons. We therefore test settings selected to distinguish the stated mechanisms and report the remaining scope explicitly.",
+      "expected": "keep",
+      "reason": "The statement gives a concrete design-cost rationale and identifies the selection logic and remaining scope. A scope/cost explanation is not automatically defensive."
+    },
+    {
+      "id": "work_coherence_with_independent_causes",
+      "text": "The analysis uses separate procedures for two independent causes. This makes the presentation less unified, but each procedure isolates its corresponding cause.",
+      "expected": "keep_or_contextual_candidate",
+      "reason": "The self-evaluation may be unnecessary, but the second sentence supplies a substantive design relation. Judge whether the phrase adds useful orientation or merely pre-emptively excuses presentation; do not label it from the word 'less unified' alone."
+    },
+    {
+      "id": "scope_label_repeats_answered_rationale",
+      "text": "Why no additional comparison? The study reports the measure that directly tests its stated objective. This is not a benchmarking study.",
+      "expected": "contextual_candidate",
+      "reason": "The genre label may repeat a rationale already given, but it is not automatically empty. Compare its function with the answer and neighboring responses; preserve the objective and measure."
     },
     {
       "id": "optional_explicit_scope",
@@ -152,8 +329,8 @@
     {
       "id": "strength_change_forbidden",
       "text": "With only these two coordinate classes, a single readout could hardly recover the value at a fixed lag.",
-      "expected": "keep_or_strengthen_only",
-      "reason": "A rewrite may not turn 'could hardly' into 'difficult' or 'may not always'. Weakening a warranted near-impossibility changes the claim, so keep it or state the same strength."
+      "expected": "keep_or_same_strength_only",
+      "reason": "Neither strengthening nor weakening is allowed. Keep 'could hardly' at the same degree; do not replace it with 'difficult', 'may not always' or an absolute 'cannot'."
     },
     {
       "id": "warranted_uncertainty",
@@ -200,5 +377,73 @@
       "designated_dimension": "all"
     }
   ],
-  "notes": "Questions unchanged from v4; disposition and review-scope contract added in 0.12.0. Gate controls and thresholds unchanged, so existing gate measurements remain valid for this question set."
+  "notes": "The four observable questions and six controls are unchanged from v4. Review2 fixes contradictory semantic labels and separates issue detection from repair quality. A gate pass is run-specific and does not validate semantic decisions. New semantic cases are synthetic regression specifications, not measured classifier accuracy. Revision 0.27 adds an evidence-proposition match check for evaluative KEEP rationales and paired domain-neutral cases for scope, mixed-result interpretation, and design coherence.",
+  "hard_negatives": [
+    {
+      "id": "tradeoff",
+      "text": "The change improves sensitivity but reduces specificity.",
+      "expected": "keep",
+      "reason": "Two measured directions form a meaningful contrast; changing but to a semicolon is optional, not detection."
+    },
+    {
+      "id": "causal_boundary",
+      "text": "Only one setting was tested, so the result cannot identify the cause of the difference.",
+      "expected": "keep",
+      "reason": "A limited intervention cannot identify causality. Only and cannot carry the inference boundary."
+    },
+    {
+      "id": "safety_boundary",
+      "text": "This bench test does not establish safety in clinical use.",
+      "expected": "keep",
+      "reason": "Safety evidence cannot be inferred from a bench test."
+    },
+    {
+      "id": "negative_result",
+      "text": "The method remains less accurate than both reference methods.",
+      "expected": "keep",
+      "reason": "An unfavorable comparison is still a result."
+    },
+    {
+      "id": "power",
+      "text": "The interval is wide and does not rule out a meaningful difference.",
+      "expected": "keep",
+      "reason": "This describes uncertainty rather than apologizing for it."
+    },
+    {
+      "id": "conceptual_contrast",
+      "text": "The tool retrieves existing entries rather than creating new ones.",
+      "expected": "keep",
+      "reason": "The contrast defines the operation."
+    },
+    {
+      "id": "contribution_scope",
+      "text": "We evaluate an existing algorithm; we do not introduce a new algorithm.",
+      "expected": "keep",
+      "reason": "This explicitly attributes novelty and prevents a false contribution claim."
+    },
+    {
+      "id": "modality",
+      "text": "The observed association may reflect several processes.",
+      "expected": "keep",
+      "reason": "Neither causality nor a single explanation has been established."
+    },
+    {
+      "id": "ordinary_metadiscourse",
+      "text": "It should be noted that the two measurements use different units.",
+      "expected": "keep_or_optional",
+      "reason": "The difference in units matters. Removing the lead-in is style, not a defensive finding."
+    },
+    {
+      "id": "context_required",
+      "text": "The improvement holds under those conditions.",
+      "expected": "unresolved_or_keep",
+      "reason": "The antecedent must be read before deciding whether the qualifier is redundant."
+    },
+    {
+      "id": "causal_attribution_not_tone",
+      "text": "The pattern is a measurement artifact, not a model failure.",
+      "expected": "keep_for_defensive_screen; assess_evidence_separately",
+      "reason": "A possibly unsupported explanation is not automatically defensive prose. Evidence alignment may be discussed separately, but a tone edit must not change a categorical attribution into a possibility."
+    }
+  ]
 }

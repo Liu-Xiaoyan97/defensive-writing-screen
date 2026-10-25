@@ -1,312 +1,184 @@
 # Defensive Writing Screen
 
-An agent skill that finds defensive writing cheaply and rewrites it carefully.
+A self-contained agent skill for finding unnecessary defensive writing without
+removing facts, limitations, uncertainty or unfavorable results.
 
-Most writing skills ask a model to read a whole draft and comment on it. That is
-expensive and tends to produce either generic advice or over-deletion. This skill
-splits the work: a TypeSafe/Jev System One model scores every prose paragraph with
-a few narrow yes/no questions, the agent reads only the paragraphs that score high,
-and rewriting follows the bundled anti-defensive rulebook, which protects evidence,
-scope, and necessary limitations.
+A TypeSafe/Jev-compatible caller routes paragraphs for attention. The agent reads
+local context, establishes whether a problem exists, and independently checks any
+repair. A high routing score is not a diagnosis or permission to edit.
 
-The skill is self-contained. It carries its own rewrite rules (adapted from
-[`anti-defensive-writing`](https://github.com/Kiterlin/anti-defensive-writing), MIT,
-attribution only) together with its own screening questions and control battery, so
-an agent that installs only this package has the full capability. It requires no
-other skill and never defers to one.
+## Version 0.30.0
 
-## How it runs
+- Require an auditable Pass B reason for every candidate: exact candidate proposition, local evidence proposition, relevant scope match, and any residual authorial assurance beyond protected information. This makes existing KEEP tests explicit; it does not change the issue standard or claim a measured accuracy gain.
+- Add optional bidirectional structural validation linking issue candidates and positive findings in full-review audit records.
 
-```text
-draft
-  └─ prepare_units.py          split into prose paragraphs, line ranges, candidate spans
-       └─ control battery      4 positive + 2 negative controls; a failing battery blocks the screen
-            └─ Jev triage     observable noul questions per paragraph (+ focused span question)
-                 └─ routing   max probability per paragraph, top-k above threshold
-                      └─ agent     read every unit, classify, record rewrite or keep
-                           └─ rewrite guide   claim-first, positive scope, keep real limits
-                                └─ report       excerpt, reason, one local revision
-```
+## Version 0.28.0
 
-Jev never rewrites, never locates quotes, and never grants permission. A high
-probability means "read this", not "delete this".
+- Split full-scope review into independent candidate discovery and adjudication passes.
+  The adjudicator rereads every target, sees candidate spans without prior verdicts,
+  and can add missed candidates. This is a workflow hypothesis, not a measured
+  detection improvement; it increases review cost and needs a frozen regression.
+- Add separate validation mode for discovery-only ledgers so candidates cannot be
+  prematurely recorded as KEEP or issue before adjudication.
 
-## What it screens
+## Version 0.27.0
 
-Four calibrated yes/no questions per paragraph: `claim_negation`,
-`negative_contrast`, `vague_hedge`, and `concessive_hedge`. `scope_tail` was retired
-from default routing in 0.11.0 because it failed its own controls in both directions;
-tail interpretation moved to the agent as rule R6. R6 fires only on a genuinely empty
-retreat: a qualifier that refers to conditions the paragraph already established is
-kept, and an isolated deictic phrase with missing context is reported as unresolved,
-not deleted. Repetition is agent-side as well.
+- Add an evidence-proposition comparison for evaluative KEEP rationales. Related
+  facts are not automatically evidence for the exact scope judgment being made.
+- Add domain-neutral paired cases for same-topic versus same-question evidence,
+  mixed-metric interpretations, subgroup uncertainty, design cost, and repeated
+  genre labels.
+- Keep evidence sufficiency separate from defensive-writing classification. An
+  unverified scientific interpretation is not automatically defensive; preserve
+  its modality and report the evidence question separately.
+- Keep all controls and examples domain-neutral. They do not borrow terminology
+  or claims from the motivating manuscript.
 
-Three narrative actions run agent-side, with no routing value: N1 restates a unit so
-the result it already reports comes first, N2 narrows an unsupported claim without
-deleting a supported interpretation of reported numbers, and N3 relocates or
-consolidates a fact that interrupts its unit or appears in two sections. Each action keeps every number, direction, and condition;
-N1 may not turn a deficit into a match, and N3 must name where the fact lands.
+- Add a sequence-level check for repeated generic scope/genre disclaimers in Q&A
+  clusters. Distinguish empty repeated rebuttals from separate design rationales.
+- Add regression cases for repeated “not a benchmark” and burden-limiting phrases,
+  paired with KEEP controls that preserve distinct scope and mathematical goals.
 
-Six protection classes keep the screen away from facts: measured results and their
-direction, mathematical and proof conditions, measurement and reproduction conditions,
-the scope of an intervention, design premises, and the semantics of a comparison.
-Protection covers meaning, not wording: a necessary limitation can keep its facts while
-an apologetic frame is restated, and a clear direction-only comparison is not treated as
-defensive because its numbers sit in a table. Each unit may carry several span findings,
-so one paragraph's first problem does not hide the second. A structure check reports a
-missing conclusion, a document that ends on limitations, a missing scope statement,
-related work that is absent or folded, evidence placed away from its claim, and review
-sections that end on the draft's own design.
+- Require a separate per-unit candidate-scan artifact before verdicts, including
+  explicit no-candidate records and concrete KEEP reasons. Its offline validator
+  checks record coverage and literal spans, not actual reading or semantic truth.
+- Search omitted-work rationales and question-and-answer rebuttals semantically.
+  Keep concrete design reasons, contribution scope and responsibility disclosures.
 
-## Install
+- Remove the contradictory rule that a fact-preserving concession rewrite must be
+  confirmed. Normal tradeoffs and necessary restrictions stay KEEP or optional.
+- Separate issue detection from repair quality: confirmed, partial, optional, keep
+  and unresolved have different meanings and counters.
+- Default to paragraph routing at 0.65 plus 12 evenly spaced non-routed units.
+  This is not random sampling and does not estimate population recall.
+- Keep full selected paragraphs and neighbors. Optional sentence screening keeps
+  every hit with exact parent offsets; there is no silent text truncation.
+- Validate source quotations, source hashes and review-record consistency before
+  accepting suggestions. This validation is not an automated semantic proof.
+- Preserve degree and modal strength in both directions. Ordinary compression is
+  not defensive-writing detection.
 
-The package is plain files: a skill directory, three references, and two stdlib
-Python scripts. It has no build step and no runtime dependency, so every install
-route below lands the same contents.
+The four observable Jev questions are unchanged. The six-control gate remains a
+run-specific routing smoke test, not a semantic accuracy benchmark. New review
+rules and local tests alone do not establish improved detection performance.
 
-### 1. Directly from GitHub with npm (no npm account or registry publish needed)
+## Independent installation
+
+The skill contains its own rules, controls and scripts. It requires no other skill,
+and never loads or defers to one. The bundled rewrite guide is adapted from
+[`anti-defensive-writing`](https://github.com/Kiterlin/anti-defensive-writing)
+(Kiterlin, MIT); `NOTICE.md` records provenance. The upstream files are not runtime
+dependencies.
 
 ```sh
 npm install github:Liu-Xiaoyan97/defensive-writing-screen
-```
-
-Pin a release or a commit so installs stay reproducible:
-
-```sh
-npm install github:Liu-Xiaoyan97/defensive-writing-screen#v0.6.0
-npm install github:Liu-Xiaoyan97/defensive-writing-screen#<commit-sha>
-```
-
-Equivalent forms, if you prefer an explicit URL or protocol:
-
-```sh
-npm install git+https://github.com/Liu-Xiaoyan97/defensive-writing-screen.git
-npm install git+ssh://git@github.com/Liu-Xiaoyan97/defensive-writing-screen.git
-```
-
-Add it to a project manifest with the same spec:
-
-```sh
-npm install --save github:Liu-Xiaoyan97/defensive-writing-screen#v0.6.0
-# package.json gains: "defensive-writing-screen": "github:Liu-Xiaoyan97/defensive-writing-screen#v0.6.0"
-```
-
-These forms need `git` on the machine and reach `github.com`, not the npm
-registry. npm clones the repository, reads `package.json`, and skips installation
-of dependencies because there are none.
-
-Then point your agent at the installed skill directory:
-
-```sh
 mkdir -p ~/.agents/skills
 cp -R node_modules/defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
 ```
 
-Or reference it in place, for example
-`node_modules/defensive-writing-screen/skills/defensive-writing-screen/SKILL.md`.
-Claude Code reads `~/.claude/skills/` or `.claude/skills/` instead. Keep the
-`references/` and `scripts/` subdirectories: the skill resolves them relative to
-its own directory.
+Pin a published tag or commit for reproducibility. Registry installation with
+`npm install defensive-writing-screen` is available only after publication; a
+version in this checkout does not imply a published release.
 
-### 2. From npm, once published
-
-```sh
-npm install defensive-writing-screen
-```
-
-Same contents, resolved through the registry instead of git. Use this when the
-public package is available; use route 1 otherwise.
-
-### 3. As a Pi package
-
-```sh
-pi install git:github.com/Liu-Xiaoyan97/defensive-writing-screen@v0.6.0
-# or, once published
-pi install npm:defensive-writing-screen
-# or from a local checkout
-pi install ./defensive-writing-screen
-```
-
-`package.json` declares `pi.skills: ["./skills"]`, so the skill appears alongside
-other Pi resources. Run `/reload` in an existing session, then invoke it with
-`/skill:defensive-writing-screen`.
-
-### 4. From a checkout
+From a checkout:
 
 ```sh
 git clone https://github.com/Liu-Xiaoyan97/defensive-writing-screen.git
-cp -R defensive-writing-screen/skills/defensive-writing-screen ~/.agents/skills/
+cd defensive-writing-screen
+sh install.sh --dest ~/.agents/skills
 ```
 
-The installer reads the current checkout when run from the repository root and
-otherwise downloads a tarball:
-
-```sh
-sh install.sh                                   # -> ~/.agents/skills
-sh install.sh --dest .agents/skills             # project-level
-```
-
-The layout follows the `skills/<name>/SKILL.md` convention used by `npx skills`:
-
-```sh
-npx skills add Liu-Xiaoyan97/defensive-writing-screen
-```
+Keep the complete skill directory, including `references/` and `scripts/`. The
+package also retains `pi.skills: ["./skills"]` resource metadata. No MCP server or
+additional skill is required.
 
 ## Requirements
 
-No other skill and no MCP server is required. The skill is a self-contained
-directory: its rulebook, question set, control battery, and scripts are all local,
-and `scripts/validate.py` fails if the text reintroduces a dependency on another
-installed skill.
+- Python 3.10+ for the bundled scripts. Offline preparation, packet generation,
+  anchor checks and aggregation use only the standard library.
+- A System One-compatible caller for Jev routing (`state` plus typed `questions`).
+  `run_screen.py` makes network requests for gate, triage and focused modes; it can
+  optionally use an installed `certifi` TLS bundle when available.
+- Without Jev, use the bundled agent-only review, mark scores null and read the
+  full authorized scope. Do not call this a successful Jev screening run.
 
-- A System One caller for triage: Pi's `jev_evaluate` tool, the TypeSafe HTTP API
-  (`/v1/systemone`), or a compatible local endpoint such as a StartLux-Decision
-  server that accepts `state` + typed `questions`.
-- Python 3.8+ only for the two helper scripts. Both are stdlib-only, make no
-  network calls, and are optional: the agent can split paragraphs and merge the
-  per-unit record itself.
-- No Jev? The skill still runs in `agent-only` mode using the bundled rewrite
-  guide, and must report that triage was skipped.
+## Run
 
-## Use
+Resolve paths relative to `skills/defensive-writing-screen`:
 
-Ask for an audit and name the scope:
-
-```text
-Use defensive-writing-screen on sections 4.2-4.3 of draft.md. Screen first, show me
-candidates with probabilities, then propose edits without writing to the file.
+```sh
+python3 scripts/prepare_units.py draft.txt --candidates > units.jsonl
+python3 scripts/run_screen.py gate --out gate.jsonl
+# Continue only after a passing gate.
+python3 scripts/run_screen.py triage --units units.jsonl --out screen.jsonl
+python3 scripts/run_screen.py summarize --screen screen.jsonl --units units.jsonl --out packet.md
 ```
 
-The agent then:
+Use `--endpoint`, `JEV_MODEL`, `JEV_API_KEY` and `--workers` for your service.
+Do not put API keys in output artifacts. The runner records requested results and
+resolved model metadata. Use new files when changing source, model or questions;
+`--resume` is for retrying the same run's missing/failed rows.
 
-1. emits units with `scripts/prepare_units.py --candidates`;
-2. asks the three broad questions per paragraph and, for each retrieved span, the
-   focused removal question;
-3. ranks by `max(probability)` and reviews the top candidates above the threshold;
-4. verifies each one against the surrounding argument and known evidence, and
-   records a verdict for every unit, including those the screen did not route;
-5. proposes one local revision per confirmed item, or explains why it stays.
+The packet's JSON sidecar keeps raw source snapshots and complete context. The
+agent reads all sentences of selected units, establishes issues and then records
+repair checks using `references/questions.md`. It writes findings plus a separate
+runtime `candidate-scan.jsonl`, not a response ledger of every low-risk paragraph. Manuscript editing still requires permission.
 
-Default reporting: source excerpt, probabilities, agent classification, proposed
-revision. Nothing is written to disk unless you authorize it.
+```sh
+python3 scripts/verify_findings.py --units units.jsonl --findings findings.jsonl \
+  --source draft.txt --out checked.jsonl
+python3 scripts/verify_candidate_scan.py --units units.jsonl --scan candidate-scan.jsonl \
+  --findings findings.jsonl --out candidate-check.json
+python3 scripts/merge_verdicts.py --screen screen.jsonl --verdicts checked.jsonl --out review.tsv
+```
 
-## Calibration
+Empty findings do not certify unread text as clean. A report may keep compact
+reviewed-unit IDs separately; the packet's selected count is not proof of reading.
+No manuscript is modified by these scripts. Runtime artifacts are written to the
+specified paths and should live outside the installed skill directory.
 
-Version 0.3.0 replaces the original sufficiency questions with observable ones and
-adds a control battery that runs before any document is screened. The change came
-from a measured failure: the original questions scored the canonical defensive
-sentences at 0.15-0.45, below the 0.65 gate they were shipped with, and an English
-academic draft of several hundred units returned no candidate at all. The observable set scores the
-same positives at 0.90-0.99 and neutral prose at 0.001-0.024; on that draft it
-returned 13 candidates, of which 5 survived review.
+Optional sentence screening:
 
-Version 0.16.0 states the purpose: the script absorbs Jev traffic so the agent spends its
-attention on judgment. A packet run must read neighbors, decide sentence by sentence and
-test a 12-unit miss-check sample; the response stays compact because saved context belongs
-in verification, not in restating machine output. Detection is the success metric, so a
-comparison against an agent-only baseline adjudicates both finding sets against the
-document rather than comparing report sizes.
+```sh
+python3 scripts/split_sentences.py units.jsonl > sentences.jsonl
+python3 scripts/run_screen.py triage --units sentences.jsonl --out sentence-screen.jsonl
+python3 scripts/run_screen.py summarize --screen screen.jsonl --units units.jsonl \
+  --sentence-screen sentence-screen.jsonl --sentence-units sentences.jsonl --out packet.md
+```
 
-Version 0.15.0 stops the skill from writing a ledger. `run_screen.py summarize` emits one
-packet holding only the units at or above the threshold, with scores, line ranges and
-exact text; the agent judges that packet, writes findings and cites the packet file
-instead of copying it. Paragraph judgment is order-independent, so units run in
-completion order and join by id. Measured: 8 routed units plus a 6-unit sample fitted in
-71 lines; four, eight and twelve workers all finished in 55-58 seconds, consistent with
-a four-slot service limit, so four stays the default.
+`--sample 0` disables the spaced sample; `--min-score` changes the score floor
+explicitly. `--markers-from units.jsonl` adds candidate-only parents. `--chars`
+accepts only 0, because truncation can hide the exact target or a critical qualifier.
 
-Version 0.13.0 runs the screen from a script. `run_screen.py` performs the gate, the
-per-unit triage and the focused deletion check in one process at concurrency four,
-retries transport errors, keeps null for persistent failures, resumes failed ids only,
-and records the resolved model. In a measured run, 119 units took about 57 seconds and
-produced the same eight routed units as 131 individual tool calls, with values within
-about 0.04. Prefer the script; keep one path per run and say which one produced a result.
+## What counts as improvement
 
-Version 0.12.2 records only risk-bearing results. The response keeps the gate table,
-every finding regardless of score, one line per routed unit, one aggregate line per
-sampling group, structure observations and cost facts. A read unit with no finding
-appears only in the count. The full ledger stays in a file artifact.
+Measure real problem identification and safe repairs separately. KEEP is not a
+false positive; optional style is not a defensive hit. Independent labels are
+needed for precision/recall claims. Software tests and consistent source anchors
+are necessary but do not establish LLM judgment quality. Development papers remain
+regression material, not unseen validation.
 
-Version 0.12.1 bounds the record after measurement showed it dominates cost: a
-screened run that read 34 of 118 units still produced more agent output than an
-agent-only full read because the response inlined a 119-row probability table. The
-full table now goes to a file artifact, the response carries routed rows plus one
-sample summary, and response size is reported as cost rather than read as evidence.
+## Local verification
 
-Version 0.12.0 adds two review scopes and a disposition contract. `screened` reads
-routed units, candidate spans and a labelled sample; `full` reads every unit and is
-required for publication acceptance or any agent-only run. Findings are `confirmed`
-when the bundled rules list the construction and the revision keeps every fact, and
-`optional` when the text is not defensive and the change is presentation. The report
-must state scope, units read and unread, Jev requests with failures, and agent turns
-or tokens, and it may not claim a Jev-first saving unless a measured comparison on
-the same draft supports it: a run that also reads every unit cannot save agent work.
+```sh
+python3 scripts/validate.py
+python3 -m unittest discover -s tests -v
+npm pack --dry-run
+```
 
-Version 0.11.0 moves the question and control definitions into
-`references/controls.json` so the prompt, the gate, and the challenge cases cannot
-drift apart, retires `scope_tail` after it failed its controls in both directions,
-adds per-span findings, and makes null a first-class state: an unrun or failed
-judgment is `untriaged`, never `0` and never `not_selected`. The canonical gate is now
-four positives and two neutrals. `validation_controls` holds six frozen texts that are
-inspected only after a revision is frozen; they are a regression set, not fresh evidence.
-
-The shipped `0.65` threshold is valid only for the current question set, language,
-and model version. Run the gate before screening a new genre and report all six
-control rows with any result. A failing gate blocks draft Jev calls and switches the
-run to an explicitly marked agent-only review; it never makes the document clean. Chinese and other CJK inputs are accepted
-by Jev but score lower than English, so calibrate separately and keep the agent
-verification step. Record the model version with any tuning result.
-
-Calibration data is deliberately decoupled from any project. The skill holds
-control sentences from the upstream defensive-writing patterns plus aggregate
-screening statistics: no draft content, document identity, domain vocabulary, or
-excerpts. Project cases live in the project and reach the skill only as run-time
-state, so the same battery can be compared across projects.
-
-## Design notes
-
-- **Screening before rewriting.** Paragraph-level questions are cheap and parallel;
-  rewriting is not. Triage buys attention where it matters.
-- **A battery before a screen.** A probability scale without known positive and
-  negative controls cannot distinguish a clean draft from an insensitive question.
-- **Observable wording over sufficiency wording.** Asking whether wording "adds
-  evidence" is answered conservatively on academic prose and flattens the ranking;
-  asking what the text contains keeps the scale usable.
-- **One paragraph per request.** Batched paragraphs blurred target attribution in
-  testing; the SOP keeps them separate until a measured run shows otherwise.
-- **Two question families.** Observable dimensions catch explicit defense; a focused
-  "would removal preserve all known meaning?" question catches mild Chinese modesty
-  and restated caveats that the dimensions miss. Neither one alone is sufficient.
-- **Necessary limits are protected.** Causal boundaries, safety prohibitions,
-  technical prerequisites, mathematical conditions, unfavorable results, and
-  conceptual contrasts that carry the argument stay, even when they read as negative
-  phrasing. In the measured run, eight of thirteen candidates were such contrasts.
-- **No skill dependencies.** Every capability lives inside this directory:
-  screening questions, the control battery, the rewrite rulebook, and the unit
-  splitter. The skill neither loads nor defers to `anti-defensive-writing` or any
-  other installed skill; attribution in `NOTICE.md` is provenance, not a runtime
-  link. Install it alone, or delete the upstream skill, and behaviour is unchanged.
+No live model calls are required for these checks. The tests cover record and
+packet behavior, source preservation and specification consistency. They do not
+assert semantic accuracy from fixture labels.
 
 ## Files
 
-```text
-package.json
-README.md
-LICENSE
-NOTICE.md
-skills/defensive-writing-screen/
-├── SKILL.md
-├── references/
-│   ├── questions.md        request shapes, routing, calibration
-│   ├── rewrite-guide.md    bundled rewrite rulebook (self-sufficient)
-│   └── cases.md            labeled smoke tests and observed failures
-└── scripts/
-    ├── prepare_units.py    offline paragraph and candidate-span extraction
-    └── merge_verdicts.py   join screen, verdicts, and labels; print agreement
-```
+- `skills/defensive-writing-screen/SKILL.md`: complete operating procedure.
+- `references/controls.json`: observable questions, routing controls and generic
+  semantic regression specifications.
+- `references/questions.md`: state, record, counting and failure contracts.
+- `references/rewrite-guide.md`: standalone evidence-preserving rewrite rules.
+- `references/cases.md`: calibration limits and regression categories.
+- `scripts/`: source preparation, routing, lossless packets, optional sentence
+  splitting, source/record checks, aggregation and structure observations.
 
-## License
-
-MIT. The rewrite guide is adapted from `anti-defensive-writing` by Kiterlin (MIT).
-`NOTICE.md` records the upstream commit, file hash, scope of the adaptation, and the
-fact that the upstream skill is not a runtime dependency.
+MIT. See `LICENSE` and `NOTICE.md` for attribution.
