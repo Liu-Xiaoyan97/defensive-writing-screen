@@ -19,7 +19,11 @@
     "claim_negation",
     "negative_contrast",
     "vague_hedge",
-    "concessive_hedge"
+    "concessive_hedge",
+    "effort_assurance",
+    "attribution_hedge",
+    "completeness_assurance",
+    "omission_value_judgment"
   ],
   "thresholds": {
     "positive_min": 0.65,
@@ -28,7 +32,7 @@
   "questions": {
     "claim_negation": {
       "type": "noul",
-      "instructions": "Does `paragraph.text` contain a sentence or clause stating a negation of a claim, that is, saying what the method, paper, model, or result does not do, does not claim, does not prove, does not provide, or does not include? Markers: do not claim, not intended to, should not be taken to mean; 并不声称、无意、不意味着、不应被理解为、不代表、不涉及、不能据此.",
+      "instructions": "Does `paragraph.text` contain a sentence or clause stating a negation of a claim, that is, saying what the method, paper, model or result does not do, does not claim, does not prove, does not provide, does not include, or judging something to have no value? Markers: do not claim, not intended to, should not be taken to mean, is not a, there is no benefit, no need to, we are not; 并不声称、无意、不意味着、不应被理解为、不代表、不涉及、没有价值、无需.",
       "criteria": {
         "true": "At least one sentence or clause explicitly negates a claim or capability",
         "false": "No sentence or clause explicitly negates a claim or capability"
@@ -52,10 +56,42 @@
     },
     "concessive_hedge": {
       "type": "noul",
-      "instructions": "Does `paragraph.text` use a concessive construction that softens a claim or pre-frames a limitation instead of stating the result directly? Markers: although, while, however; 虽然、尽管、但、然而、仍.",
+      "instructions": "Does `paragraph.text` use a concessive construction that softens, pre-frames or walks back the authors' own claim or result, rather than reporting a genuine contrast between two reported findings? Markers: although, while, however, even though; 虽然、尽管、但、然而. Do not count a concession whose two sides are both reported measurements, and do not count a concession that introduces a necessary scope or condition rather than retreating from a claim.",
       "criteria": {
-        "true": "At least one concessive construction softens a claim or pre-frames a limitation",
-        "false": "No concessive construction is used to soften a claim"
+        "true": "A concessive construction softens or walks back the authors' own claim rather than contrasting two reported findings",
+        "false": "No concessive construction, or the concession contrasts two reported findings or introduces a necessary scope condition"
+      }
+    },
+    "effort_assurance": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` contain a generalized assurance about the authors' own effort, rigor, diligence, integrity, completeness or value, presented without naming a checkable artifact, method, quantity or location? Markers: make every effort, we ensure, we have ensured, we report every, we carefully, we rigorously, to the best of our knowledge, we are confident, we are not framing, we do not overstate; 我们尽力、我们确保、我们逐一报告、我们严格、据我们所知、我们有信心. Do not count an assurance that names the concrete artifact or location that makes it checkable, and do not count a plain description of a procedure the authors performed.",
+      "criteria": {
+        "true": "At least one generalized self-assurance about effort, rigor, completeness or value is present and it names no checkable artifact, method, quantity or location",
+        "false": "No such assurance, or the assurance names a checkable artifact, method, quantity or location"
+      }
+    },
+    "attribution_hedge": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` attribute a result or shortfall to a named mechanism, cause or difficulty using an unhedged belief or assertion, while supplying no comparison, citation, measurement or ablation in the same paragraph? Markers: we believe this is due to, this is because, this reflects, the reason is, this indicates that; 我们认为这是因为、这反映了、原因在于、这说明. Do not count a mechanism offered with explicit hypothesis modality and a concrete illustration, and do not count an attribution that cites a source or reports a comparison in the same paragraph.",
+      "criteria": {
+        "true": "At least one causal attribution is asserted with no comparison, citation, measurement or ablation in the same paragraph",
+        "false": "No such attribution, or the attribution is supported by a comparison, citation, measurement or ablation in the same paragraph"
+      }
+    },
+    "completeness_assurance": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` assert that the authors reported, ran, checked or disclosed the complete set of analyses, results or checks, or justify the presence of auxiliary material by its completeness or audit value, rather than naming what each item establishes? Markers: we report every, we report all, we ran every, including the two, none of it is needed to read, all of it is needed to check, we disclose all; 我们报告了全部、我们逐一报告、包含其余、这些都不影响结论但都用于核对. Do not count a plain list of reported items without a completeness or audit-value claim.",
+      "criteria": {
+        "true": "A completeness or audit-value assurance is asserted without naming what each item establishes",
+        "false": "No such assurance, or the sentence lists reported items without claiming completeness or audit value"
+      }
+    },
+    "omission_value_judgment": {
+      "type": "noul",
+      "instructions": "Does `paragraph.text` judge an omitted experiment, comparison, repetition or scope expansion to have no value, to be worthless, or to constitute scope creep, while giving no comparability, population or condition analysis? Markers: no benefit in repeating, not worth, scope creep, multiplies the experiments, pointless, unnecessary to repeat; 没有价值、不值得、范围蔓延、徒增实验. Do not count a documented design reason that names the cost, condition or comparison that makes the omission acceptable.",
+      "criteria": {
+        "true": "An omitted line of work is judged valueless or excess without a comparability, population or condition analysis",
+        "false": "No such judgment, or the omission is justified by a named cost, condition or comparison"
       }
     }
   },
@@ -445,5 +481,65 @@
       "expected": "keep_for_defensive_screen; assess_evidence_separately",
       "reason": "A possibly unsupported explanation is not automatically defensive prose. Evidence alignment may be discussed separately, but a tone edit must not change a categorical attribution into a possibility."
     }
-  ]
+  ],
+  "two_stage": {
+    "principle": "Stage 1 maximizes recall surface: any active dimension above the gate threshold enters the candidate set. Stage 2 assigns a confidence tier from the specialized dimensions only and never discards a candidate; low-tier candidates are handed to agent review rather than dropped. Discarding on a low stage-2 score would remove genuine findings, because the specialized dimensions cover only a subset of the defect families.",
+    "stage1_recall_gate": {
+      "dimensions": "all_active",
+      "op": "max",
+      "threshold": 0.5,
+      "meaning": "candidate enters review when any active dimension is at or above 0.5"
+    },
+    "stage2_confidence_tier": {
+      "dimensions": [
+        "effort_assurance",
+        "attribution_hedge",
+        "completeness_assurance",
+        "omission_value_judgment"
+      ],
+      "op": "max",
+      "tiers": [
+        {
+          "name": "high",
+          "min": 0.6,
+          "action": "jev_positive",
+          "meaning": "specialized dimension fires strongly; treat as a positive candidate and hand to repair review"
+        },
+        {
+          "name": "medium",
+          "min": 0.2,
+          "action": "send_agent",
+          "meaning": "specialized dimension fires weakly; agent decides"
+        },
+        {
+          "name": "low",
+          "min": 0.0,
+          "action": "send_agent",
+          "meaning": "only generic dimensions fire; agent decides"
+        }
+      ],
+      "never_discard": true
+    },
+    "measured_on": {
+      "labels": "119 audited sentences (18 confirmed defensive, 101 audited non-defensive)",
+      "stage1_pass": 52,
+      "stage1_positive_recall": "18/18",
+      "tier_high": {
+        "count": 9,
+        "positives": 9,
+        "false_positives": 0
+      },
+      "tier_medium": {
+        "count": 5,
+        "positives": 3,
+        "false_positives": 2
+      },
+      "tier_low": {
+        "count": 38,
+        "positives": 6,
+        "false_positives": 32
+      },
+      "note": "Counts are a development-set measurement, not a general accuracy claim. The 101 audited non-defensive sentences come from a proposal pool and are not an exhaustive negative sample of full documents."
+    }
+  }
 }

@@ -36,7 +36,7 @@ def main():
     check('two independent passes' in text,'full-review pass separation missing')
     for name in ['SOP','Working without Jev','Reporting']:
         check(f'## {name}' in text,f'missing section {name}')
-    for i in range(1,9):
+    for i in range(1,11):
         check(f'{i}. **' in text,f'missing SOP step {i}')
     for name in ['questions.md','controls.json','rewrite-guide.md','cases.md']:
         path=SKILL/'references'/name
@@ -62,7 +62,18 @@ def main():
     check('must not carry project content' in (SKILL/'references'/'cases.md').read_text(),'case separation missing')
     controls=json.loads((SKILL/'references'/'controls.json').read_text())
     check(controls['thresholds']=={'positive_min':0.65,'negative_max':0.2},'routing thresholds changed')
-    check(set(controls['questions'])=={'claim_negation','negative_contrast','vague_hedge','concessive_hedge'},'routing dimensions changed')
+    # Dimensions are the routing contract. Adding one is allowed only together with an explicit
+    # active_dimensions entry and a two_stage block, so a silent change cannot pass validation.
+    expected_dims={'claim_negation','negative_contrast','vague_hedge','concessive_hedge',
+                   'effort_assurance','attribution_hedge',
+                   'completeness_assurance','omission_value_judgment'}
+    check(set(controls['questions'])==expected_dims,'routing dimensions changed')
+    check(set(controls.get('active_dimensions') or [])==expected_dims,
+          'active_dimensions does not match questions')
+    two=controls.get('two_stage') or {}
+    check(two.get('stage1_recall_gate',{}).get('threshold')==0.5,'stage1 recall gate missing')
+    check(two.get('stage2_confidence_tier',{}).get('never_discard') is True,
+          'stage2 must never discard a candidate')
     check(len(controls['controls'])==6,'gate control count changed')
     check(controls['revision']==manifest['version'],'review contract/package version mismatch')
     questions=(SKILL/'references'/'questions.md').read_text()

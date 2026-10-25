@@ -19,7 +19,35 @@ from handoff import read_rows
 DIMENSIONS = {'claim_negation': ('claim_negation','neg'),
               'negative_contrast': ('negative_contrast','con'),
               'vague_hedge': ('vague_hedge','hedge'),
-              'concessive_hedge': ('concessive_hedge','conc')}
+              'concessive_hedge': ('concessive_hedge','conc'),
+              'effort_assurance': ('effort_assurance','effort'),
+              'attribution_hedge': ('attribution_hedge','attrib'),
+              'completeness_assurance': ('completeness_assurance','complete'),
+              'omission_value_judgment': ('omission_value_judgment','omit')}
+# Specialized dimensions drive the confidence tier. They cover fewer defect families than the
+# generic ones, so a low tier must never discard a candidate; it only routes to agent review.
+GENERIC = ('claim_negation','negative_contrast','vague_hedge','concessive_hedge')
+SPECIALIZED = ('effort_assurance','attribution_hedge',
+               'completeness_assurance','omission_value_judgment')
+TIERS = (('high',0.6),('medium',0.2),('low',0.0))
+
+
+def confidence_tier(row):
+    """Return (tier, score) from the specialized dimensions.
+
+    A record produced before the specialized dimensions existed carries none of them. That is a
+    missing tier, not a failed unit: return (None, None) and let the caller fall back to the
+    generic routing threshold so older screens stay readable.
+    """
+    values = [probability(row, DIMENSIONS[name]) for name in SPECIALIZED]
+    present = [v for v in values if v is not None]
+    if not present:
+        return None, None
+    score = max(present)
+    for name, floor in TIERS:
+        if score >= floor:
+            return name, score
+    return 'low', score
 UNRUN_STATES = ('untriaged_error','untriaged_no_caller','untriaged_control_failed')
 DISPOSITIONS = ('confirmed','partial','optional','keep','unresolved')
 
@@ -76,18 +104,22 @@ def main(argv=None):
             raise SystemExit('label issue_present must be boolean or null')
     totals = Counter()
     routes = untriaged = positive_routes = tp = fp = fn = tn = 0
-    table = [['id','screen_state','triage','review_state','confirmed','partial','optional','keep','unresolved']]
+    tiers = Counter()
+    table = [['id','screen_state','triage','tier','tier_score','review_state','confirmed','partial','optional','keep','unresolved']]
     spans = [['unit','id','disposition','span','proposal','reason']]
     for uid, r in screen.items():
         values = [probability(r, keys) for keys in DIMENSIONS.values()]
-        complete = all(v is not None for v in values) and r.get('ok', True) is not False
+        generic = [probability(r, DIMENSIONS[name]) for name in GENERIC]
+        complete = all(v is not None for v in generic) and r.get('ok', True) is not False
         state = r.get('screen_state') or ('scored' if complete else 'untriaged_error')
         if state in UNRUN_STATES:
             complete = False
         if not complete and state not in UNRUN_STATES:
             state = 'untriaged_error'
-        score = max(values) if complete else None
+        score = max(generic) if complete else None
         routed = score is not None and score >= args.threshold
+        tier, tier_score = confidence_tier(r) if complete else (None, None)
+        tiers[tier] += 1
         routes += routed
         untriaged += not complete
         c = Counter(f['disposition'] for f in grouped[uid])
