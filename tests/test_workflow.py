@@ -278,3 +278,34 @@ class RoutingAndCountingTests(unittest.TestCase):
                                      '--reviewed-units',str(p/'r'),'--out',str(p/'o')])
             self.assertIn('TP 1 FP 0 FN 1 TN 0',output.getvalue())
 
+
+
+class EndpointDiscoveryTests(unittest.TestCase):
+    """The screen must resolve its endpoint without importing any Pi package."""
+
+    def test_no_pi_import_in_scripts(self):
+        import pathlib
+        root = pathlib.Path(__file__).resolve().parent.parent
+        for path in (root/'skills'/'defensive-writing-screen'/'scripts').glob('*.py'):
+            body = path.read_text()
+            for bad in ('import pi_jev', 'from pi_jev', 'pi-jev', 'jev_eval', 'jev-eval'):
+                self.assertNotIn(bad, body, f'{path.name} references {bad}')
+
+    def test_discovery_prefers_explicit_env(self):
+        import importlib, os, sys
+        sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent.parent
+                              /'skills'/'defensive-writing-screen'/'scripts'))
+        mod = importlib.import_module('run_screen')
+        old = {k: os.environ.get(k) for k in ('JEV_ENDPOINT','PI_JEV_BASE_URL')}
+        try:
+            os.environ['PI_JEV_BASE_URL'] = 'http://a.test'
+            os.environ.pop('JEV_ENDPOINT', None)
+            self.assertTrue(mod.discover_endpoint()[0].startswith('http://a.test'))
+            os.environ['JEV_ENDPOINT'] = 'http://b.test/v1/systemone'
+            self.assertEqual(mod.discover_endpoint()[0], 'http://b.test/v1/systemone')
+        finally:
+            for k, v in old.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v

@@ -62,7 +62,51 @@ def ssl_context():
         return ssl.create_default_context()
 CONTROLS = HERE.parent / "references" / "controls.json"
 
-DEFAULT_BASE = "http://localhost:8090"
+FALLBACK_BASE = "http://localhost:8090"
+SYSTEMONE_PATH = "/v1/systemone"
+
+
+def agent_env(name, default=None):
+    """Read a value from the Pi agent environment, tolerating an unset shell."""
+    return os.environ.get(name) or default
+
+
+def discover_endpoint():
+    """Resolve the System One endpoint without importing any Pi package.
+
+    Resolution order, first match wins:
+      1. JEV_ENDPOINT / JEV_BASE_URL in the environment (explicit override)
+      2. PI_JEV_BASE_URL, which Pi exports into a running agent
+      3. the first endpoint in Pi's jev-endpoints.json, read as plain JSON
+      4. the documented local default
+
+    Returns (url, model, api_key). Nothing here imports a Pi module, so the script
+    runs the same inside and outside an agent session.
+    """
+    explicit = agent_env("JEV_ENDPOINT") or agent_env("JEV_BASE_URL")
+    if explicit:
+        return explicit, agent_env("JEV_MODEL"), agent_env("JEV_API_KEY")
+    base = agent_env("PI_JEV_BASE_URL")
+    if base:
+        return base.rstrip("/") + SYSTEMONE_PATH, agent_env("JEV_MODEL"), agent_env("JEV_API_KEY")
+    config = Path(os.path.expanduser("~/.pi/agent/jev-endpoints.json"))
+    if config.is_file():
+        try:
+            data = json.loads(config.read_text())
+            first = (data.get("endpoints") or [{}])[0]
+            url = first.get("baseUrl")
+            if url:
+                model = agent_env("JEV_MODEL") or first.get("model")
+                key = agent_env("JEV_API_KEY")
+                key_file = first.get("apiKeyFile")
+                if not key and key_file:
+                    path = Path(os.path.expanduser(key_file))
+                    if path.is_file():
+                        key = path.read_text().strip()
+                return url.rstrip("/") + SYSTEMONE_PATH, model, key
+        except Exception:
+            pass
+    return FALLBACK_BASE + SYSTEMONE_PATH, agent_env("JEV_MODEL"), agent_env("JEV_API_KEY")
 GENRE = "academic paper, English"
 RULES = ("Preserve facts, metric direction, mathematical conditions, "
          "intervention scope, and necessary uncertainty.")
@@ -224,14 +268,22 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--units", type=Path)
     parser.add_argument("--spans", type=Path)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--base", default=os.environ.get("PI_JEV_BASE_URL", DEFAULT_BASE),
-                        help="base URL; the path is appended")
+    discovered, discovered_model, discovered_key = discover_endpoint()
+    default_base = (discovered[:-len(SYSTEMONE_PATH)]
+                    if discovered.endswith(SYSTEMONE_PATH) else discovered)
+    parser.add_argument("--base", default=default_base,
+                        help="System One base URL; resolved from JEV_ENDPOINT, PI_JEV_BASE_URL, "
+                             "Pi's jev-endpoints.json, then the local default")
     parser.add_argument("--path", default=os.environ.get("JEV_PATH", "/v1/systemone"),
                         help="endpoint path, for example /v1/systemone or /v1/decisions")
     parser.add_argument("--endpoint", help="full endpoint URL, overriding --base and --path")
     parser.add_argument("--api-key", default=os.environ.get("JEV_API_KEY")
-                        or os.environ.get("BAMBOO_API_KEY") or os.environ.get("TYPESAFE_API_KEY") or None)
-    parser.add_argument("--model", default=os.environ.get("JEV_MODEL") or None)
+                        or os.environ.get("BAMBOO_API_KEY") or os.environ.get("TYPESAFE_API_KEY")
+                        or discovered_key or None,
+                        help="bearer token; falls back to the endpoint config's apiKeyFile")
+    parser.add_argument("--model", default=os.environ.get("JEV_MODEL") or discovered_model,
+                        help="model field sent with each request; falls back to the endpoint "
+                             "config, else omitted")
     parser.add_argument("--workers", default=os.environ.get("JEV_CONCURRENCY", "4"),
                         help="pool size, or auto to use the widest safe fan-out (units are independent)")
     parser.add_argument("--timeout", type=float, default=20.0)
