@@ -351,3 +351,40 @@ class FormatExtractionTests(unittest.TestCase):
                 with self.assertRaises(SystemExit) as ctx:
                     m.from_pdf(pathlib.Path(fh.name))
         self.assertIn('no extractable text layer', str(ctx.exception))
+
+
+class FrontmatterTests(unittest.TestCase):
+    """The skill must load in a strict YAML reader, not just in a lenient one.
+
+    A plain scalar that contains ': ' is read as a nested mapping and the skill fails to
+    load. Quoting every free-text field removes the whole class of failure.
+    """
+
+    def skill(self):
+        import pathlib
+        return (pathlib.Path(__file__).resolve().parent.parent
+                / 'skills' / 'defensive-writing-screen' / 'SKILL.md')
+
+    def frontmatter(self):
+        parts = self.skill().read_text().split('---\n')
+        self.assertGreaterEqual(len(parts), 3, 'frontmatter fences missing')
+        self.assertEqual(parts[0].strip(), '', 'content before the frontmatter')
+        return parts[1]
+
+    def test_frontmatter_is_strict_yaml(self):
+        try:
+            import yaml
+        except ImportError:
+            self.skipTest('PyYAML not installed')
+        data = yaml.safe_load(self.frontmatter())
+        for key in ('name','description','license','compatibility','metadata'):
+            self.assertIn(key, data)
+        self.assertIsInstance(data['description'], str)
+        self.assertIsInstance(data['compatibility'], str)
+
+    def test_free_text_fields_are_quoted(self):
+        for line in self.frontmatter().splitlines():
+            if line.startswith(('description:','compatibility:','  upstream:','  version:')):
+                value = line.split(':',1)[1].strip()
+                self.assertTrue(value.startswith('"') and value.endswith('"'),
+                                f'unquoted free-text field: {line[:60]}')

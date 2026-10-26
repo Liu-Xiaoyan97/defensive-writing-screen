@@ -1,8 +1,8 @@
 ---
 name: defensive-writing-screen
-description: Audit defensive writing with Jev-first routing, contextual agent review, and separate issue and repair judgments. Preserve facts, uncertainty, limitations and unfavorable results. Supports papers, reports, proposals and SOPs. Includes its own rules, controls, source-anchor checks and compact reporting. No other skill is required.
+description: "Audit defensive writing with Jev-first routing, contextual agent review, and separate issue and repair judgments. Preserve facts, uncertainty, limitations and unfavorable results. Supports papers, reports, proposals and SOPs. Includes its own rules, controls, source-anchor checks and compact reporting. No other skill is required."
 license: MIT
-compatibility: Jev routing needs a System One caller. Bundled scripts need Python 3.10+. Without Jev or after a failed gate, report agent-only review. Never invent probabilities.
+compatibility: "Jev routing needs a System One caller. Bundled scripts need Python 3.10+. Without Jev or after a failed gate, report agent-only review. Never invent probabilities."
 metadata:
   version: "0.30.0"
   upstream: "Kiterlin/anti-defensive-writing (MIT), adapted; see NOTICE.md"
