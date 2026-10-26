@@ -2,11 +2,11 @@
 
 ## Canonical question set
 
-`controls.json` is the only source for the four active observable questions and the six routing controls. `triage_revision` remains v4; `revision` also identifies the updated agent-review contract. `claim_negation`, `negative_contrast`, `vague_hedge` and `concessive_hedge` retrieve constructions. Their scores are NOT probabilities that an edit is justified. Keep exactly the same questions in script/tool runs and record requested/resolved model IDs.
+`controls.json` is the only source for the nine active observable questions and the six routing controls. `revision` identifies the screen contract. The dimensions in `active_dimensions` retrieve constructions. Their scores are NOT probabilities that an edit is justified. Keep exactly the same questions in script/tool runs and record requested/resolved model IDs.
 
 The six controls test four positive constructions and two neutral texts. Positive thresholds are 0.65, negative ceilings 0.20. Necessary scope can be a positive construction. Passing this gate does not validate semantic discrimination. Run a new gate for each endpoint/model/language variant; do not change labels or retry an unfavorable score to pass. Transport errors may be retried. `validation_controls` are frozen regression cases, not permanently unseen data.
 
-`semantic_challenges` and `hard_negatives` specify the agent's contextual decisions. They include meaningful tradeoffs, causality, safety, uncertainty, contribution attribution and ordinary metadiscourse. They are synthetic specifications, not completed classifier experiments. Do not use them as negative labels for observable routing questions.
+`two_stage` defines the recall gate and the confidence tier. Stage 1 keeps every candidate whose strongest dimension reaches the gate. Stage 2 tiers candidates from the specialized dimensions and subtracts the `substantive_boundary` keep signal. The tier orders the report; it does not authorize an edit or skip a step.
 
 ## Running the screen
 

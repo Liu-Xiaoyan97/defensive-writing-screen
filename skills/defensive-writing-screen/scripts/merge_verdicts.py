@@ -23,12 +23,18 @@ DIMENSIONS = {'claim_negation': ('claim_negation','neg'),
               'effort_assurance': ('effort_assurance','effort'),
               'attribution_hedge': ('attribution_hedge','attrib'),
               'completeness_assurance': ('completeness_assurance','complete'),
-              'omission_value_judgment': ('omission_value_judgment','omit')}
+              'omission_value_judgment': ('omission_value_judgment','omit'),
+              'substantive_boundary': ('substantive_boundary','bound'),
+}
 # Specialized dimensions drive the confidence tier. They cover fewer defect families than the
 # generic ones, so a low tier must never discard a candidate; it only routes to agent review.
 GENERIC = ('claim_negation','negative_contrast','vague_hedge','concessive_hedge')
 SPECIALIZED = ('effort_assurance','attribution_hedge',
                'completeness_assurance','omission_value_judgment')
+# A statement that names the concrete measurement, statistic, dataset or design element limiting a
+# claim is a keep signal: it is an evidence boundary, not a posture. It lowers the tier rather than
+# raising it.
+KEEP_SIGNAL = ('substantive_boundary',)
 TIERS = (('high',0.6),('medium',0.2),('low',0.0))
 
 
@@ -43,7 +49,9 @@ def confidence_tier(row):
     present = [v for v in values if v is not None]
     if not present:
         return None, None
-    score = max(present)
+    keep = [probability(row, DIMENSIONS[name]) for name in KEEP_SIGNAL]
+    keep_present = [v for v in keep if v is not None]
+    score = max(present) - (max(keep_present) if keep_present else 0.0)
     for name, floor in TIERS:
         if score >= floor:
             return name, score

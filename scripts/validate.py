@@ -33,10 +33,9 @@ def main():
     check('Calibration records in this skill stay generic' in text,'project separation missing')
     check('Information preservation is necessary, not sufficient' in text,'two-stage boundary missing')
     check('keep the modal strength and degree' in text,'modal/degree protection missing')
-    check('two independent passes' in text,'full-review pass separation missing')
     for name in ['SOP','Working without Jev','Reporting']:
         check(f'## {name}' in text,f'missing section {name}')
-    for i in range(1,11):
+    for i in range(1,9):
         check(f'{i}. **' in text,f'missing SOP step {i}')
     for name in ['questions.md','controls.json','rewrite-guide.md','cases.md']:
         path=SKILL/'references'/name
@@ -66,33 +65,21 @@ def main():
     # active_dimensions entry and a two_stage block, so a silent change cannot pass validation.
     expected_dims={'claim_negation','negative_contrast','vague_hedge','concessive_hedge',
                    'effort_assurance','attribution_hedge',
-                   'completeness_assurance','omission_value_judgment'}
+                   'completeness_assurance','omission_value_judgment',
+                   'substantive_boundary'}
     check(set(controls['questions'])==expected_dims,'routing dimensions changed')
     check(set(controls.get('active_dimensions') or [])==expected_dims,
           'active_dimensions does not match questions')
     two=controls.get('two_stage') or {}
     check(two.get('stage1_recall_gate',{}).get('threshold')==0.5,'stage1 recall gate missing')
-    check(two.get('stage2_confidence_tier',{}).get('never_discard') is True,
-          'stage2 must never discard a candidate')
+    tier=two.get('stage2_confidence_tier',{})
+    check(tier.get('never_discard') is True,'stage2 must never discard a candidate')
+    check(tier.get('agent_stage') is False,'stage 2 must not require an agent pass')
     check(len(controls['controls'])==6,'gate control count changed')
     check(controls['revision']==manifest['version'],'review contract/package version mismatch')
     questions=(SKILL/'references'/'questions.md').read_text()
-    check('candidate-discovery.jsonl' in questions and 'Pass B' in questions,
-          'two-pass candidate workflow missing')
-    cases={row['id'] for row in controls['semantic_challenges']}
-    check({'direct_result_plus_nonclaim','intent_disclaimer_before_analysis',
-           'unsupported_causal_explanation','auditable_method_rationale',
-           'poor_result_causal_defense','effort_claim_with_details',
-           'qa_omitted_work_dismissal','scope_label_as_answer',
-           'omitted_work_design_reason','ai_disclosure_responsibility',
-           'q_and_a_repeated_genre_rebuttal','q_and_a_distinct_design_reason',
-           'all_we_need_burden_rebuttal','all_we_need_distinct_theorem_goal',
-           'q_and_a_repeated_no_benefit_scope_gap','q_and_a_no_benefit_same_scope_rationale',
-           'q_and_a_all_we_need_unjustified_burden',
-           'nonclaim_same_result_after_evidence','nonclaim_distinct_subgroup_uncertainty'} <= cases,
-          'missing review regression boundaries')
-    hard={row['id'] for row in controls['hard_negatives']}
-    check('causal_attribution_not_tone' in hard,'missing causal-modality protection')
+    check('issue_test' in controls['review_contract'] and 'repair_test' in controls['review_contract'],
+          'review contract missing')
     for entry in manifest['files']:
         check(bool(list(ROOT.glob(entry))),f'missing package entry {entry}')
     for entry in manifest.get('pi',{}).get('skills',[]):
