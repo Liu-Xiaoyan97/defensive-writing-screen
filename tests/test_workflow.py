@@ -309,3 +309,45 @@ class EndpointDiscoveryTests(unittest.TestCase):
                     os.environ.pop(k, None)
                 else:
                     os.environ[k] = v
+
+
+class FormatExtractionTests(unittest.TestCase):
+    """Every supported format must reach the same unit splitter as plain text."""
+
+    def scripts(self):
+        import pathlib, sys
+        path = pathlib.Path(__file__).resolve().parent.parent / 'skills' / 'defensive-writing-screen' / 'scripts'
+        sys.path.insert(0, str(path))
+        return path
+
+    def test_markdown_strips_fences_and_comments(self):
+        import importlib
+        self.scripts()
+        m = importlib.import_module('extract_text')
+        text = m.from_markdown("# T\n\nkeep me\n\n```py\ncode\n```\n\n<!-- hidden -->\nalso keep\n")
+        self.assertIn('keep me', text)
+        self.assertIn('also keep', text)
+        self.assertNotIn('code', text)
+        self.assertNotIn('hidden', text)
+
+    def test_suffix_detection_covers_every_format(self):
+        import importlib
+        self.scripts()
+        m = importlib.import_module('extract_text')
+        for suffix, fmt in (('.md','markdown'),('.tex','latex'),('.pdf','pdf'),
+                            ('.docx','docx'),('.txt','text')):
+            self.assertEqual(m.detect('x'+suffix), fmt)
+
+    def test_pdf_without_text_layer_is_an_error(self):
+        import importlib, pathlib, tempfile, unittest.mock
+        self.scripts()
+        m = importlib.import_module('extract_text')
+        class EmptyPage:
+            def extract_text(self): return ''
+        class Reader:
+            def __init__(self, _): self.pages = [EmptyPage()]
+        with unittest.mock.patch.dict('sys.modules', {'pypdf': unittest.mock.MagicMock(PdfReader=Reader)}):
+            with tempfile.NamedTemporaryFile(suffix='.pdf') as fh:
+                with self.assertRaises(SystemExit) as ctx:
+                    m.from_pdf(pathlib.Path(fh.name))
+        self.assertIn('no extractable text layer', str(ctx.exception))

@@ -224,28 +224,42 @@ def latex_blocks(text: str):
     yield from iter_blocks("\n".join(cleaned))
 
 
+def read_source(source: str, fmt: str) -> tuple[str, str]:
+    """Return (text, format). Non-text formats go through extract_text first."""
+    from extract_text import convert, detect
+    if source == "-":
+        return sys.stdin.read(), (fmt if fmt != "auto" else "text")
+    path = Path(source)
+    resolved = detect(source) if fmt == "auto" else fmt
+    if resolved is None:
+        raise SystemExit(
+            f"cannot tell the format of {path.name}; pass --format text|markdown|latex|pdf|docx")
+    if resolved in ("pdf", "docx"):
+        return convert(path, resolved), resolved
+    return path.read_bytes().decode("utf-8"), resolved
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Split a draft into screening units.")
     parser.add_argument("source", nargs="?", default="-", help="Markdown/text file, or - for stdin")
     parser.add_argument("--name", help="slug for unit ids; defaults to file stem")
-    parser.add_argument("--format", choices=("auto", "text", "latex"), default="auto",
-                        help="auto selects latex for .tex files; use latex explicitly for stdin")
+    parser.add_argument("--format", choices=("auto","text","markdown","latex","pdf","docx"),
+                        default="auto",
+                        help="auto uses the file suffix; pdf and docx are converted to text first")
     parser.add_argument("--candidates", action="store_true", help="include defensive-phrase candidate spans")
     parser.add_argument("--max-units", type=int, default=0, help="emit at most N units (0 = all)")
     parser.add_argument("--min-chars", type=int, default=12, help="skip blocks shorter than this")
     args = parser.parse_args(argv)
 
+    text, resolved_format = read_source(args.source, args.format)
     if args.source == "-":
-        text = sys.stdin.read()
         name = args.name or "draft"
     else:
-        path = Path(args.source)
-        text = path.read_bytes().decode("utf-8")
-        name = args.name or path.stem
+        name = args.name or Path(args.source).stem
 
     slug = slugify(name)
     emitted = 0
-    use_latex = args.format == "latex" or (args.format == "auto" and args.source.endswith(".tex"))
+    use_latex = resolved_format == "latex"
     blocks = latex_blocks(text) if use_latex else iter_blocks(text)
     source_lines = text.split("\n")
     source_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -264,7 +278,7 @@ def main(argv: list[str]) -> int:
         unit["source_sha256"] = source_sha256
         unit["source_name"] = args.source
         unit["line_basis"] = "LF"
-        unit["format"] = "latex" if use_latex else "text"
+        unit["format"] = resolved_format
         if args.candidates:
             unit["candidates"] = find_candidates(paragraph)
         print(json.dumps(unit, ensure_ascii=False))

@@ -41,7 +41,7 @@ def main():
         path=SKILL/'references'/name
         check(path.is_file() and path.stat().st_size>500,f'missing/empty {name}')
         check(name in text,f'undiscoverable reference {name}')
-    for name in ['prepare_units.py','run_screen.py','handoff.py','split_sentences.py',
+    for name in ['prepare_units.py','extract_text.py','run_screen.py','handoff.py','split_sentences.py',
                  'verify_findings.py','verify_candidate_scan.py','merge_verdicts.py','check_structure.py']:
         check((SKILL/'scripts'/name).is_file(),f'missing script {name}')
     for path in SKILL.rglob('*'):
